@@ -1,0 +1,1878 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>图书馆探索者</title>
+    <style>
+        /* 对话框样式 */
+        .dialogue-box {
+            position: absolute;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 600px;
+            background-color: rgba(255, 255, 255, 0.9);
+            border: 3px solid #654321;
+            border-radius: 8px;
+            padding: 20px;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+            z-index: 100;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+        
+        .dialogue-box.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .dialogue-content {
+            font-family: 'Courier New', monospace;
+            font-size: 16px;
+            color: #333;
+            margin-bottom: 15px;
+            line-height: 1.5;
+            min-height: 60px;
+        }
+        
+        .dialogue-controls {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+        
+        .dialogue-controls button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            transition: background-color 0.3s ease;
+        }
+        
+        .dialogue-controls button:hover {
+            background-color: #2980b9;
+        }
+        
+        .close-dialogue {
+            background-color: #e74c3c !important;
+        }
+        
+        .close-dialogue:hover {
+            background-color: #c0392b !important;
+        }
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background-color: #f0f0f0;
+        }
+        
+        .game-container {
+            position: relative;
+            width: 800px;
+            height: 600px;
+            margin: 50px auto;
+            background-color: #2c3e50;
+            overflow: hidden;
+            border: 3px solid #333;
+        }
+        
+        .world {
+            position: absolute;
+            width: 3000px;
+            height: 3000px;
+            transform-origin: center;
+            transition: transform 0.1s ease-out;
+        }
+        
+        /* 窗外景色容器 - 放置在世界地图边界外侧 */
+        .outside-scenery {
+            position: absolute;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1;
+            background: linear-gradient(135deg, #87CEEB 0%, #1E90FF 100%);
+            transition: background 20s ease-in-out;
+            overflow: hidden;
+            /* 添加轻微的纹理以增强深度感 */
+            background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23ffffff' fill-opacity='0.05' fill-rule='evenodd'/%3E%3C/svg%3E");
+        }
+        
+        /* 云朵元素样式 */
+        .cloud {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 100px;
+            filter: blur(10px);
+            animation: cloudMove linear infinite;
+        }
+        
+        /* 星星元素样式 */
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle ease-in-out infinite;
+        }
+        
+        @keyframes cloudMove {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100vw); }
+        }
+        
+        @keyframes twinkle {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+        
+        /* 世界地图边界玻璃窗样式 - 增强玻璃质感 */
+        .world-boundary {
+            position: absolute;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.05));
+            backdrop-filter: blur(2px);
+            border: 3px solid #8B4513;
+            border-radius: 2px;
+            z-index: 2;
+            box-shadow: 
+                inset 0 0 30px rgba(255, 255, 255, 0.3),
+                0 0 10px rgba(255, 255, 255, 0.1);
+            overflow: hidden;
+            /* 添加轻微的纹理 */
+            background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23ffffff' fill-opacity='0.05' fill-rule='evenodd'/%3E%3C/svg%3E");
+        }
+        
+        /* 玻璃反光效果 */
+        .world-boundary::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent 40%, rgba(255, 255, 255, 0.3) 50%, transparent 60%);
+            transform: rotate(-15deg);
+            animation: glassShimmer 5s infinite linear;
+        }
+        
+        /* 第二重反光效果 */
+        .world-boundary::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(135deg, transparent 45%, rgba(255, 255, 255, 0.2) 55%, transparent 65%);
+            transform: rotate(15deg);
+            animation: glassShimmer 8s infinite linear;
+        }
+        
+        /* 雨滴效果容器 */
+        .raindrop-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            pointer-events: none;
+        }
+        
+        /* 雨滴样式 */
+        .raindrop {
+            position: absolute;
+            background: linear-gradient(transparent, rgba(255, 255, 255, 0.5));
+            border-radius: 0 0 50% 50%;
+            animation: raindropFall linear forwards;
+            opacity: 0.7;
+        }
+        
+        @keyframes glassShimmer {
+            0% { transform: translateX(-100%) rotate(-15deg); }
+            100% { transform: translateX(100%) rotate(-15deg); }
+        }
+        
+        @keyframes raindropFall {
+            0% {
+                transform: translateY(-10px) rotate(15deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.7;
+            }
+            90% {
+                opacity: 0.7;
+            }
+            100% {
+                transform: translateY(100%) rotate(15deg);
+                opacity: 0;
+            }
+        }
+        
+        .floor {
+            position: absolute;
+            background-color: #8B4513;
+            background-image: 
+                linear-gradient(rgba(0, 0, 0, 0.1) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 0, 0, 0.1) 1px, transparent 1px);
+            background-size: 40px 40px;
+            z-index: 1;
+        }
+        
+        /* NPC样式 */
+        .npc-container {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            z-index: 2; /* 与书架同一层级，低于角色 */
+            pointer-events: auto; /* 允许子元素接收点击事件 */
+            image-rendering: pixelated;
+        }
+        
+        .npc {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            z-index: 2;
+            pointer-events: none; /* 禁用鼠标交互 */
+            image-rendering: pixelated;
+            transition: transform 0.2s ease, filter 0.2s ease;
+        }
+        
+        /* 碰撞高亮效果 */
+        .npc.highlight {
+            transform: scale(1.1);
+            filter: brightness(1.2);
+        }
+        
+        /* 对话中的NPC高亮效果 */
+        .npc.talking {
+            animation: npcTalk 1.5s ease-in-out infinite;
+            filter: brightness(1.3);
+        }
+        
+        @keyframes npcTalk {
+            0%, 100% {
+                transform: translateY(0) scale(1);
+            }
+            50% {
+                transform: translateY(-3px) scale(1.05);
+            }
+        }
+        
+        /* 像素风格NPC头部 - 采用两层矩形创建圆形效果，与玩家角色一致 */
+        .npc-head {
+            position: absolute;
+            top: 0;
+            left: 6px;
+            width: 20px;
+            height: 12px;
+            background-color: #f5deb3;
+        }
+        
+        /* 头部第二层，创建圆形效果 */
+        .npc-head::before {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: -2px;
+            width: 24px;
+            height: 8px;
+            background-color: #f5deb3;
+        }
+        
+        /* 面部特征 - 调整位置以匹配新的头部结构 */
+        .npc-face {
+            position: absolute;
+            top: 2px;
+            left: 0;
+            width: 20px;
+            height: 10px;
+        }
+        
+        /* 像素眼睛 - 方形 */
+        .npc-eye {
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            background-color: #333333;
+        }
+        
+        .npc-eye.left {
+            left: 4px;
+            top: 4px;
+        }
+        
+        .npc-eye.right {
+            right: 4px;
+            top: 4px;
+        }
+        
+        /* 像素嘴巴 - 方形 */
+        .npc-mouth {
+            position: absolute;
+            bottom: 0;
+            left: 4px;
+            width: 12px;
+            height: 2px;
+            background-color: #8b4513;
+        }
+        
+        /* 身体 */
+        .npc-body {
+            position: absolute;
+            top: 12px;
+            left: 8px;
+            width: 24px;
+            height: 16px;
+            background-color: #f5deb3;
+        }
+        
+        /* 服装 - 使用与玩家相同的蓝色 */
+        .npc-outfit {
+            position: absolute;
+            top: 12px;
+            left: 8px;
+            width: 24px;
+            height: 16px;
+            background-color: #3498db; /* 与玩家相同的蓝色上衣 */
+        }
+        
+        /* 像素手臂 */
+        .npc-arm-left,
+        .npc-arm-right {
+            position: absolute;
+            top: 14px;
+            width: 8px;
+            height: 14px;
+            background-color: #f5deb3;
+        }
+        
+        .npc-arm-left {
+            left: 0;
+        }
+        
+        .npc-arm-right {
+            right: 0;
+        }
+        
+        /* 像素腿部 - 缩短长度 */
+        .npc-leg-left,
+        .npc-leg-right {
+            position: absolute;
+            bottom: 0;
+            width: 8px;
+            height: 12px;
+            background-color: #2c3e50; /* 裤子颜色 */
+        }
+        
+        .npc-leg-left {
+            left: 8px;
+        }
+        
+        .npc-leg-right {
+            right: 8px;
+        }
+        
+        /* 鞋子 - 调整位置 */
+        .npc-shoe-left,
+        .npc-shoe-right {
+            position: absolute;
+            bottom: 0;
+            width: 10px;
+            height: 2px;
+            background-color: #f5deb3;
+        }
+        
+        .npc-shoe-left {
+            left: 7px;
+        }
+        
+        .npc-shoe-right {
+            right: 7px;
+        }
+        
+        
+        .bookshelves {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            z-index: 2;
+        }
+        
+        .bookshelf {
+            position: absolute;
+            width: 120px;
+            height: 200px;
+            background-color: #654321;
+            border: 3px solid #3E2723;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+            z-index: 2;
+        }
+        
+        .bookshelf::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 5px;
+            height: 100%;
+            background-color: #3E2723;
+        }
+        
+        .bookshelf::after {
+            content: '';
+            position: absolute;
+            top: 30%;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background-color: #3E2723;
+        }
+        
+        .character-canvas {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 40px;
+            height: 40px;
+            transform: translate(-50%, -50%);
+            z-index: 10;
+            image-rendering: pixelated;
+        }
+        
+        .game-title {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-family: 'Arial', sans-serif;
+            font-size: 24px;
+            font-weight: bold;
+            color: #fff;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+            background-color: rgba(0, 0, 0, 0.5);
+            padding: 10px 20px;
+            border-radius: 10px;
+            z-index: 20;
+        }
+        
+        .move-indicator {
+            position: absolute;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-family: 'Arial', sans-serif;
+            font-size: 16px;
+            color: #fff;
+            background-color: rgba(0, 0, 0, 0.5);
+            padding: 8px 16px;
+            border-radius: 20px;
+            opacity: 0;
+            transition: opacity 0.3s ease-out;
+            z-index: 20;
+        }
+        
+        .move-indicator.active {
+            opacity: 1;
+        }
+        
+        .instructions {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 10px;
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+        }
+        
+        .coordinates {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 5px;
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+            font-family: 'Courier New', monospace;
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <!-- 窗外景色 -->
+        <div class="outside-scenery" id="outsideScenery"></div>
+        
+        <div class="world" id="world">
+            <div class="floor"></div>
+            <div class="bookshelves" id="bookshelves">
+                <!-- 图书柜将通过JavaScript动态生成 -->
+            </div>
+            <!-- NPC容器 -->
+            <div class="npc-container" id="npcContainer"></div>
+        </div>
+        <div class="game-title">图书馆探索者</div>
+        
+        <canvas id="characterCanvas" class="character-canvas"></canvas>
+        
+        <div class="move-indicator" id="moveIndicator"></div>
+        
+        <!-- NPC对话容器 -->
+        <div id="dialogueBox" class="dialogue-box">
+            <div class="dialogue-content"></div>
+            <div class="dialogue-controls">
+                <button class="next-dialogue">继续</button>
+                <button class="close-dialogue">关闭</button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="coordinates" id="coordinates">坐标: 0, 0</div>
+    
+    <div class="instructions">
+        使用方向键（↑↓←→）或WASD键移动。角色保持在中心，世界围绕角色移动。
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 获取DOM元素
+            const world = document.getElementById('world');
+            const gameContainer = document.querySelector('.game-container');
+            const characterCanvas = document.getElementById('characterCanvas');
+            const moveIndicator = document.getElementById('moveIndicator');
+            const outsideScenery = document.getElementById('outsideScenery');
+            const floor = document.querySelector('.floor');
+            const coordinatesDisplay = document.getElementById('coordinates');
+            
+            // 根据系统时间更新窗外景色
+            function updateOutsideScenery() {
+                const now = new Date();
+                const hour = now.getHours();
+                let backgroundGradient;
+                
+                // 根据时间设置不同的背景色
+                if (hour >= 5 && hour < 7) {
+                    // 日出
+                    backgroundGradient = 'linear-gradient(135deg, #FFD700 0%, #FF8C00 100%)';
+                } else if (hour >= 7 && hour < 12) {
+                    // 上午
+                    backgroundGradient = 'linear-gradient(135deg, #87CEEB 0%, #1E90FF 100%)';
+                } else if (hour >= 12 && hour < 18) {
+                    // 下午
+                    backgroundGradient = 'linear-gradient(135deg, #87CEEB 0%, #4682B4 100%)';
+                } else if (hour >= 18 && hour < 20) {
+                    // 日落
+                    backgroundGradient = 'linear-gradient(135deg, #FF6347 0%, #8B0000 100%)';
+                } else {
+                    // 夜晚
+                    backgroundGradient = 'linear-gradient(135deg, #191970 0%, #000000 100%)';
+                }
+                
+                // 应用背景渐变
+                outsideScenery.style.background = backgroundGradient;
+                
+                // 清除之前的动态元素
+                clearDynamicElements();
+                
+                // 根据时间添加不同的动态元素
+                if (hour >= 7 && hour < 18) {
+                    // 白天添加云朵
+                    createClouds();
+                } else if (hour >= 18 || hour < 5) {
+                    // 夜晚添加星星
+                    createStars();
+                }
+            }
+            
+            // 清除动态元素
+            function clearDynamicElements() {
+                const clouds = outsideScenery.querySelectorAll('.cloud');
+                const stars = outsideScenery.querySelectorAll('.star');
+                clouds.forEach(cloud => cloud.remove());
+                stars.forEach(star => star.remove());
+            }
+            
+            // 创建云朵
+            function createClouds() {
+                for (let i = 0; i < 5; i++) {
+                    const cloud = document.createElement('div');
+                    cloud.className = 'cloud';
+                    cloud.style.cssText = `
+                        position: absolute;
+                        width: ${100 + Math.random() * 200}px;
+                        height: ${50 + Math.random() * 100}px;
+                        background: white;
+                        border-radius: 50%;
+                        opacity: 0.8;
+                        top: ${Math.random() * 100}%;
+                        left: ${Math.random() * 100}%;
+                        animation: moveCloud ${30 + Math.random() * 50}s linear infinite;
+                        filter: blur(5px);
+                    `;
+                    outsideScenery.appendChild(cloud);
+                }
+            }
+            
+            // 创建星星
+            function createStars() {
+                for (let i = 0; i < 100; i++) {
+                    const star = document.createElement('div');
+                    star.className = 'star';
+                    const size = Math.random() * 2;
+                    star.style.cssText = `
+                        position: absolute;
+                        width: ${size}px;
+                        height: ${size}px;
+                        background: white;
+                        border-radius: 50%;
+                        top: ${Math.random() * 100}%;
+                        left: ${Math.random() * 100}%;
+                        opacity: ${0.5 + Math.random() * 0.5};
+                        animation: twinkle ${Math.random() * 3 + 1}s infinite alternate;
+                    `;
+                    outsideScenery.appendChild(star);
+                }
+            }
+            
+            // 添加CSS动画
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes moveCloud {
+                    0% { transform: translateX(-200%); }
+                    100% { transform: translateX(200%); }
+                }
+                @keyframes twinkle {
+                    0% { opacity: 0.3; }
+                    100% { opacity: 1; }
+                }
+            `;
+            document.head.appendChild(style);
+            
+            // 初始更新窗外景色
+            updateOutsideScenery();
+            // 每小时更新一次窗外景色
+            setInterval(updateOutsideScenery, 3600000);
+            
+            // 设置canvas尺寸
+            characterCanvas.width = 32;
+            characterCanvas.height = 32;
+            const characterCtx = characterCanvas.getContext('2d');
+            
+            // 玩家状态
+            const player = {
+                width: 32,
+                height: 32,
+                direction: 'down', // 默认方向
+                animationFrame: 0 // 用于动画效果
+            };
+            
+            // 游戏常量
+            const MOVE_SPEED = 5; // 移动速度
+            const WORLD_WIDTH = 3000;
+            const WORLD_HEIGHT = 3000;
+            const CONTAINER_WIDTH = 800;
+            const CONTAINER_HEIGHT = 600;
+            
+            // 位置跟踪
+            let worldPositionX = 0;
+            let worldPositionY = 0;
+            
+            // 动画状态
+            let isMoving = false;
+            let animationCounter = 0;
+            
+            // 键盘状态跟踪
+            const keys = {
+                up: false,
+                down: false,
+                left: false,
+                right: false,
+                interact: false
+            };
+            
+            // 图书柜位置数据（用于碰撞检测）
+            const bookshelvesData = [];
+            
+            // NPC数据数组
+            const npcsData = [];
+            
+            // 当前正在交互的NPC
+            let currentInteractingNPC = null;
+            // 是否正在显示对话
+            let isDialogueActive = false;
+            
+            // 角色碰撞箱尺寸
+            const playerCollisionBox = {
+                width: 30,  // 稍小于角色实际尺寸
+                height: 32  // 角色高度
+            };
+            
+            // 图书柜碰撞箱尺寸（特别是底部碰撞区域）
+            const bookshelfCollisionBox = {
+                width: 120,  // 图书柜宽度
+                height: 40,  // 底部碰撞区域高度（从底部算起）
+                offsetTop: 160  // 底部碰撞区域距离图书柜顶部的偏移
+            };
+            
+            // 窗外景色元素已在前面声明
+            
+            // 初始化世界位置（使角色在初始位置居中）
+            function initializeWorldPosition() {
+                worldPositionX = -(WORLD_WIDTH / 2 - CONTAINER_WIDTH / 2);
+                worldPositionY = -(WORLD_HEIGHT / 2 - CONTAINER_HEIGHT / 2);
+                updateWorldTransform();
+                
+                    // 根据要求修改地板大小：上下各减少6个方格，左右各减少9个方格
+                // 每个方格大小为40px（从CSS的background-size可知）
+                const tileSize = 40;
+                const reducedWidth = WORLD_WIDTH - (9 * tileSize * 2); // 左右各减少9个方格
+                const reducedHeight = WORLD_HEIGHT - (6 * tileSize * 2); // 上下各减少6个方格
+                
+                // 保持地板相对于世界居中定位，确保移动范围不变
+                floor.style.width = `${reducedWidth}px`;
+                floor.style.height = `${reducedHeight}px`;
+                floor.style.left = `${(WORLD_WIDTH - reducedWidth) / 2}px`;
+                floor.style.top = `${(WORLD_HEIGHT - reducedHeight) / 2}px`;
+                
+                // 创建世界边界玻璃窗
+                createWorldBoundary();
+                
+                // 初始化窗外景色
+                updateOutsideScenery();
+                
+                // 每小时更新一次窗外景色
+                setInterval(updateOutsideScenery, 3600000); // 3600000 毫秒 = 1 小时
+            }
+            
+            // 根据系统时间更新窗外景色
+            function updateOutsideScenery() {
+                const now = new Date();
+                const hour = now.getHours();
+                let gradient = '';
+                
+                // 根据不同时间段设置不同的背景渐变
+                if (hour >= 5 && hour < 7) {
+                    // 日出时分
+                    gradient = 'linear-gradient(180deg, #003366 0%, #FF9966 50%, #66CCFF 100%)';
+                    clearDynamicElements();
+                    createStars(10); // 日出时少量星星
+                } else if (hour >= 7 && hour < 12) {
+                    // 上午
+                    gradient = 'linear-gradient(135deg, #87CEEB 0%, #1E90FF 100%)';
+                    clearDynamicElements();
+                    createClouds(5);
+                } else if (hour >= 12 && hour < 18) {
+                    // 下午
+                    gradient = 'linear-gradient(135deg, #B0E0E6 0%, #4682B4 100%)';
+                    clearDynamicElements();
+                    createClouds(8);
+                } else if (hour >= 18 && hour < 20) {
+                    // 日落时分
+                    gradient = 'linear-gradient(180deg, #660033 0%, #FF6600 50%, #FFCC33 100%)';
+                    clearDynamicElements();
+                    createClouds(3);
+                } else {
+                    // 夜晚
+                    gradient = 'linear-gradient(180deg, #000033 0%, #000066 50%, #000033 100%)';
+                    clearDynamicElements();
+                    createStars(50);
+                }
+                
+                // 应用背景渐变
+                outsideScenery.style.background = gradient;
+            }
+            
+            // 清除动态元素
+            function clearDynamicElements() {
+                const clouds = document.querySelectorAll('.cloud');
+                clouds.forEach(cloud => cloud.remove());
+                
+                const stars = document.querySelectorAll('.star');
+                stars.forEach(star => star.remove());
+            }
+            
+            // 创建云朵
+            function createClouds(count) {
+                for (let i = 0; i < count; i++) {
+                    const cloud = document.createElement('div');
+                    cloud.className = 'cloud';
+                    
+                    // 随机大小和位置
+                    const size = Math.random() * 100 + 50;
+                    cloud.style.width = `${size}px`;
+                    cloud.style.height = `${size * 0.4}px`;
+                    cloud.style.left = `-${size}px`; // 从屏幕左侧外部开始
+                    cloud.style.top = `${Math.random() * 50}%`;
+                    cloud.style.animationDuration = `${Math.random() * 120 + 60}s`;
+                    cloud.style.animationDelay = `${Math.random() * 60}s`;
+                    
+                    outsideScenery.appendChild(cloud);
+                }
+            }
+            
+            // 创建星星
+            function createStars(count) {
+                for (let i = 0; i < count; i++) {
+                    const star = document.createElement('div');
+                    star.className = 'star';
+                    
+                    // 随机大小和位置
+                    const size = Math.random() * 3 + 1;
+                    star.style.width = `${size}px`;
+                    star.style.height = `${size}px`;
+                    star.style.left = `${Math.random() * 100}vw`;
+                    star.style.top = `${Math.random() * 100}vh`;
+                    star.style.animationDuration = `${Math.random() * 3 + 2}s`;
+                    star.style.animationDelay = `${Math.random() * 2}s`;
+                    
+                    outsideScenery.appendChild(star);
+                }
+            }
+            
+            // 创建世界边界玻璃窗
+            function createWorldBoundary() {
+                const world = document.getElementById('world');
+                const boundaryThickness = 20; // 边界厚度
+                const boundaryZIndex = 2;
+                
+                // 获取地板的位置和大小，将玻璃窗移到地板边界
+                const floorLeft = parseInt(floor.style.left);
+                const floorTop = parseInt(floor.style.top);
+                const floorWidth = parseInt(floor.style.width);
+                const floorHeight = parseInt(floor.style.height);
+                
+                // 添加CSS类确保玻璃窗元素不参与碰撞检测和鼠标事件
+                const boundaryStyle = `
+                    .world-boundary {
+                        pointer-events: none;
+                    }
+                `;
+                
+                // 将样式添加到head
+                const styleElement = document.createElement('style');
+                styleElement.textContent = boundaryStyle;
+                document.head.appendChild(styleElement);
+                
+                // 创建左侧边界玻璃窗（移到地板左边界）
+                const leftBoundary = document.createElement('div');
+                leftBoundary.className = 'world-boundary';
+                leftBoundary.style.left = `${floorLeft - boundaryThickness}px`;
+                leftBoundary.style.top = `${floorTop}px`;
+                leftBoundary.style.width = `${boundaryThickness}px`;
+                leftBoundary.style.height = `${floorHeight}px`;
+                leftBoundary.style.zIndex = boundaryZIndex;
+                world.appendChild(leftBoundary);
+                
+                // 创建右侧边界玻璃窗（移到地板右边界）
+                const rightBoundary = document.createElement('div');
+                rightBoundary.className = 'world-boundary';
+                rightBoundary.style.left = `${floorLeft + floorWidth}px`;
+                rightBoundary.style.top = `${floorTop}px`;
+                rightBoundary.style.width = `${boundaryThickness}px`;
+                rightBoundary.style.height = `${floorHeight}px`;
+                rightBoundary.style.zIndex = boundaryZIndex;
+                world.appendChild(rightBoundary);
+                
+                // 创建上侧边界玻璃窗（移到地板上边界）
+                const topBoundary = document.createElement('div');
+                topBoundary.className = 'world-boundary';
+                topBoundary.style.left = `${floorLeft}px`;
+                topBoundary.style.top = `${floorTop - boundaryThickness}px`;
+                topBoundary.style.width = `${floorWidth}px`;
+                topBoundary.style.height = `${boundaryThickness}px`;
+                topBoundary.style.zIndex = boundaryZIndex;
+                world.appendChild(topBoundary);
+                
+                // 创建下侧边界玻璃窗（移到地板下边界）
+                const bottomBoundary = document.createElement('div');
+                bottomBoundary.className = 'world-boundary';
+                bottomBoundary.style.left = `${floorLeft}px`;
+                bottomBoundary.style.top = `${floorTop + floorHeight}px`;
+                bottomBoundary.style.width = `${floorWidth}px`;
+                bottomBoundary.style.height = `${boundaryThickness}px`;
+                bottomBoundary.style.zIndex = boundaryZIndex;
+                world.appendChild(bottomBoundary);
+                
+                // 为每个玻璃窗添加雨滴效果
+                addRaindropEffect(leftBoundary, true);
+                addRaindropEffect(rightBoundary, true);
+                addRaindropEffect(topBoundary, false);
+                addRaindropEffect(bottomBoundary, false);
+            }
+            
+            // 添加雨滴效果
+            function addRaindropEffect(boundaryElement, isVertical) {
+                const raindropContainer = document.createElement('div');
+                raindropContainer.className = 'raindrop-container';
+                boundaryElement.appendChild(raindropContainer);
+                
+                // 随机生成雨滴数量（根据边界尺寸调整）
+                const width = parseInt(boundaryElement.style.width || boundaryElement.offsetWidth);
+                const height = parseInt(boundaryElement.style.height || boundaryElement.offsetHeight);
+                const raindropCount = isVertical ? Math.floor(height / 20) : Math.floor(width / 20);
+                
+                // 定时生成雨滴
+                const createRaindrop = () => {
+                    const raindrop = document.createElement('div');
+                    raindrop.className = 'raindrop';
+                    
+                    // 设置雨滴尺寸和位置
+                    const length = Math.random() * 10 + 5;
+                    const width = length * 0.2;
+                    
+                    raindrop.style.width = `${width}px`;
+                    raindrop.style.height = `${length}px`;
+                    
+                    // 根据边界类型设置位置
+                    if (isVertical) {
+                        // 垂直边界（左右）
+                        raindrop.style.left = `${Math.random() * 30}%`;
+                        raindrop.style.top = `-10px`;
+                    } else {
+                        // 水平边界（上下）
+                        raindrop.style.left = `${Math.random() * 100}%`;
+                        raindrop.style.top = `-10px`;
+                    }
+                    
+                    // 设置动画持续时间
+                    const duration = Math.random() * 2 + 1;
+                    raindrop.style.animationDuration = `${duration}s`;
+                    
+                    // 添加到容器
+                    raindropContainer.appendChild(raindrop);
+                    
+                    // 动画结束后移除雨滴
+                    setTimeout(() => {
+                        raindrop.remove();
+                    }, duration * 1000);
+                };
+                
+                // 持续生成雨滴
+                setInterval(createRaindrop, 200);
+            }
+            
+            // 更新世界变换
+            function updateWorldTransform() {
+                world.style.transform = `translate(${worldPositionX}px, ${worldPositionY}px)`;
+            }
+            
+            // 检查图书柜底部的碰撞
+            function checkBookshelfCollision(deltaX, deltaY) {
+                // 计算玩家在世界中的位置
+                const playerWorldX = -worldPositionX + (CONTAINER_WIDTH / 2) - playerCollisionBox.width / 2;
+                const playerWorldY = -worldPositionY + (CONTAINER_HEIGHT / 2) - playerCollisionBox.height / 2;
+                
+                // 预测玩家移动后的位置
+                const futurePlayerX = playerWorldX - deltaX; // 注意这里的负号，因为世界坐标和角色移动方向相反
+                const futurePlayerY = playerWorldY - deltaY;
+                
+                // 重置所有书柜的阴影效果
+                for (const shelf of bookshelvesData) {
+                    shelf.element.style.boxShadow = '0 2px 5px rgba(0, 0, 0, 0.3)';
+                }
+                
+                // 检查每个书柜的底部区域
+                for (const shelf of bookshelvesData) {
+                    // 计算书柜底部的碰撞区域
+                    const shelfBottomX = shelf.x;
+                    const shelfBottomY = shelf.y + bookshelfCollisionBox.offsetTop;
+                    const shelfBottomWidth = bookshelfCollisionBox.width;
+                    const shelfBottomHeight = bookshelfCollisionBox.height;
+                    
+                    // 简化的AABB碰撞检测
+                    // 检查玩家移动后是否会与书柜底部区域重叠
+                    const collision = futurePlayerX < shelfBottomX + shelfBottomWidth &&
+                                     futurePlayerX + playerCollisionBox.width > shelfBottomX &&
+                                     futurePlayerY < shelfBottomY + shelfBottomHeight &&
+                                     futurePlayerY + playerCollisionBox.height > shelfBottomY;
+                    
+                    if (collision) {
+                        // 碰撞时添加视觉反馈
+                        shelf.element.style.boxShadow = '0 0 15px rgba(255, 215, 0, 0.5)';
+                        return true;
+                    }
+                }
+                
+                return false;
+            }
+            
+            // 检查并更新角色和书柜的前后关系（z-index）
+            function updateCharacterDepth() {
+                // 计算角色在世界中的位置
+                const playerWorldX = -worldPositionX + (CONTAINER_WIDTH / 2);
+                const playerWorldY = -worldPositionY + (CONTAINER_HEIGHT / 2);
+                
+                // 默认将角色置于所有书柜上方
+                characterCanvas.style.zIndex = '3';
+                characterCanvas.style.opacity = '1'; // 重置透明度
+                
+                // 重置所有书柜的样式
+                for (const shelf of bookshelvesData) {
+                    shelf.element.style.zIndex = '2';
+                    shelf.element.style.opacity = '1';
+                    shelf.element.style.filter = 'brightness(1)';
+                }
+                
+                // 检查每个书柜
+                for (const shelf of bookshelvesData) {
+                    // 计算书柜的边界
+                    const shelfLeft = shelf.x;
+                    const shelfRight = shelf.x + shelf.width;
+                    const shelfTop = shelf.y;
+                    const shelfBottom = shelf.y + shelf.height;
+                    
+                    // 更严格的条件：只有当角色完全进入书柜的水平范围，并且在书柜的垂直范围内，并且有明显的前后关系时
+                    // 才应用z-index提升和虚化效果
+                    // 使用角色的碰撞盒尺寸（假设为40x60）来进行精确判断
+                    const playerWidth = 40;
+                    const playerHeight = 60;
+                    const playerLeft = playerWorldX - playerWidth / 2;
+                    const playerRight = playerWorldX + playerWidth / 2;
+                    const playerTop = playerWorldY - playerHeight / 2;
+                    const playerBottom = playerWorldY + playerHeight / 2;
+                    
+                    // 精确判断角色是否与书柜发生碰撞（水平和垂直方向都有重叠）
+                    // 并且角色的大部分位于书柜下方（营造深度感）
+                    if (playerRight > shelfLeft && 
+                        playerLeft < shelfRight && 
+                        playerBottom > shelfTop && 
+                        playerTop < shelfBottom &&
+                        playerWorldY < shelf.y + shelf.height * 0.7) { // 角色中心在书柜下方70%高度以内
+                        
+                        // 将书柜置于角色上方
+                        shelf.element.style.zIndex = '4';
+                        // 当角色在书柜背后时，将角色虚化（设置透明度）
+                        characterCanvas.style.opacity = '0.6';
+                    }
+                }
+            }
+            
+            // 限制世界移动范围，确保角色能到达地图边界
+            function clampWorldPosition() {
+                // 左边界限制（世界右移）
+                worldPositionX = Math.min(0, worldPositionX);
+                // 右边界限制（世界左移）- 使用世界的实际宽度作为限制
+                worldPositionX = Math.max(-(WORLD_WIDTH - CONTAINER_WIDTH), worldPositionX);
+                // 上边界限制（世界下移）
+                worldPositionY = Math.min(0, worldPositionY);
+                // 下边界限制（世界上移）- 使用世界的实际高度作为限制
+                worldPositionY = Math.max(-(WORLD_HEIGHT - CONTAINER_HEIGHT), worldPositionY);
+            }
+            
+            // 键盘按下事件
+            function handleKeyDown(e) {
+                switch(e.key) {
+                    case 'ArrowUp':
+                    case 'w':
+                    case 'W':
+                        keys.up = true;
+                        break;
+                    case 'ArrowDown':
+                    case 's':
+                    case 'S':
+                        keys.down = true;
+                        break;
+                    case 'ArrowLeft':
+                    case 'a':
+                    case 'A':
+                        keys.left = true;
+                        break;
+                    case 'ArrowRight':
+                    case 'd':
+                    case 'D':
+                        keys.right = true;
+                        break;
+                    case ' ':
+                    case 'Enter':
+                        keys.interact = true;
+                        break;
+                }
+            }
+            
+            // 键盘释放事件
+            function handleKeyUp(e) {
+                switch(e.key) {
+                    case 'ArrowUp':
+                    case 'w':
+                    case 'W':
+                        keys.up = false;
+                        break;
+                    case 'ArrowDown':
+                    case 's':
+                    case 'S':
+                        keys.down = false;
+                        break;
+                    case 'ArrowLeft':
+                    case 'a':
+                    case 'A':
+                        keys.left = false;
+                        break;
+                    case 'ArrowRight':
+                    case 'd':
+                    case 'D':
+                        keys.right = false;
+                        break;
+                    case ' ':
+                    case 'Enter':
+                        keys.interact = false;
+                        break;
+                }
+            }
+            
+            // 渲染像素风格角色
+            function renderCharacter() {
+                // 清空画布
+                characterCtx.clearRect(0, 0, characterCanvas.width, characterCanvas.height);
+                
+                // 计算动画帧
+                let frame = Math.floor(player.animationFrame);
+                
+                // 玩家在画布中央
+                const playerX = 0;
+                const playerY = 0;
+                
+                // 根据方向绘制角色
+                switch(player.direction) {
+                    case 'down':
+                        // 身体
+                        characterCtx.fillStyle = '#3498db'; // 蓝色上衣
+                        characterCtx.fillRect(playerX + 8, playerY + 12, 16, 16);
+                        
+                        // 头部（圆形效果）
+                        characterCtx.fillStyle = '#f5deb3'; // 肤色
+                        characterCtx.fillRect(playerX + 6, playerY + 2, 20, 12);
+                        characterCtx.fillRect(playerX + 4, playerY + 4, 24, 8);
+                        
+                        // 眼睛（向下看）
+                        characterCtx.fillStyle = '#333333';
+                        characterCtx.fillRect(playerX + 10, playerY + 8, 3, 3);
+                        characterCtx.fillRect(playerX + 19, playerY + 8, 3, 3);
+                        
+                        // 表情（简单像素化）
+                        characterCtx.fillStyle = '#8b4513'; // 嘴巴
+                        characterCtx.fillRect(playerX + 10, playerY + 14, 12, 2);
+                        
+                        // 裤子
+                        characterCtx.fillStyle = '#2c3e50';
+                        characterCtx.fillRect(playerX + 8, playerY + 24, 16, 8);
+                        
+                        // 腿部动画
+                        if (frame % 2 === 0) {
+                            // 左腿在前
+                            characterCtx.fillStyle = '#2c3e50';
+                            characterCtx.fillRect(playerX + 8, playerY + 28, 6, 4);
+                            characterCtx.fillStyle = '#f5deb3';
+                            characterCtx.fillRect(playerX + 6, playerY + 32, 10, 2);
+                            
+                            // 右腿在后
+                            characterCtx.fillStyle = '#2c3e50';
+                            characterCtx.fillRect(playerX + 18, playerY + 28, 6, 4);
+                            characterCtx.fillStyle = '#f5deb3';
+                            characterCtx.fillRect(playerX + 16, playerY + 32, 10, 2);
+                        } else {
+                            // 右腿在前
+                            characterCtx.fillStyle = '#2c3e50';
+                            characterCtx.fillRect(playerX + 18, playerY + 28, 6, 4);
+                            characterCtx.fillStyle = '#f5deb3';
+                            characterCtx.fillRect(playerX + 16, playerY + 32, 10, 2);
+                            
+                            // 左腿在后
+                            characterCtx.fillStyle = '#2c3e50';
+                            characterCtx.fillRect(playerX + 8, playerY + 28, 6, 4);
+                            characterCtx.fillStyle = '#f5deb3';
+                            characterCtx.fillRect(playerX + 6, playerY + 32, 10, 2);
+                        }
+                        
+                        // 手臂（下垂）
+                        characterCtx.fillStyle = '#f5deb3';
+                        characterCtx.fillRect(playerX + 2, playerY + 16, 6, 8);
+                        characterCtx.fillRect(playerX + 24, playerY + 16, 6, 8);
+                        break;
+                        
+                    case 'up':
+                        // 身体
+                        characterCtx.fillStyle = '#3498db';
+                        characterCtx.fillRect(playerX + 8, playerY + 12, 16, 16);
+                        
+                        // 头部（圆形效果）
+                        characterCtx.fillStyle = '#f5deb3';
+                        characterCtx.fillRect(playerX + 6, playerY + 2, 20, 12);
+                        characterCtx.fillRect(playerX + 4, playerY + 4, 24, 8);
+                        
+                        // 眼睛（向上看）
+                        characterCtx.fillStyle = '#333333';
+                        characterCtx.fillRect(playerX + 10, playerY + 4, 3, 3);
+                        characterCtx.fillRect(playerX + 19, playerY + 4, 3, 3);
+                        
+                        // 表情
+                        characterCtx.fillStyle = '#8b4513';
+                        characterCtx.fillRect(playerX + 10, playerY + 10, 12, 2);
+                        
+                        // 裤子
+                        characterCtx.fillStyle = '#2c3e50';
+                        characterCtx.fillRect(playerX + 8, playerY + 24, 16, 8);
+                        
+                        // 腿部动画
+                        if (frame % 2 === 0) {
+                            characterCtx.fillStyle = '#2c3e50';
+                            characterCtx.fillRect(playerX + 8, playerY + 28, 6, 4);
+                            characterCtx.fillStyle = '#f5deb3';
+                            characterCtx.fillRect(playerX + 6, playerY + 32, 10, 2);
+                            
+                            characterCtx.fillStyle = '#2c3e50';
+                            characterCtx.fillRect(playerX + 18, playerY + 28, 6, 4);
+                            characterCtx.fillStyle = '#f5deb3';
+                            characterCtx.fillRect(playerX + 16, playerY + 32, 10, 2);
+                        } else {
+                            characterCtx.fillStyle = '#2c3e50';
+                            characterCtx.fillRect(playerX + 18, playerY + 28, 6, 4);
+                            characterCtx.fillStyle = '#f5deb3';
+                            characterCtx.fillRect(playerX + 16, playerY + 32, 10, 2);
+                            
+                            characterCtx.fillStyle = '#2c3e50';
+                            characterCtx.fillRect(playerX + 8, playerY + 28, 6, 4);
+                            characterCtx.fillStyle = '#f5deb3';
+                            characterCtx.fillRect(playerX + 6, playerY + 32, 10, 2);
+                        }
+                        
+                        // 手臂（举到前方）
+                        characterCtx.fillStyle = '#f5deb3';
+                        characterCtx.fillRect(playerX + 4, playerY + 14, 4, 8);
+                        characterCtx.fillRect(playerX + 24, playerY + 14, 4, 8);
+                        break;
+                        
+                    case 'left':
+                        // 身体
+                        characterCtx.fillStyle = '#3498db';
+                        characterCtx.fillRect(playerX + 10, playerY + 12, 14, 16);
+                        
+                        // 头部（圆形效果）
+                        characterCtx.fillStyle = '#f5deb3';
+                        characterCtx.fillRect(playerX + 8, playerY + 2, 16, 12);
+                        characterCtx.fillRect(playerX + 10, playerY + 4, 12, 8);
+                        
+                        // 眼睛（向左看）
+                        characterCtx.fillStyle = '#333333';
+                        characterCtx.fillRect(playerX + 8, playerY + 8, 3, 3);
+                        characterCtx.fillRect(playerX + 13, playerY + 8, 3, 3);
+                        
+                        // 表情
+                        characterCtx.fillStyle = '#8b4513';
+                        characterCtx.fillRect(playerX + 10, playerY + 14, 8, 2);
+                        
+                        // 裤子
+                        characterCtx.fillStyle = '#2c3e50';
+                        characterCtx.fillRect(playerX + 10, playerY + 24, 14, 8);
+                        
+                        // 腿部动画
+                        if (frame % 2 === 0) {
+                            // 左腿在前
+                            characterCtx.fillStyle = '#2c3e50';
+                            characterCtx.fillRect(playerX + 10, playerY + 28, 6, 4);
+                            characterCtx.fillStyle = '#f5deb3';
+                            characterCtx.fillRect(playerX + 8, playerY + 32, 8, 2);
+                            
+                            // 右腿在后
+                            characterCtx.fillStyle = '#2c3e50';
+                            characterCtx.fillRect(playerX + 18, playerY + 28, 6, 4);
+                            characterCtx.fillStyle = '#f5deb3';
+                            characterCtx.fillRect(playerX + 16, playerY + 32, 10, 2);
+                        } else {
+                            // 右腿在前
+                            characterCtx.fillStyle = '#2c3e50';
+                            characterCtx.fillRect(playerX + 18, playerY + 28, 6, 4);
+                            characterCtx.fillStyle = '#f5deb3';
+                            characterCtx.fillRect(playerX + 16, playerY + 32, 10, 2);
+                            
+                            // 左腿在后
+                            characterCtx.fillStyle = '#2c3e50';
+                            characterCtx.fillRect(playerX + 10, playerY + 28, 6, 4);
+                            characterCtx.fillStyle = '#f5deb3';
+                            characterCtx.fillRect(playerX + 6, playerY + 32, 10, 2);
+                        }
+                        
+                        // 手臂（固定）
+                        characterCtx.fillStyle = '#f5deb3';
+                        characterCtx.fillRect(playerX + 4, playerY + 16, 6, 6);
+                        characterCtx.fillRect(playerX + 20, playerY + 16, 4, 6);
+                        break;
+                        
+                    case 'right':
+                        // 身体
+                        characterCtx.fillStyle = '#3498db';
+                        characterCtx.fillRect(playerX + 8, playerY + 12, 14, 16);
+                        
+                        // 头部（圆形效果）
+                        characterCtx.fillStyle = '#f5deb3';
+                        characterCtx.fillRect(playerX + 8, playerY + 2, 16, 12);
+                        characterCtx.fillRect(playerX + 10, playerY + 4, 12, 8);
+                        
+                        // 眼睛（向右看）
+                        characterCtx.fillStyle = '#333333';
+                        characterCtx.fillRect(playerX + 17, playerY + 8, 3, 3);
+                        characterCtx.fillRect(playerX + 22, playerY + 8, 3, 3);
+                        
+                        // 表情
+                        characterCtx.fillStyle = '#8b4513';
+                        characterCtx.fillRect(playerX + 14, playerY + 14, 8, 2);
+                        
+                        // 裤子
+                        characterCtx.fillStyle = '#2c3e50';
+                        characterCtx.fillRect(playerX + 8, playerY + 24, 14, 8);
+                        
+                        // 腿部动画
+                        if (frame % 2 === 0) {
+                            // 左腿在前
+                            characterCtx.fillStyle = '#2c3e50';
+                            characterCtx.fillRect(playerX + 8, playerY + 28, 6, 4);
+                            characterCtx.fillStyle = '#f5deb3';
+                            characterCtx.fillRect(playerX + 6, playerY + 32, 10, 2);
+                            
+                            // 右腿在后
+                            characterCtx.fillStyle = '#2c3e50';
+                            characterCtx.fillRect(playerX + 16, playerY + 28, 6, 4);
+                            characterCtx.fillStyle = '#f5deb3';
+                            characterCtx.fillRect(playerX + 14, playerY + 32, 10, 2);
+                        } else {
+                            // 右腿在前
+                            characterCtx.fillStyle = '#2c3e50';
+                            characterCtx.fillRect(playerX + 16, playerY + 28, 6, 4);
+                            characterCtx.fillStyle = '#f5deb3';
+                            characterCtx.fillRect(playerX + 18, playerY + 32, 10, 2);
+                            
+                            // 左腿在后
+                            characterCtx.fillStyle = '#2c3e50';
+                            characterCtx.fillRect(playerX + 8, playerY + 28, 6, 4);
+                            characterCtx.fillStyle = '#f5deb3';
+                            characterCtx.fillRect(playerX + 6, playerY + 32, 8, 2);
+                        }
+                        
+                        // 手臂（固定）
+                        characterCtx.fillStyle = '#f5deb3';
+                        characterCtx.fillRect(playerX + 6, playerY + 16, 4, 6);
+                        characterCtx.fillRect(playerX + 22, playerY + 16, 4, 6);
+                        break;
+                }
+            }
+            
+            // 更新角色状态和动画
+            function updateCharacterAnimation() {
+                // 检查是否正在移动
+                const currentlyMoving = keys.up || keys.down || keys.left || keys.right;
+                
+                if (currentlyMoving) {
+                    // 开始移动
+                    isMoving = true;
+                    animationCounter++;
+                    
+                    // 更新动画帧
+                    if (animationCounter >= 4) {
+                        animationCounter = 0;
+                        player.animationFrame = (player.animationFrame + 1) % 4;
+                    }
+                    
+                    // 更新移动方向指示器
+                    let directionText = '';
+                    if (keys.up && keys.left) directionText = '左上';
+                    else if (keys.up && keys.right) directionText = '右上';
+                    else if (keys.down && keys.left) directionText = '左下';
+                    else if (keys.down && keys.right) directionText = '右下';
+                    else if (keys.up) directionText = '上';
+                    else if (keys.down) directionText = '下';
+                    else if (keys.left) directionText = '左';
+                    else if (keys.right) directionText = '右';
+                    
+                    if (directionText) {
+                        moveIndicator.textContent = `正在移动: ${directionText}`;
+                        moveIndicator.classList.add('active');
+                    }
+                    
+                    // 更新角色朝向
+                    if (keys.left) {
+                        player.direction = 'left';
+                    } else if (keys.right) {
+                        player.direction = 'right';
+                    } else if (keys.up) {
+                        player.direction = 'up';
+                    } else if (keys.down) {
+                        player.direction = 'down';
+                    }
+                } else if (isMoving) {
+                    // 停止移动
+                    isMoving = false;
+                    player.animationFrame = 0;
+                    moveIndicator.classList.remove('active');
+                }
+                
+                // 渲染角色
+                renderCharacter();
+            }
+            
+            // 检查NPC碰撞
+            function checkNPCCollision() {
+                // 计算玩家在世界中的位置
+                const playerWorldX = -worldPositionX + (CONTAINER_WIDTH / 2) - playerCollisionBox.width / 2;
+                const playerWorldY = -worldPositionY + (CONTAINER_HEIGHT / 2) - playerCollisionBox.height / 2;
+                
+                // 检查每个NPC
+                for (const npc of npcsData) {
+                    // 简化的AABB碰撞检测
+                    const collision = playerWorldX < npc.x + npc.width &&
+                                     playerWorldX + playerCollisionBox.width > npc.x &&
+                                     playerWorldY < npc.y + npc.height &&
+                                     playerWorldY + playerCollisionBox.height > npc.y;
+                    
+                    if (collision) {
+                        return npc;
+                    }
+                }
+                
+                return null;
+            }
+            
+            // 游戏循环更新函数
+            function update() {
+                // 计算移动增量
+                let deltaX = 0;
+                let deltaY = 0;
+                
+                // 只有在对话未激活时才处理移动
+                if (!isDialogueActive) {
+                    // 根据按键状态设置移动增量
+                    if (keys.up) deltaY = MOVE_SPEED;
+                    if (keys.down) deltaY = -MOVE_SPEED;
+                    if (keys.left) deltaX = MOVE_SPEED;
+                    if (keys.right) deltaX = -MOVE_SPEED;
+                    
+                    // 如果有移动增量，检查碰撞并更新位置
+                    if (deltaX !== 0 || deltaY !== 0) {
+                        // 检查碰撞，只有在没有碰撞的情况下才更新位置
+                        if (!checkBookshelfCollision(deltaX, deltaY)) {
+                            // 更新世界位置
+                            worldPositionX += deltaX;
+                            worldPositionY += deltaY;
+                            
+                            // 限制世界移动范围
+                            clampWorldPosition();
+                            
+                            // 应用变换
+                            updateWorldTransform();
+                        }
+                    }
+                }
+                
+                // 检查NPC碰撞
+                const collidedNPC = checkNPCCollision();
+                
+                // 更新所有NPC的视觉反馈（移除之前可能添加的高亮效果）
+                npcsData.forEach(npc => {
+                    if (!isDialogueActive || npc !== currentInteractingNPC) {
+                        npc.element.classList.remove('highlight');
+                    }
+                });
+                
+                // 如果与NPC碰撞并且当前没有对话在显示，或者碰撞的是当前正在对话的NPC
+                if (collidedNPC) {
+                    // 高亮显示当前碰撞的NPC
+                    collidedNPC.element.classList.add('highlight');
+                    
+                    // 如果当前没有对话在显示，设置当前交互的NPC
+                    if (!isDialogueActive) {
+                        currentInteractingNPC = collidedNPC;
+                    }
+                } else {
+                    // 如果没有与NPC碰撞，清除当前交互的NPC
+                    currentInteractingNPC = null;
+                }
+                
+                // 按空格键与NPC交互
+                if (collidedNPC && keys.interact && !isDialogueActive) {
+                    // 显示对话
+                    showDialogue(collidedNPC);
+                    isDialogueActive = true;
+                    // 重置交互键状态
+                    keys.interact = false;
+                }
+                
+                // 更新角色动画
+                updateCharacterAnimation();
+                
+                // 更新角色与书柜的前后关系
+                updateCharacterDepth();
+                
+                // 更新坐标显示
+                // 计算玩家在世界中的实际位置（中心位置）
+                const playerWorldX = -worldPositionX + CONTAINER_WIDTH / 2;
+                const playerWorldY = -worldPositionY + CONTAINER_HEIGHT / 2;
+                coordinatesDisplay.textContent = `坐标: ${Math.round(playerWorldX)}, ${Math.round(playerWorldY)}`;
+                
+                // 请求下一帧
+                requestAnimationFrame(update);
+            }
+            
+            // 生成图书柜
+            function generateBookshelves() {
+                const bookshelvesContainer = document.getElementById('bookshelves');
+                
+                // 在房间周围创建图书柜
+                const positions = [
+                    // 顶部一排
+                    { x: 700, y: 500 },
+                    { x: 900, y: 500 },
+                    { x: 1100, y: 500 },
+                    { x: 1300, y: 500 },
+                    { x: 1500, y: 500 },
+                    { x: 1700, y: 500 },
+                    { x: 1900, y: 500 },
+                    { x: 2100, y: 500 },
+                    
+                    // 底部一排
+                    { x: 700, y: 2000 },
+                    { x: 900, y: 2000 },
+                    { x: 1100, y: 2000 },
+                    { x: 1300, y: 2000 },
+                    { x: 1500, y: 2000 },
+                    { x: 1700, y: 2000 },
+                    { x: 1900, y: 2000 },
+                    { x: 2100, y: 2000 },
+                    
+                    // 中间几排
+                    { x: 900, y: 1200 },
+                    { x: 1100, y: 1200 },
+                    { x: 1300, y: 1200 },
+                    { x: 1500, y: 1200 },
+                    { x: 1700, y: 1200 },
+                    { x: 1900, y: 1200 },
+                    
+                    { x: 900, y: 1600 },
+                    { x: 1100, y: 1600 },
+                    { x: 1300, y: 1600 },
+                    { x: 1500, y: 1600 },
+                    { x: 1700, y: 1600 },
+                    { x: 1900, y: 1600 },
+                ];
+                
+                // 创建图书柜元素
+                positions.forEach(pos => {
+                    const bookshelf = document.createElement('div');
+                    bookshelf.classList.add('bookshelf');
+                    bookshelf.style.left = `${pos.x}px`;
+                    bookshelf.style.top = `${pos.y}px`;
+                    
+                    // 添加书籍细节
+                    for (let i = 0; i < 4; i++) {
+                        const shelfDiv = document.createElement('div');
+                        shelfDiv.style.position = 'absolute';
+                        shelfDiv.style.width = '100%';
+                        shelfDiv.style.height = '20px';
+                        shelfDiv.style.top = `${i * 50 + 25}px`;
+                        shelfDiv.style.display = 'flex';
+                        shelfDiv.style.justifyContent = 'space-around';
+                        shelfDiv.style.alignItems = 'center';
+                        
+                        // 每个书架放置6本书
+                        for (let j = 0; j < 6; j++) {
+                            const book = document.createElement('div');
+                            book.style.width = '15px';
+                            book.style.height = '20px';
+                            // 随机书脊颜色
+                            const colors = ['#e74c3c', '#3498db', '#2ecc71', '#f39c12', '#9b59b6', '#1abc9c'];
+                            book.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                            book.style.border = '1px solid rgba(0, 0, 0, 0.2)';
+                            book.style.boxShadow = '1px 1px 3px rgba(0, 0, 0, 0.3)';
+                            shelfDiv.appendChild(book);
+                        }
+                        
+                        bookshelf.appendChild(shelfDiv);
+                    }
+                    
+                    bookshelvesContainer.appendChild(bookshelf);
+                        
+                        // 记录图书柜位置信息用于碰撞检测和z-index管理
+                        bookshelvesData.push({
+                            x: pos.x,
+                            y: pos.y,
+                            width: 120,
+                            height: 200,
+                            element: bookshelf // 保存DOM元素引用
+                        });
+                });
+            }
+            
+            // 设置事件监听器
+            document.addEventListener('keydown', handleKeyDown);
+            document.addEventListener('keyup', handleKeyUp);
+            
+            // 显示NPC对话
+            function showDialogue(npcData) {
+                const dialogueBox = document.getElementById('dialogueBox');
+                const dialogueContent = dialogueBox.querySelector('.dialogue-content');
+                const nextButton = dialogueBox.querySelector('.next-dialogue');
+                const closeButton = dialogueBox.querySelector('.close-dialogue');
+                
+                // 为正在对话的NPC添加动画效果
+                if (npcData.element) {
+                    npcData.element.classList.add('talking');
+                }
+                
+                // 设置当前对话
+                function updateDialogue() {
+                    dialogueContent.textContent = npcData.dialogues[npcData.currentDialogueIndex];
+                    
+                    // 检查是否是最后一句对话
+                    if (npcData.currentDialogueIndex >= npcData.dialogues.length - 1) {
+                        nextButton.textContent = '结束';
+                    } else {
+                        nextButton.textContent = '继续';
+                    }
+                }
+                
+                // 显示对话框
+                dialogueBox.classList.add('active');
+                updateDialogue();
+                
+                // 清理函数 - 确保在所有情况下都能重置对话状态
+                const cleanup = () => {
+                    // 重置对话状态标志
+                    isDialogueActive = false;
+                    
+                    // 移除所有事件监听器
+                    document.removeEventListener('keydown', handleKeyDown);
+                    nextButton.removeEventListener('click', handleNext);
+                    closeButton.removeEventListener('click', handleClose);
+                    
+                    // 确保移除NPC的talking类
+                    if (npcData.element) {
+                        npcData.element.classList.remove('talking');
+                    }
+                    
+                    // 移除高亮效果
+                    if (currentInteractingNPC) {
+                        currentInteractingNPC.element.classList.remove('highlight');
+                    }
+                    
+                    console.log('对话已结束，isDialogueActive重置为:', isDialogueActive);
+                };
+                
+                // 继续按钮事件
+                function handleNext() {
+                    if (npcData.currentDialogueIndex >= npcData.dialogues.length - 1) {
+                        // 对话结束，重置索引并关闭对话框
+                        npcData.currentDialogueIndex = 0;
+                        dialogueBox.classList.remove('active');
+                        // 直接调用清理函数，确保状态重置
+                        cleanup();
+                    } else {
+                        // 显示下一句对话
+                        npcData.currentDialogueIndex++;
+                        updateDialogue();
+                    }
+                }
+                
+                // 关闭按钮事件
+                function handleClose() {
+                    npcData.currentDialogueIndex = 0;
+                    dialogueBox.classList.remove('active');
+                    // 直接调用清理函数，确保状态重置
+                    cleanup();
+                }
+                
+                // 移除之前的事件监听器
+                nextButton.removeEventListener('click', handleNext);
+                closeButton.removeEventListener('click', handleClose);
+                
+                // 添加新的事件监听器
+                nextButton.addEventListener('click', handleNext);
+                closeButton.addEventListener('click', handleClose);
+                
+                // 按Enter键继续，按Esc键关闭
+                function handleKeyDown(e) {
+                    if (e.key === 'Enter') {
+                        handleNext();
+                    } else if (e.key === 'Escape') {
+                        handleClose();
+                    }
+                }
+                
+                document.addEventListener('keydown', handleKeyDown);
+                
+                // 添加对话框动画结束时的清理（额外保障）
+                const handleDialogueAnimationEnd = () => {
+                    if (!dialogueBox.classList.contains('active')) {
+                        cleanup();
+                    }
+                };
+                
+                dialogueBox.addEventListener('transitionend', handleDialogueAnimationEnd);
+                
+                // 确保在函数退出前移除动画监听器（防止内存泄漏）
+                setTimeout(() => {
+                    if (!dialogueBox.classList.contains('active')) {
+                        dialogueBox.removeEventListener('transitionend', handleDialogueAnimationEnd);
+                    }
+                }, 1000);
+            }
+            
+            // 处理NPC交互
+            function interactWithNPC(npcElement) {
+                // 查找对应的NPC数据
+                const npcData = npcsData.find(npc => npc.element === npcElement);
+                if (!npcData) return;
+                
+                // 显示对话
+                showDialogue(npcData);
+            }
+            
+            // 生成NPC
+            function generateNPCs() {
+                const npcContainer = document.getElementById('npcContainer');
+                
+                // NPC位置数据
+                const npcPositions = [
+                    { x: 1000, y: 800 },    // 左上角附近
+                    { x: 1800, y: 800 },    // 右上角附近
+                    { x: 1000, y: 1800 },   // 左下角附近
+                    { x: 1800, y: 1800 },   // 右下角附近
+                    { x: 1400, y: 1400 },   // 中心位置
+                    { x: 1500, y: 2200 }    // 图书馆正下方（管理员NPC）
+                ];
+                
+                // 创建NPC元素
+                npcPositions.forEach(pos => {
+                    const npc = document.createElement('div');
+                    npc.classList.add('npc');
+                    npc.style.left = `${pos.x}px`;
+                    npc.style.top = `${pos.y}px`;
+                    
+                    // 创建NPC身体
+                    const npcBody = document.createElement('div');
+                    npcBody.classList.add('npc-body');
+                    
+                    // 创建NPC头部
+                    const npcHead = document.createElement('div');
+                    npcHead.classList.add('npc-head');
+                    
+                    // 创建NPC面部
+                    const npcFace = document.createElement('div');
+                    npcFace.classList.add('npc-face');
+                    
+                    // 创建眼睛
+                    const leftEye = document.createElement('div');
+                    leftEye.classList.add('npc-eye', 'left');
+                    
+                    const rightEye = document.createElement('div');
+                    rightEye.classList.add('npc-eye', 'right');
+                    
+                    // 创建嘴巴
+                    const npcMouth = document.createElement('div');
+                    npcMouth.classList.add('npc-mouth');
+                    
+                    // 创建服装
+                    const npcOutfit = document.createElement('div');
+                    npcOutfit.classList.add('npc-outfit');
+                    
+                    // 创建手臂
+                    const leftArm = document.createElement('div');
+                    leftArm.classList.add('npc-arm-left');
+                    
+                    const rightArm = document.createElement('div');
+                    rightArm.classList.add('npc-arm-right');
+                    
+                    // 创建腿部
+                    const leftLeg = document.createElement('div');
+                    leftLeg.classList.add('npc-leg-left');
+                    
+                    const rightLeg = document.createElement('div');
+                    rightLeg.classList.add('npc-leg-right');
+                    
+                    // 创建鞋子
+                    const leftShoe = document.createElement('div');
+                    leftShoe.classList.add('npc-shoe-left');
+                    
+                    const rightShoe = document.createElement('div');
+                    rightShoe.classList.add('npc-shoe-right');
+                    
+                    // 组装NPC面部
+                    npcFace.appendChild(leftEye);
+                    npcFace.appendChild(rightEye);
+                    npcFace.appendChild(npcMouth);
+                    
+                    // 组装NPC头部
+                    npcHead.appendChild(npcFace);
+                    
+                    // 组装完整NPC（按照正确的层叠顺序）
+                    npc.appendChild(leftLeg);
+                    npc.appendChild(rightLeg);
+                    npc.appendChild(leftShoe);
+                    npc.appendChild(rightShoe);
+                    npc.appendChild(npcBody);
+                    npc.appendChild(npcOutfit);
+                    npc.appendChild(leftArm);
+                    npc.appendChild(rightArm);
+                    npc.appendChild(npcHead);
+                    
+                    // 添加到容器
+                    npcContainer.appendChild(npc);
+                    
+                    // 移除点击事件监听器，改为碰撞交互
+                    // 点击事件已被碰撞交互替代
+                    
+                    // 创建基本NPC数据
+                    const npcData = {
+                        x: pos.x,
+                        y: pos.y,
+                        width: 40,
+                        height: 40,
+                        element: npc,
+                        // 为每个NPC添加唯一ID
+                        id: 'npc_' + npcsData.length,
+                        // 基本对话内容
+                        dialogues: [
+                            '欢迎来到图书馆！',
+                            '这里有很多有趣的书。',
+                            '你喜欢阅读吗？'
+                        ],
+                        currentDialogueIndex: 0
+                    };
+                    
+                    // 如果是图书馆正下方的NPC（管理员），设置不同的对话内容和样式
+                    if (pos.x === 1500 && pos.y === 2200) {
+                        // 管理员对话内容
+                        npcData.dialogues = [
+                            '你好，我是这里的管理员。',
+                            '请保持安静，不要大声喧哗。',
+                            '如果需要帮助，可以随时来找我。',
+                            '记得把看完的书放回原位。'
+                        ];
+                        // 为管理员NPC添加特殊服装样式
+                        npc.querySelector('.npc-outfit').style.backgroundColor = '#800000'; // 深红色管理员服装
+                    }
+                    
+                    npcsData.push(npcData);
+                });
+            }
+            
+            // 初始化游戏
+            initializeWorldPosition();
+            generateBookshelves();
+            generateNPCs();
+            // 初始渲染角色
+            renderCharacter();
+            update(); // 启动游戏循环
+        });
+    </script>
+</body>
+</html>

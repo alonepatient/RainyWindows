@@ -1,0 +1,1671 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RainyWindows</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f8f9fa;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        header {
+            background-color: #fff;
+            padding: 15px 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            transition: all 0.3s ease;
+        }
+        
+        header.scrolled {
+            padding: 10px 0;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.12);
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 28px;
+            font-weight: 700;
+            color: #333;
+            text-decoration: none;
+            letter-spacing: -0.5px;
+            display: flex;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+        
+        .logo:hover {
+            color: #3498db;
+            transform: scale(1.05);
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            list-style: none;
+        }
+        
+        .nav-links a {
+            text-decoration: none;
+            color: #666;
+            font-size: 15px;
+            font-weight: 500;
+            position: relative;
+            transition: all 0.3s ease;
+            padding: 5px 0;
+        }
+        
+        .nav-links a:hover {
+            color: #3498db;
+        }
+        
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: #3498db;
+            transition: width 0.3s ease;
+        }
+        
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+        
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .header-icon {
+            font-size: 19px;
+            color: #666;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            padding: 5px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 35px;
+            height: 35px;
+        }
+        
+        .header-icon:hover {
+            color: #3498db;
+            background-color: rgba(52, 152, 219, 0.1);
+            transform: translateY(-2px);
+        }
+        
+        /* 移动端菜单按钮 */
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 5px;
+        }
+        
+        .mobile-menu-btn .bar {
+            display: block;
+            width: 25px;
+            height: 3px;
+            margin: 5px auto;
+            background-color: #333;
+            transition: all 0.3s ease;
+        }
+        
+        .mobile-menu-btn.active .bar:nth-child(1) {
+            transform: translateY(8px) rotate(45deg);
+        }
+        
+        .mobile-menu-btn.active .bar:nth-child(2) {
+            opacity: 0;
+        }
+        
+        .mobile-menu-btn.active .bar:nth-child(3) {
+            transform: translateY(-8px) rotate(-45deg);
+        }
+        
+        .main-content {
+            display: flex;
+            gap: 30px;
+            margin-top: 30px;
+        }
+        
+        .content-wrapper {
+            flex: 1;
+        }
+        
+        .sidebar {
+            width: 320px;
+            flex-shrink: 0;
+            margin-bottom: 30px;
+        }
+        
+        /* Main Container */
+    .main-container {
+        display: flex;
+        align-items: stretch;
+        gap: 30px;
+        margin-top: 30px;
+        margin-bottom: 40px;
+    }
+    
+    /* Left Content Section */
+    .left-content {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 30px;
+    }
+    
+    /* Hero Section */
+    .hero-section {
+    background-color: #ffffff;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+    border: 1px solid #e0e0e0;
+}
+
+.hero-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 10;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.5s ease, visibility 0.5s ease;
+    pointer-events: none;
+    background-color: #6b46c1; /* 紫色背景 */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+}
+
+.hero-overlay::before {
+    content: '✈️';
+    position: absolute;
+    top: 20%;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 48px;
+    animation: float 3s ease-in-out infinite;
+}
+
+.hero-overlay::after {
+    content: '所见 记录所思';
+    position: absolute;
+    top: 45%;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 18px;
+    color: white;
+    opacity: 0.9;
+}
+
+.hero-overlay .explore-btn {
+    position: absolute;
+    bottom: 30%;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 24px;
+    font-weight: bold;
+    color: white;
+}
+
+.hero-overlay .explore-btn::after {
+    content: '→';
+    font-size: 28px;
+    animation: pulse-arrow 1.5s ease-in-out infinite;
+}
+
+@keyframes float {
+    0%, 100% { transform: translateX(-50%) translateY(0); }
+    50% { transform: translateX(-50%) translateY(-10px); }
+}
+
+@keyframes pulse-arrow {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.2); }
+}
+
+.hero-image:hover ~ .hero-overlay {
+    opacity: 1;
+    visibility: visible;
+}
+
+.hero-main-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+}
+    
+    .hero-sidebar-cards {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        width: 320px;
+        align-self: stretch;
+    }
+    
+    .starry-card {
+        position: relative;
+        padding: 0;
+        border-radius: 12px;
+        overflow: hidden;
+        height: 100%;
+        min-height: 300px;
+    }
+    
+    .starry-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-image: url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="800" height="600" viewBox="0 0 800 600"%3E%3Crect width="800" height="600" fill="%230f172a"/%3E%3Cdefs%3E%3Cfilter id="glow" x="-50%" y="-50%" width="200%" height="200%"%3E%3CfeGaussianBlur stdDeviation="2" result="blur"%3E%3C/feGaussianBlur%3E%3CfeComposite in="SourceGraphic" in2="blur" operator="over"%3E%3C/feComposite%3E%3C/filter%3E%3C/defs%3E%3Cpath d="M0,300 Q200,200 400,300 Q600,400 800,300 L800,600 L0,600 Z" fill="%231e293b"/%3E%3Cpath d="M0,350 Q200,250 400,350 Q600,450 800,350" stroke="%23475569" stroke-width="2" fill="none"/%3E%3Cpath d="M0,250 Q200,150 400,250 Q600,350 800,250" stroke="%23475569" stroke-width="1" fill="none"/%3E%3Cg filter="url(%23glow)"%3E%3Ccircle cx="100" cy="100" r="2" fill="%23ffffff" opacity="0.8"/%3E%3Ccircle cx="200" cy="150" r="1.5" fill="%23ffffff" opacity="0.6"/%3E%3Ccircle cx="300" cy="80" r="2" fill="%23ffffff" opacity="0.7"/%3E%3Ccircle cx="400" cy="200" r="1" fill="%23ffffff" opacity="0.5"/%3E%3Ccircle cx="500" cy="120" r="2.5" fill="%23ffffff" opacity="0.9"/%3E%3Ccircle cx="600" cy="180" r="1" fill="%23ffffff" opacity="0.4"/%3E%3Ccircle cx="700" cy="90" r="1.5" fill="%23ffffff" opacity="0.6"/%3E%3Ccircle cx="150" cy="200" r="1" fill="%23ffffff" opacity="0.5"/%3E%3Ccircle cx="250" cy="250" r="2" fill="%23ffffff" opacity="0.8"/%3E%3Ccircle cx="350" cy="150" r="1.5" fill="%23ffffff" opacity="0.7"/%3E%3Ccircle cx="450" cy="250" r="1" fill="%23ffffff" opacity="0.6"/%3E%3Ccircle cx="550" cy="100" r="2" fill="%23ffffff" opacity="0.8"/%3E%3Ccircle cx="650" cy="220" r="1.5" fill="%23ffffff" opacity="0.7"/%3E%3Ccircle cx="750" cy="150" r="1" fill="%23ffffff" opacity="0.5"/%3E%3C/g%3E%3C/svg%3E');
+        background-size: cover;
+        background-position: center;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .starry-content {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        padding: 30px;
+        color: white;
+    }
+    
+    .starry-tag {
+        font-size: 14px;
+        opacity: 0.9;
+    }
+    
+    .starry-title {
+        font-size: 28px;
+        font-weight: 700;
+        margin: 10px 0 20px 0;
+        line-height: 1.2;
+    }
+    
+    .starry-button {
+        align-self: flex-end;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        background-color: rgba(255, 255, 255, 0.2);
+        color: white;
+        padding: 10px 20px;
+        border-radius: 25px;
+        text-decoration: none;
+        font-weight: 500;
+        transition: background-color 0.3s ease;
+    }
+    
+    .starry-button:hover {
+        background-color: rgba(255, 255, 255, 0.3);
+    }
+    
+    .arrow-icon {
+        font-size: 18px;
+    }
+        
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 40%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(52,152,219,0.1), rgba(52,152,219,0.2));
+            z-index: 0;
+            border-radius: 0 12px 12px 0;
+        }
+        
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            flex: 1;
+        }
+        
+        .hero-text h1 {
+            font-size: 42px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 5px;
+            line-height: 1.2;
+            letter-spacing: -0.5px;
+        }
+        
+        .hero-text p {
+            color: #666;
+            font-size: 18px;
+            margin-bottom: 30px;
+            font-weight: 400;
+        }
+        
+        .social-icons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            max-width: 300px;
+        }
+        
+        .social-icon {
+            width: 55px;
+            height: 55px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 26px;
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .social-icon::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, transparent 0%, rgba(255,255,255,0.2) 100%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .social-icon:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 15px rgba(0,0,0,0.15);
+        }
+        
+        .social-icon:hover::before {
+            opacity: 1;
+        }
+        
+        .social-icon:nth-child(1) { background-color: #f39c12; }
+        .social-icon:nth-child(2) { background-color: #3498db; }
+        .social-icon:nth-child(3) { background-color: #27ae60; }
+        .social-icon:nth-child(4) { background-color: #9b59b6; }
+        .social-icon:nth-child(5) { background-color: #e74c3c; }
+        .social-icon:nth-child(6) { background-color: #1abc9c; }
+        .social-icon:nth-child(7) { background-color: #34495e; }
+        .social-icon:nth-child(8) { background-color: #00bcd4; }
+        
+        .hero-image {
+            width: 320px;
+            height: 220px;
+            border-radius: 16px;
+            overflow: hidden;
+            position: relative;
+            z-index: 1;
+            box-shadow: 0 10px 25px rgba(52, 152, 219, 0.15);
+            transition: all 0.3s ease;
+            background: linear-gradient(135deg, #161627 0%, #1a1a2e 100%);
+        }
+        
+        .hero-image:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 15px 30px rgba(52, 152, 219, 0.2);
+        }
+        
+        .hero-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            transition: transform 0.5s ease;
+        }
+        
+        .hero-image:hover img {
+            transform: scale(1.05) translateY(-5px);
+        }
+        
+        /* 添加光晕效果 */
+        .hero-image::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(52, 152, 219, 0.1) 0%, transparent 70%);
+            z-index: -1;
+            animation: glowPulse 4s ease-in-out infinite;
+        }
+        
+        @keyframes glowPulse {
+            0%, 100% {
+                opacity: 0.3;
+            }
+            50% {
+                opacity: 0.6;
+            }
+        }
+        
+        .categories {
+            display: flex;
+            gap: 18px;
+            margin-bottom: 30px;
+        }
+        
+        .category-card {
+            flex: 1;
+            padding: 25px;
+            border-radius: 12px;
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        .category-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+        }
+        
+        .category-card h3 {
+            font-size: 22px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            position: relative;
+            z-index: 1;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .category-card p {
+            font-size: 14px;
+            opacity: 0.95;
+            position: relative;
+            z-index: 1;
+            margin-bottom: 15px;
+        }
+        
+        .category-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, transparent 100%);
+            z-index: 0;
+        }
+        
+        .category-card::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 80px;
+            height: 80px;
+            opacity: 0.2;
+            transform: rotate(45deg) translate(40%, 40%);
+            z-index: 0;
+        }
+        
+        .category-tech {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+        }
+        
+        .category-tech::after {
+            background-color: #21618c;
+        }
+        
+        .category-tech h3::before {
+            content: '💻';
+            font-size: 24px;
+        }
+        
+        .category-study {
+            background: linear-gradient(135deg, #e67e22, #d35400);
+        }
+        
+        .category-study::after {
+            background-color: #8e44ad;
+        }
+        
+        .category-study h3::before {
+            content: '📚';
+            font-size: 24px;
+        }
+        
+        .category-life {
+            background: linear-gradient(135deg, #27ae60, #229954);
+        }
+        
+        .category-life::after {
+            background-color: #1e8449;
+        }
+        
+        .category-life h3::before {
+            content: '🌟';
+            font-size: 24px;
+        }
+        
+        .breadcrumb {
+            background-color: #fff;
+            padding: 16px 24px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .breadcrumb a {
+            text-decoration: none;
+            color: #666;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+            padding: 2px 0;
+        }
+        
+        .breadcrumb a:hover {
+            color: #3498db;
+        }
+        
+        .breadcrumb a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 1px;
+            background-color: #3498db;
+            transition: width 0.3s ease;
+        }
+        
+        .breadcrumb a:hover::after {
+            width: 100%;
+        }
+        
+        .breadcrumb span {
+            color: #999;
+            font-size: 14px;
+            font-weight: 300;
+        }
+        
+        .breadcrumb a:last-child {
+            color: #3498db;
+            font-weight: 600;
+        }
+        
+        .breadcrumb a:last-child:hover {
+            text-decoration: underline;
+        }
+        
+        .article-card {
+            background-color: #fff;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            margin-bottom: 30px;
+            display: flex;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: visible;
+            cursor: pointer;
+        }
+        
+        .article-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+        }
+        
+        /* 交互元素的统一反馈效果 */
+        .user-social-icon,
+        .activity-item,
+        .view-more-btn {
+            transition: all 0.3s ease;
+        }
+        
+        .user-social-icon:hover {
+            transform: translateY(-3px) scale(1.1);
+        }
+        
+        .activity-item:hover {
+            transform: translateX(5px);
+        }
+        
+        .view-more-btn:hover {
+            transform: translateX(3px);
+        }
+        
+        .article-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+        }
+        
+        .article-card:hover .article-image img {
+            transform: scale(1.05);
+        }
+        
+        .article-image {
+            width: 320px;
+            flex-shrink: 0;
+            height: 220px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .article-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+        
+        .article-image::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.2) 0%, transparent 100%);
+            z-index: 1;
+        }
+        
+        .article-content {
+            padding: 24px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        
+        .article-meta {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+        
+        .article-tag {
+            background-color: #f0f0f0;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            color: #666;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        .article-tag:hover {
+            background-color: #3498db;
+            color: #fff;
+        }
+        
+        .article-title {
+            font-size: 22px;
+            color: #333;
+            margin-bottom: 12px;
+            font-weight: 600;
+            line-height: 1.4;
+            transition: color 0.3s ease;
+        }
+        
+        .article-card:hover .article-title {
+            color: #3498db;
+        }
+        
+        .article-excerpt {
+            color: #666;
+            font-size: 14px;
+            line-height: 1.6;
+            margin-bottom: 16px;
+            flex: 1;
+        }
+        
+        .article-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 16px;
+            border-top: 1px solid #f0f0f0;
+        }
+        
+        .article-tags {
+            display: flex;
+            gap: 6px;
+        }
+        
+        .article-tags .article-tag {
+            background-color: rgba(52, 152, 219, 0.1);
+            color: #3498db;
+            padding: 2px 8px;
+            font-size: 11px;
+        }
+        
+        .article-date {
+            font-size: 13px;
+            color: #999;
+            font-weight: 500;
+        }
+        
+        .user-card {
+            background-color: #fff;
+            padding: 100px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        
+        .user-avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            margin: 0 auto 80px;
+            overflow: hidden;
+            border: 3px solid #f0f0f0;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .user-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .user-name {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .user-bio {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+        
+        .user-social {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .user-social-icon {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background-color: #f0f0f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #666;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .user-social-icon:hover {
+            background-color: #e0e0e0;
+            color: #333;
+        }
+        
+        /* sidebar-card styles are now handled by starry-card */
+        
+        .sidebar-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #333;
+            position: relative;
+            padding-bottom: 8px;
+        }
+        
+        .sidebar-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 40px;
+            height: 3px;
+            background-color: #3498db;
+            border-radius: 3px;
+        }
+        
+        /* 用户统计 */
+        .user-stats {
+            display: flex;
+            justify-content: space-around;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            margin-bottom: 30px;
+        }
+        
+        .user-stat {
+            text-align: center;
+        }
+        
+        .user-stat-number {
+            display: block;
+            font-size: 18px;
+            font-weight: 700;
+            color: #333;
+        }
+        
+        .user-stat-label {
+            display: block;
+            font-size: 12px;
+            color: #999;
+            margin-top: 3px;
+        }
+        
+        /* 热门标签 */
+        .tags-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        
+        .tag-item {
+            text-decoration: none;
+            color: #666;
+            background-color: #f0f0f0;
+            padding: 4px 12px;
+            border-radius: 16px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+        
+        .tag-item:hover {
+            background-color: #3498db;
+            color: #fff;
+            transform: translateY(-2px);
+        }
+        
+        /* 最近活动 */
+        .activity-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .activity-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+        
+        .activity-icon {
+            font-size: 16px;
+            width: 30px;
+            height: 30px;
+            background-color: #f0f0f0;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        
+        .activity-content {
+            flex: 1;
+        }
+        
+        .activity-text {
+            font-size: 14px;
+            color: #333;
+            margin-bottom: 3px;
+        }
+        
+        .activity-time {
+            font-size: 12px;
+            color: #999;
+        }
+        
+        .recommendation-card {
+            display: block;
+            text-decoration: none;
+            color: #333;
+            margin-bottom: 15px;
+            transition: opacity 0.3s;
+        }
+        
+        .recommendation-card:hover {
+            opacity: 0.8;
+        }
+        
+        .recommendation-card:last-child {
+            margin-bottom: 0;
+        }
+        
+        .recommendation-image {
+            width: 100%;
+            height: 150px;
+            border-radius: 8px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+        
+        .recommendation-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .recommendation-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .recommendation-meta {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: #999;
+        }
+        
+        .view-more {
+            text-align: center;
+            margin-top: 10px;
+        }
+        
+        .view-more-btn {
+            text-decoration: none;
+            color: #3498db;
+            font-size: 14px;
+            transition: color 0.3s;
+        }
+        
+        .view-more-btn:hover {
+            color: #2980b9;
+        }
+        
+        .scroll-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: #3498db;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.3s ease;
+            z-index: 1000;
+            box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+        }
+        
+        .scroll-to-top.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .scroll-to-top:hover {
+            background-color: #2980b9;
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 6px 16px rgba(52, 152, 219, 0.4);
+        }
+        
+        @media (max-width: 992px) {
+            .nav-links {
+                gap: 20px;
+            }
+            
+            .header-right {
+                gap: 15px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            /* 导航栏响应式 */
+            .nav-links {
+                position: fixed;
+                top: 70px;
+                left: 0;
+                width: 100%;
+                background-color: #fff;
+                flex-direction: column;
+                align-items: center;
+                padding: 20px 0;
+                gap: 15px;
+                box-shadow: 0 10px 15px rgba(0,0,0,0.1);
+                transform: translateY(-150%);
+                transition: transform 0.3s ease;
+                z-index: 90;
+            }
+            
+            .nav-links.active {
+                transform: translateY(0);
+                animation: slideDown 0.3s ease-out;
+            }
+            
+            @keyframes slideDown {
+                from {
+                    opacity: 0;
+                    transform: translateY(-50px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+            
+            .mobile-menu-btn {
+                display: block;
+                z-index: 100;
+            }
+            
+            .header-right {
+                gap: 10px;
+            }
+            
+            /* 主要内容响应式 */
+            .main-content {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                order: 1;
+            }
+            
+            .content-wrapper {
+                order: 2;
+            }
+            
+            /* 侧边栏卡片响应式 */
+            .sidebar-card {
+                padding: 15px;
+            }
+            
+            .tags-container {
+                justify-content: center;
+            }
+            
+            .user-stats {
+                gap: 10px;
+            }
+            
+            .main-container {
+        flex-direction: column;
+        gap: 20px;
+    }
+    
+    .left-content {
+        gap: 20px;
+    }
+    
+    .hero-section {
+        text-align: center;
+        padding: 30px 20px;
+    }
+    
+    .hero-main-content {
+        flex-direction: column;
+        width: 100%;
+    }
+    
+    .hero-sidebar-cards {
+        width: 100%;
+    }
+    
+    .starry-card {
+        min-height: 250px;
+    }
+    
+    .starry-content {
+        padding: 20px;
+    }
+    
+    .starry-title {
+        font-size: 24px;
+    }
+    
+    .starry-button {
+        padding: 8px 16px;
+    }
+            
+            .hero-image {
+                margin-top: 20px;
+                width: 100%;
+                max-width: 320px;
+                height: auto;
+                min-height: 200px;
+                margin-left: auto;
+                margin-right: auto;
+            }
+            
+            .social-icons {
+                margin: 0 auto;
+            }
+            
+            .article-card {
+                flex-direction: column;
+                animation: fadeIn 0.5s ease;
+            }
+            
+            @keyframes fadeIn {
+                from {
+                    opacity: 0;
+                    transform: translateY(20px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+            
+            .article-image {
+                width: 100%;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .logo {
+                font-size: 24px;
+            }
+            
+            .categories {
+                flex-direction: column;
+            }
+            
+            .header-icon {
+                width: 30px;
+                height: 30px;
+                font-size: 16px;
+            }
+            
+            .starry-card {
+                min-height: 220px;
+            }
+            
+            .starry-content {
+                padding: 15px;
+            }
+            
+            .starry-title {
+                font-size: 20px;
+            }
+            
+            .starry-button {
+                padding: 6px 12px;
+                font-size: 14px;
+            }
+            
+            /* 576px断点下的hero-image样式 */
+            .hero-image {
+                max-width: 280px;
+                min-height: 180px;
+                border-radius: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header id="main-header">
+        <div class="container">
+            <div class="header-content">
+                <a href="#" class="logo">
+                    <span>RainyWindows</span>
+                </a>
+                
+                <!-- 移动端菜单按钮 -->
+                <button class="mobile-menu-btn" id="mobile-menu-btn">
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                </button>
+                
+                <!-- 桌面端导航 -->
+                <nav class="nav-links" id="nav-links">
+                    <a href="#">分类</a>
+                    <a href="#">标签</a>
+                    <a href="#">归档</a>
+                    <a href="#">友链</a>
+                    <a href="#">关于</a>
+                </nav>
+                
+                <div class="header-right">
+                    <div class="header-icon" title="移动版本">📱</div>
+                    <div class="header-icon" title="通知">🔔</div>
+                    <div class="header-icon" title="搜索">🔍</div>
+                </div>
+            </div>
+        </div>
+    </header>
+    
+    <main class="container">
+        <!-- Main Content and Sidebar Container -->
+        <div class="main-container">
+            <!-- Left Content Section -->
+            <div class="left-content">
+                <!-- Hero Section -->
+                <section class="hero-section">
+                    <!-- 覆盖层图片 -->
+                    <div class="hero-overlay">
+                        <div class="explore-btn">随便逛逛</div>
+                    </div>
+                    
+                    <div class="hero-main-content">
+                        <div class="hero-content">
+                            <div class="hero-text">
+                                <h1>分享所见</h1>
+                                <h1>记录所思</h1>
+                                <p>blog.pengjiancheng.com</p>
+                            </div>
+                            <div class="social-icons">
+                                <div class="social-icon" title="React">⚛️</div>
+                                <div class="social-icon" title="Vue">🟢</div>
+                                <div class="social-icon" title="JavaScript">💻</div>
+                                <div class="social-icon" title="TypeScript">🔷</div>
+                                <div class="social-icon" title="Node.js">🌐</div>
+                                <div class="social-icon" title="CSS">🎨</div>
+                                <div class="social-icon" title="Git">📂</div>
+                                <div class="social-icon" title="Docker">🐳</div>
+                            </div>
+                        </div>
+                        <div class="hero-image">
+                            <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='220' viewBox='0 0 320 220'%3E%3Cdefs%3E%3ClinearGradient id='cockpitGradient' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%233498db;stop-opacity:0.2'/%3E%3Cstop offset='100%25' style='stop-color:%233498db;stop-opacity:0.8'/%3E%3C/linearGradient%3E%3C/defs%3E%3C!-- 飞船驾驶舱背景 --%3E%3Crect width='320' height='220' fill='%23161627'/%3E%3C!-- 飞船驾驶舱内部结构 --%3E%3Cpath d='M0,30 L320,30' stroke='%23444' stroke-width='4'/%3E%3Cpath d='M0,200 L320,200' stroke='%23555' stroke-width='3'/%3E%3C!-- 驾驶舱边缘 --%3E%3Cpath d='M50,50 Q160,20 270,50 L270,170 Q160,190 50,170 Z' fill='none' stroke='%23666' stroke-width='8'/%3E%3Cpath d='M60,60 Q160,30 260,60 L260,160 Q160,180 60,160 Z' fill='%231a1a2e' stroke='%23555' stroke-width='2'/%3E%3C!-- 驾驶舱窗口 --%3E%3Ccircle cx='160' cy='110' r='70' fill='url(%23cockpitGradient)' stroke='%23888' stroke-width='4'/%3E%3Ccircle cx='160' cy='110' r='65' fill='%23a5e1ff'/%3E%3C!-- 窗外的云朵 --%3E%3Cpath d='M100,80 Q120,60 140,80 Q160,60 180,80 Q200,60 220,80 Q240,60 260,80' fill='%23e0f7ff' opacity='0.6'/%3E%3Cpath d='M100,140 Q120,120 140,140 Q160,120 180,140 Q200,120 220,140 Q240,120 260,140' fill='%23e0f7ff' opacity='0.6'/%3E%3C!-- 星星 --%3E%3Ccircle cx='120' cy='90' r='1.5' fill='%23fff' opacity='0.8'/%3E%3Ccircle cx='190' cy='80' r='1' fill='%23fff' opacity='0.6'/%3E%3Ccircle cx='210' cy='110' r='2' fill='%23fff' opacity='0.9'/%3E%3Ccircle cx='130' cy='130' r='1' fill='%23fff' opacity='0.7'/%3E%3Ccircle cx='170' cy='150' r='1.5' fill='%23fff' opacity='0.8'/%3E%3C!-- 小黑猫宇航员 --%3E%3Cg transform='translate(160,110)'%3E%3C!-- 头部 --%3E%3Ccircle cx='0' cy='0' r='30' fill='%23000' stroke='%23333' stroke-width='1'/%3E%3C!-- 耳朵 --%3E%3Cpath d='M-20,-30 L-15,-50 L0,-40 Z' fill='%23000' stroke='%23333' stroke-width='1'/%3E%3Cpath d='M20,-30 L15,-50 L0,-40 Z' fill='%23000' stroke='%23333' stroke-width='1'/%3E%3C!-- 身体和宇航服 --%3E%3Cpath d='M-20,20 C-20,40 -10,60 0,70 C10,60 20,40 20,20 Z' fill='%23ff8c00' stroke='%23ffa500' stroke-width='1'/%3E%3Cpath d='M-15,50 L15,50' stroke='%23ff6347' stroke-width='3'/%3E%3Cpath d='M-10,60 L10,60' stroke='%23ff6347' stroke-width='3'/%3E%3C!-- 手臂 --%3E%3Cpath d='M-20,20 C-40,15 -45,30 -30,40 Z' fill='%23ff8c00' stroke='%23ffa500' stroke-width='1'/%3E%3Cpath d='M20,20 C40,15 45,30 30,40 Z' fill='%23ff8c00' stroke='%23ffa500' stroke-width='1'/%3E%3C!-- 手和控制器 --%3E%3Ccircle cx='-30' cy='40' r='5' fill='%23000' stroke='%23333' stroke-width='1'/%3E%3Crect x='-35' y='35' width='10' height='10' rx='2' fill='%234682b4' stroke='%236495ed' stroke-width='1'/%3E%3Ccircle cx='-32' cy='38' r='2' fill='%23ff0000'/%3E%3C!-- 胡须 --%3E%3Cpath d='M-15,20 L-30,22' stroke='%23fff' stroke-width='1.5' fill='none'/%3E%3Cpath d='M-15,25 L-30,25' stroke='%23fff' stroke-width='1.5' fill='none'/%3E%3Cpath d='M-15,30 L-30,28' stroke='%23fff' stroke-width='1.5' fill='none'/%3E%3Cpath d='M15,20 L30,22' stroke='%23fff' stroke-width='1.5' fill='none'/%3E%3Cpath d='M15,25 L30,25' stroke='%23fff' stroke-width='1.5' fill='none'/%3E%3Cpath d='M15,30 L30,28' stroke='%23fff' stroke-width='1.5' fill='none'/%3E%3C!-- 眼睛反光 --%3E%3Ccircle cx='-20' cy='-10' r='1' fill='%23fff'/%3E%3Ccircle cx='20' cy='-10' r='1' fill='%23fff'/%3E%3C/g%3E%3C!-- 驾驶舱控制面板 --%3E%3Crect x='30' y='175' width='40' height='20' rx='2' fill='%23222' stroke='%23444' stroke-width='1'/%3E%3Ccircle cx='40' cy='185' r='2' fill='%23ff0000'/%3E%3Ccircle cx='50' cy='185' r='2' fill='%2300ff00'/%3E%3Ccircle cx='60' cy='185' r='2' fill='%230000ff'/%3E%3Crect x='250' y='175' width='40' height='20' rx='2' fill='%23222' stroke='%23444' stroke-width='1'/%3E%3Ccircle cx='260' cy='185' r='2' fill='%23ff0000'/%3E%3Ccircle cx='270' cy='185' r='2' fill='%2300ff00'/%3E%3Ccircle cx='280' cy='185' r='2' fill='%230000ff'/%3E%3C/svg%3E" alt="宇航员小黑猫在飞船驾驶舱" />
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- Categories -->
+                <section class="categories">
+                            <div class="category-card category-tech">
+                                <h3>创造</h3>
+                                <p>编程、设计与创意作品</p>
+                            </div>
+                            <div class="category-card category-study" onclick="window.location.href='library.html';" style="cursor: pointer;">
+                                <h3>收录</h3>
+                                <p>资料整理与知识库</p>
+                            </div>
+                            <div class="category-card category-life">
+                                <h3>体验</h3>
+                                <p>生活感悟与旅行见闻</p>
+                            </div>
+                </section>
+            </div>
+            
+            <!-- Sidebar Cards -->
+            <div class="hero-sidebar-cards" style="cursor: pointer;" onclick="window.location.href='studio.html';">
+                <!-- New Idea Card with Starry Background -->
+                <div class="sidebar-card starry-card">
+                    <div class="starry-overlay">
+                        <div class="starry-content">
+                            <div class="starry-tag">新想法</div>
+                            <h2 class="starry-title">让 IDEA 更进一步</h2>
+                            <a href="#" class="starry-button">
+                                更多推荐
+                                <span class="arrow-icon">›</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="main-content">
+            <aside class="sidebar">
+                <!-- User Card -->
+                <div class="user-card" style="position: relative; padding-bottom: 50px; cursor: pointer;" onclick="window.location.href='person.html';">
+                    <div class="user-avatar">
+                        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='45' fill='%232196f3'/%3E%3Ccircle cx='35' cy='40' r='8' fill='%23fff'/%3E%3Ccircle cx='65' cy='40' r='8' fill='%23fff'/%3E%3Cpath d='M30,65 Q50,75 70,65' stroke='%23fff' stroke-width='4' fill='none'/%3E%3C/svg%3E" alt="用户头像" />
+                    </div>
+                    <div class="random-quote" style="display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; font-size: 16px; color: #333; font-weight: 500; line-height: 1.4; max-width: 80%; opacity: 0; transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);">
+                        <span class="quote-text"></span>
+                    </div>
+                    <div style="position: absolute; bottom: 10px; left: 10px;">
+                        <h3 class="user-name">penjc</h3>
+                        <p class="user-bio">技术博主</p>
+                    </div>
+                    <div class="user-social" style="position: absolute; bottom: 10px; right: 10px;">
+                        <div class="user-social-icon" onclick="event.stopPropagation();">🐦</div>
+                        <div class="user-social-icon" onclick="event.stopPropagation();">🔔</div>
+                        <div class="user-social-icon" onclick="event.stopPropagation();">📧</div>
+                    </div>
+                </div>
+                
+                <!-- User Stats -->
+                <div class="user-stats">
+                    <div class="user-stat">
+                        <span class="user-stat-number">156</span>
+                        <span class="user-stat-label">文章</span>
+                    </div>
+                    <div class="user-stat">
+                        <span class="user-stat-number">4.2k</span>
+                        <span class="user-stat-label">粉丝</span>
+                    </div>
+                    <div class="user-stat">
+                        <span class="user-stat-number">89</span>
+                        <span class="user-stat-label">分类</span>
+                    </div>
+                </div>
+                
+                <!-- Popular Tags Card -->
+                <div class="sidebar-card">
+                    <h3 class="sidebar-title">热门标签</h3>
+                    <div class="tags-container">
+                        <a href="#" class="tag-item"># Java</a>
+                        <a href="#" class="tag-item"># Spring</a>
+                        <a href="#" class="tag-item"># 生活</a>
+                        <a href="#" class="tag-item"># 学习</a>
+                        <a href="#" class="tag-item"># 技术</a>
+                        <a href="#" class="tag-item"># 前端</a>
+                        <a href="#" class="tag-item"># 后端</a>
+                        <a href="#" class="tag-item"># 数据库</a>
+                    </div>
+                </div>
+                
+                <!-- Recent Activity Card -->
+                <div class="sidebar-card">
+                    <h3 class="sidebar-title">最近活动</h3>
+                    <div class="activity-list">
+                        <div class="activity-item">
+                            <div class="activity-icon">📝</div>
+                            <div class="activity-content">
+                                <p class="activity-text">发布了新文章</p>
+                                <p class="activity-time">2小时前</p>
+                            </div>
+                        </div>
+                        <div class="activity-item">
+                            <div class="activity-icon">💬</div>
+                            <div class="activity-content">
+                                <p class="activity-text">回复了评论</p>
+                                <p class="activity-time">昨天</p>
+                            </div>
+                        </div>
+                        <div class="activity-item">
+                            <div class="activity-icon">❤️</div>
+                            <div class="activity-content">
+                                <p class="activity-text">收到了点赞</p>
+                                <p class="activity-time">3天前</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+            
+            <div class="content-wrapper">
+                <!-- Breadcrumb -->
+                <nav class="breadcrumb">
+                    <a href="#">首页</a>
+                    <span>›</span>
+                    <a href="#">生活</a>
+                    <span>›</span>
+                    <a href="#">学习</a>
+                    <span>›</span>
+                    <a href="#">技术</a>
+                    <span>›</span>
+                    <a href="#">更多</a>
+                </nav>
+                
+                <!-- Articles -->
+                <section class="articles">
+                    <article class="article-card">
+                        <div class="article-image">
+                            <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='200' viewBox='0 0 300 200'%3E%3Crect width='300' height='200' fill='%23d32f2f'/%3E%3Cpath d='M50,180 L150,80 L250,180 Z' fill='%23f44336'/%3E%3Ccircle cx='150' cy='130' r='20' fill='%23ff9800'/%3E%3C/svg%3E" alt="文章图片" />
+                        </div>
+                        <div class="article-content">
+                            <div class="article-meta">
+                                <span class="article-tag">技术</span>
+                                <span class="article-tag">解析</span>
+                                <span class="article-tag">未读</span>
+                            </div>
+                            <h2 class="article-title">面向对象手写 Spring IoC - Bean 的实例化与依赖注入</h2>
+                            <p class="article-excerpt">本文将深入探讨Spring IoC容器的核心原理，通过手写实现Bean的实例化与依赖注入，帮助读者更好地理解Spring框架的工作机制。</p>
+                            <div class="article-footer">
+                                <div class="article-tags">
+                                    <span class="article-tag"># Java</span>
+                                    <span class="article-tag"># Spring</span>
+                                </div>
+                                <div class="article-date">2025-03-06</div>
+                            </div>
+                        </div>
+                    </article>
+                    
+                    <article class="article-card">
+                        <div class="article-image">
+                            <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='200' viewBox='0 0 300 200'%3E%3Crect width='300' height='200' fill='%23388e3c'/%3E%3Cpath d='M50,180 L150,80 L250,180 Z' fill='%234caf50'/%3E%3Ccircle cx='150' cy='130' r='20' fill='%238bc34a'/%3E%3C/svg%3E" alt="文章图片" />
+                        </div>
+                        <div class="article-content">
+                            <div class="article-meta">
+                                <span class="article-tag">技术</span>
+                                <span class="article-tag">未读</span>
+                            </div>
+                            <h2 class="article-title">面向对象手写 Spring IoC - BeanDefinition 加载与解析</h2>
+                            <p class="article-excerpt">本文将详细介绍Spring IoC容器中BeanDefinition的加载与解析过程，通过手写实现帮助读者深入理解Spring框架的底层实现原理。</p>
+                            <div class="article-footer">
+                                <div class="article-tags">
+                                    <span class="article-tag"># Java</span>
+                                    <span class="article-tag"># Spring</span>
+                                </div>
+                                <div class="article-date">2025-03-05</div>
+                            </div>
+                        </div>
+                    </article>
+                </section>
+            </div>
+        </div>
+    </main>
+    
+    <div class="scroll-to-top">↑</div>
+    
+    <script>
+        // 导航栏滚动效果
+        const header = document.getElementById('main-header');
+        
+        window.addEventListener('scroll', () => {
+            if (window.pageYOffset > 50) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+        });
+        
+        // 移动端菜单功能
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const navLinks = document.getElementById('nav-links');
+        
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenuBtn.classList.toggle('active');
+            navLinks.classList.toggle('active');
+            
+            // 点击菜单时禁止背景滚动
+            document.body.style.overflow = navLinks.classList.contains('active') ? 'hidden' : 'auto';
+        });
+        
+        // 点击导航链接后关闭菜单
+        navLinks.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenuBtn.classList.remove('active');
+                navLinks.classList.remove('active');
+                document.body.style.overflow = 'auto';
+            });
+        });
+        
+        // 滚动到顶部按钮功能
+        const scrollBtn = document.querySelector('.scroll-to-top');
+        
+        window.addEventListener('scroll', () => {
+            if (window.pageYOffset > 300) {
+                scrollBtn.classList.add('visible');
+            } else {
+                scrollBtn.classList.remove('visible');
+            }
+        });
+        
+        scrollBtn.addEventListener('click', () => {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+        
+        // 为文章卡片添加点击效果
+        const articleCards = document.querySelectorAll('.article-card');
+        articleCards.forEach(card => {
+            card.addEventListener('click', function(e) {
+                if (!e.target.closest('.article-footer')) {
+                    console.log('点击了文章:', this.querySelector('.article-title').textContent);
+                    // 实际应用中可以跳转到文章详情页
+                    // window.location.href = 'article-detail.html?id=' + articleId;
+                }
+            });
+        });
+        
+        // 为分类卡片添加点击效果
+        const categoryCards = document.querySelectorAll('.category-card');
+        categoryCards.forEach(card => {
+            card.addEventListener('click', function() {
+                const categoryName = this.querySelector('h3').textContent;
+                console.log('点击了分类:', categoryName);
+                // 实际应用中可以跳转到分类页
+                // window.location.href = 'category.html?name=' + encodeURIComponent(categoryName);
+            });
+        });
+        
+        // 平滑滚动
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+                
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    targetElement.scrollIntoView({ 
+                        behavior: 'smooth' 
+                    });
+                }
+            });
+        });
+        
+        // Hero Image 悬停效果 - 显示覆盖层
+        const heroImage = document.querySelector('.hero-image');
+        const heroOverlay = document.querySelector('.hero-overlay');
+        
+        if (heroImage && heroOverlay) {
+            heroImage.addEventListener('mouseenter', function() {
+                heroOverlay.style.opacity = '1';
+                heroOverlay.style.visibility = 'visible';
+            });
+            
+            heroImage.addEventListener('mouseleave', function() {
+                heroOverlay.style.opacity = '0';
+                heroOverlay.style.visibility = 'hidden';
+            });
+        }
+        
+        // User Card 悬停效果 - 隐藏头像并显示随机文案
+        const userCard = document.querySelector('.user-card');
+        const userAvatar = document.querySelector('.user-avatar');
+        const randomQuote = document.querySelector('.random-quote');
+        const quoteText = document.querySelector('.quote-text');
+        
+        if (userCard && userAvatar && randomQuote && quoteText) {
+            // 随机文案数组
+            const quotes = [
+                "代码如诗，每一行都是思想的结晶",
+                "技术之路，永无止境的学习与探索",
+                "编程不仅是技能，更是一种思维方式",
+                "在bug中成长，在代码中寻找优雅",
+                "每一次重构都是对完美的追求",
+                "技术改变世界，代码创造未来",
+                "保持好奇心，拥抱新技术",
+                "简洁的代码是最好的文档",
+                "编程是艺术与科学的完美结合",
+                "在技术的海洋中，我们都是探索者"
+            ];
+            
+            userCard.addEventListener('mouseenter', function() {
+                // 随机选择文案
+                const randomIndex = Math.floor(Math.random() * quotes.length);
+                quoteText.textContent = quotes[randomIndex];
+                
+                // 显示随机文案（使用CSS过渡）
+                randomQuote.style.display = 'block';
+                setTimeout(() => {
+                    randomQuote.style.opacity = '1';
+                }, 10);
+                
+                // 隐藏头像（使用CSS过渡）
+                userAvatar.style.opacity = '0';
+                setTimeout(() => {
+                    userAvatar.style.visibility = 'hidden';
+                }, 400);
+            });
+            
+            userCard.addEventListener('mouseleave', function() {
+                // 隐藏随机文案（使用CSS过渡）
+                randomQuote.style.opacity = '0';
+                setTimeout(() => {
+                    randomQuote.style.display = 'none';
+                }, 400);
+                
+                // 显示头像（使用CSS过渡）
+                userAvatar.style.visibility = 'visible';
+                setTimeout(() => {
+                    userAvatar.style.opacity = '1';
+                }, 10);
+            });
+        }
+    </script>
+</body>
+</html>

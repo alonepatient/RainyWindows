@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>alone patient's home</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/transition.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📝</text></svg>">
+    <script src="js/typing-effect.js" defer></script>
+    <script src="js/transition-effect.js" defer></script>
+</head>
+<body>
+    <div class="container">
+        <!-- 头部 -->
+        <header class="header">
+            <!-- 右上角控制区域 -->
+            <div class="top-controls">
+                <!-- 深色模式开关 -->
+                <div class="theme-switch">
+                    <label class="theme-toggle">
+                        <input type="checkbox" id="themeToggle">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+                <!-- 时间和天气信息将在这里添加 -->
+                <div class="time-weather-info">
+                    <div class="date-time"></div>
+                    <div class="weather"></div>
+                </div>
+                <!-- 3D角色元素 -->
+                <div class="character-3d">
+                    <!-- 晴天娃娃（基于经典形象的标准设计） -->
+                    <svg class="sun-doll" width="80" height="100" viewBox="0 0 100 140" xmlns="http://www.w3.org/2000/svg">
+                        <!-- 悬挂绳 -->
+                        <line x1="50" y1="0" x2="50" y2="25" stroke="#8B4513" stroke-width="2" />
+                        <circle cx="50" cy="25" r="2" fill="#8B4513" />
+                        
+                        <!-- 头部 -->
+                        <circle cx="50" cy="45" r="28" fill="white" stroke="#E0E0E0" stroke-width="1.5">
+                            <animate attributeName="transform" values="rotate(0 50 45);rotate(2 50 45);rotate(-2 50 45);rotate(0 50 45)" dur="6s" repeatCount="indefinite" />
+                        </circle>
+                        
+                        <!-- 眼睛 -->
+                        <circle cx="43" cy="45" r="3" fill="black" />
+                        <circle cx="57" cy="45" r="3" fill="black" />
+                        <!-- 高光 -->
+                        <circle cx="44" cy="44" r="1" fill="white" />
+                        <circle cx="58" cy="44" r="1" fill="white" />
+                        
+                        <!-- 微笑 -->
+                        <path d="M42 55 Q50 60 58 55" fill="none" stroke="black" stroke-width="1.2" stroke-linecap="round" />
+                        
+                        <!-- 颈部 - 增强与头部的连接 -->
+                        <path d="M50 73 C50 75, 45 78, 50 80 C55 78, 50 75, 50 73" fill="white" stroke="#E0E0E0" stroke-width="1" />
+                        
+                        <!-- 身体 - 更自然的裙摆状，增强与头部连接 -->
+                        <path d="M45 73 C30 75, 20 90, 18 115 C25 135, 50 145, 75 135 C82 115, 80 90, 65 75 C55 73, 45 73" fill="white" stroke="#E0E0E0" stroke-width="1.5" />
+                        
+                        <!-- 裙摆细节 - 多层褶皱 -->
+                        <path d="M18 115 C30 125, 50 130, 70 125 C82 115" fill="none" stroke="#F5F5F5" stroke-width="1" />
+                        <path d="M25 95 C35 105, 50 110, 65 105 C75 95" fill="none" stroke="#F9F9F9" stroke-width="0.8" />
+                    </svg>
+                    
+                    <!-- 独眼球体机器人（深色模式显示） -->
+                    <svg class="robot-sphere" width="80" height="100" viewBox="0 0 100 140" xmlns="http://www.w3.org/2000/svg">
+                        <!-- 主球体 - 基础形状 -->
+                        <circle cx="50" cy="50" r="30" fill="#2c3e50" stroke="#34495e" stroke-width="2">
+                            <animate attributeName="filter" values="brightness(1);brightness(1.2);brightness(1)" dur="4s" repeatCount="indefinite" />
+                        </circle>
+                        
+                        <!-- 破裂效果 - 裂纹 -->
+                        <path d="M50 20 C60 25, 70 35, 80 45" fill="none" stroke="#2c3e50" stroke-width="1.5" stroke-linecap="round" />
+                        <path d="M20 50 C25 40, 35 30, 50 25" fill="none" stroke="#2c3e50" stroke-width="1.5" stroke-linecap="round" />
+                        <path d="M30 25 C35 35, 45 40, 50 45" fill="none" stroke="#2c3e50" stroke-width="1.2" stroke-linecap="round" />
+                        <path d="M70 70 C65 60, 55 55, 50 50" fill="none" stroke="#2c3e50" stroke-width="1.2" stroke-linecap="round" />
+                        
+                        <!-- 破裂效果 - 缺失部分 -->
+                        <path d="M15 40 A35 35 0 0 1 25 30" fill="none" stroke="#2c3e50" stroke-width="2" stroke-dasharray="5,2" />
+                        <path d="M85 40 A35 35 0 0 0 75 30" fill="none" stroke="#2c3e50" stroke-width="2" stroke-dasharray="5,2" />
+                        
+                        <!-- 球体细节 - 装饰线条 -->
+                        <path d="M20 50 C20 35, 35 20, 50 20 C65 20, 80 35, 80 50" fill="none" stroke="#34495e" stroke-width="0.8" opacity="0.7" />
+                        
+                        <!-- 中心独眼 -->
+                        <circle id="robot-eye-main" cx="50" cy="45" r="8" fill="#e74c3c" />
+                        <circle id="robot-eye-pupil" cx="50" cy="45" r="4" fill="#2c3e50" />
+                        <circle id="robot-eye-highlight" cx="52" cy="43" r="2" fill="white" />
+                        
+                        <!-- 机械装饰 - 传感器/面板 -->
+                        <circle cx="50" cy="65" r="6" fill="#34495e" stroke="#2c3e50" stroke-width="1.5" />
+                        <line x1="47" y1="65" x2="53" y2="65" stroke="#2c3e50" stroke-width="1.5" />
+                        <line x1="50" y1="62" x2="50" y2="68" stroke="#2c3e50" stroke-width="1.5" />
+                        
+                        <!-- 侧边接收器 -->
+                        <rect x="15" y="45" width="5" height="10" rx="1" fill="#34495e" />
+                        <rect x="80" y="45" width="5" height="10" rx="1" fill="#34495e" />
+                        
+                        <!-- 底部连接部分 -->
+                        <ellipse cx="50" cy="80" rx="12" ry="5" fill="#34495e" />
+                    </svg>
+                </div>
+            </div>
+            <div class="header-profile">
+                <div class="profile-avatar-large avatar-flip-container">
+                    <div class="avatar-front">
+                        <img src="img/person/1.jpg" alt="alonepatient">
+                    </div>
+                    <div class="avatar-back">
+                        <img src="img/person/2.jpg" alt="Developer">
+                    </div>
+                </div>
+                <div class="profile-info">
+                    <h1 class="profile-greeting">Hello I'm <span class="profile-name">alonepatient</span></h1>
+                    <p class="profile-role">👦 Full Stack Developer</p>
+                    <p class="profile-motto">📝 The only way to do great is to love what you do.</p>
+                    <!-- 社交链接卡片 -->
+                    <div class="social-card-stack" id="socialCardStack">
+                        <a href="https://github.com/alonepatient" class="social-card" style="--index: 0" target="_blank" title="GitHub">
+                            <div class="social-card-logo">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"></path>
+                                </svg>
+                            </div>
+                        </a>
+                        <a href="https://space.bilibili.com/3493080999135873?spm_id_from=333.1007.0.0" class="social-card" style="--index: 1" target="_blank" title="B站">
+                            <div class="social-card-logo">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <rect width="20" height="20" x="2" y="2" rx="3" ry="3"></rect>
+                                    <path d="M10 9v6l5-3z"></path>
+                                </svg>
+                            </div>
+                        </a>
+                        <a href="https://twitter.com" class="social-card" style="--index: 2" target="_blank" title="X">
+                            <div class="social-card-logo">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
+                                </svg>
+                            </div>
+                        </a>
+                        <a href="1527588080@qq.com" class="social-card" style="--index: 3" target="_blank" title="Email">
+                            <div class="social-card-logo">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                                    <polyline points="22,6 12,13 2,6"></polyline>
+                                </svg>
+                            </div>
+                        </a>
+                        <a href="https://csdn.net" class="social-card" style="--index: 4" target="_blank" title="CSDN">
+                            <div class="social-card-logo">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                                    <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+                                    <line x1="12" x2="12" y1="22.08" y2="12"></line>
+                                </svg>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="profile-links">
+                    </div>
+                </div>
+            </div>
+        </header>
+        
+        <!-- 导航栏 - 移至header外部，下拉时显示 -->
+        <nav class="nav">
+            <ul class="nav-list">
+                <li class="nav-item"><a href="index.html" class="nav-link active">首页</a></li>
+                <li class="nav-item"><a href="about.html" class="nav-link">关于</a></li>
+                <li class="nav-item"><a href="gallery.html" class="nav-link">相册</a></li>
+                <li class="nav-item"><a href="links.html" class="nav-link">友链</a></li>
+                <li class="nav-item"><a href="message.html" class="nav-link">留言</a></li>
+            </ul>
+        </nav>
+
+        <!-- 主内容区域 -->
+        <main class="main">
+            <div class="content">
+                <!-- 文章列表 -->
+                <section class="articles">
+                    <!-- 个人简介功能卡片 -->
+                    <div class="feature-card profile-card">
+                        <div class="profile-avatar">
+                            <img src="img/person/1.jpg" alt="alonepatient">
+                        </div>
+                        <h3 class="card-title">👋 Hi, I'm alonepatient</h3>
+                        <div class="card-content">
+                            <p>全栈开发者，热爱技术创新与分享。专注于前端技术、Node.js开发和用户体验设计。</p>
+                        </div>
+                    </div>
+
+                    <!-- 技能展示功能卡片 -->
+                    <div class="feature-card skills-card">
+                        <span class="card-icon">🛠️</span>
+                        <h3 class="card-title">技能专长</h3>
+                        <div class="card-content">
+                            <div class="skill-item">
+                                <span class="skill-name">JavaScript</span>
+                                <div class="skill-level">
+                                    <div class="skill-progress" style="width: 90%"></div>
+                                </div>
+                            </div>
+                            <div class="skill-item">
+                                <span class="skill-name">React/Vue</span>
+                                <div class="skill-level">
+                                    <div class="skill-progress" style="width: 85%"></div>
+                                </div>
+                            </div>
+                            <div class="skill-item">
+                                <span class="skill-name">Node.js</span>
+                                <div class="skill-level">
+                                    <div class="skill-progress" style="width: 80%"></div>
+                                </div>
+                            </div>
+                            <div class="skill-item">
+                                <span class="skill-name">CSS/SCSS</span>
+                                <div class="skill-level">
+                                    <div class="skill-progress" style="width: 88%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 数据统计功能卡片 -->
+                    <div class="feature-card stats-card">
+                        <span class="card-icon">📊</span>
+                        <h3 class="card-title">博客统计</h3>
+                        <div class="card-content">
+                            <div class="stats-grid">
+                                <div class="stat-item">
+                                    <span class="stat-number">15</span>
+                                    <span class="stat-label">文章总数</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-number">2.3K</span>
+                                    <span class="stat-label">总访问量</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-number">8</span>
+                                    <span class="stat-label">技术标签</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-number">3</span>
+                                    <span class="stat-label">运行年数</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 快捷链接功能卡片 -->
+                    <div class="feature-card links-card">
+                        <span class="card-icon">🔗</span>
+                        <h3 class="card-title">快捷导航</h3>
+                        <div class="card-content">
+                            <div class="links-grid">
+                                <a href="https://github.com" class="link-item" target="_blank">
+                                    <span class="link-icon">💻</span>
+                                    <span class="link-text">GitHub</span>
+                                </a>
+                                <a href="mailto:hello@zyyo.net" class="link-item">
+                                    <span class="link-icon">📧</span>
+                                    <span class="link-text">Email</span>
+                                </a>
+                                <a href="#" class="link-item">
+                                    <span class="link-icon">📱</span>
+                                    <span class="link-text">微信</span>
+                                </a>
+                                <a href="#" class="link-item">
+                                    <span class="link-icon">🎨</span>
+                                    <span class="link-text">作品集</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <article class="article-card">
+                        <div class="article-meta">
+                            <time class="article-date" datetime="2024-10-26">2024年10月26日</time>
+                            <span class="article-category">技术</span>
+                        </div>
+                        <h2 class="article-title">
+                            <a href="article.html?id=1" class="article-link">现代Web开发技术栈的演进与思考</a>
+                        </h2>
+                        <div class="article-excerpt">
+                            <p>随着前端技术的快速发展，从jQuery到React、Vue，从Webpack到Vite，整个Web开发生态发生了翻天覆地的变化。本文将分享我对现代Web开发技术栈的一些思考和实践经验...</p>
+                        </div>
+                        <div class="article-tags">
+                            <span class="tag">JavaScript</span>
+                            <span class="tag">前端开发</span>
+                            <span class="tag">React</span>
+                        </div>
+                    </article>
+
+                    <article class="article-card">
+                        <div class="article-meta">
+                            <time class="article-date" datetime="2024-10-20">2024年10月20日</time>
+                            <span class="article-category">生活</span>
+                        </div>
+                        <h2 class="article-title">
+                            <a href="article.html?id=2" class="article-link">秋天的第一杯奶茶与程序员的思考</a>
+                        </h2>
+                        <div class="article-excerpt">
+                            <p>秋天来了，朋友圈又开始刷屏"秋天的第一杯奶茶"。作为一名程序员，我想聊聊关于生活与工作平衡的一些感悟。代码很重要，但生活中的这些小美好同样珍贵...</p>
+                        </div>
+                        <div class="article-tags">
+                            <span class="tag">生活感悟</span>
+                            <span class="tag">工作平衡</span>
+                        </div>
+                    </article>
+
+                    <article class="article-card">
+                        <div class="article-meta">
+                            <time class="article-date" datetime="2024-10-15">2024年10月15日</time>
+                            <span class="article-category">技术</span>
+                        </div>
+                        <h2 class="article-title">
+                            <a href="article.html?id=3" class="article-link">CSS Grid布局的实践应用与技巧分享</a>
+                        </h2>
+                        <div class="article-excerpt">
+                            <p>CSS Grid是现代Web布局的强大工具，它为我们提供了二维布局的完美解决方案。通过实际项目的应用，我总结了一些Grid布局的实用技巧和最佳实践...</p>
+                        </div>
+                        <div class="article-tags">
+                            <span class="tag">CSS</span>
+                            <span class="tag">布局</span>
+                            <span class="tag">前端</span>
+                        </div>
+                    </article>
+
+                    <article class="article-card">
+                        <div class="article-meta">
+                            <time class="article-date" datetime="2024-10-10">2024年10月10日</time>
+                            <span class="article-category">技术</span>
+                        </div>
+                        <h2 class="article-title">
+                            <a href="article.html?id=4" class="article-link">Node.js性能优化的几个关键点</a>
+                        </h2>
+                        <div class="article-excerpt">
+                            <p>在开发高并发的Node.js应用时，性能优化是一个不可忽视的话题。本文将从内存管理、异步处理、数据库优化等几个维度，分享一些实用的性能优化技巧...</p>
+                        </div>
+                        <div class="article-tags">
+                            <span class="tag">Node.js</span>
+                            <span class="tag">性能优化</span>
+                            <span class="tag">后端</span>
+                        </div>
+                    </article>
+
+                    <article class="article-card">
+                        <div class="article-meta">
+                            <time class="article-date" datetime="2024-10-05">2024年10月5日</time>
+                            <span class="article-category">生活</span>
+                        </div>
+                        <h2 class="article-title">
+                            <a href="article.html?id=5" class="article-link">国庆假期的读书清单与思考</a>
+                        </h2>
+                        <div class="article-excerpt">
+                            <p>国庆七天假期，除了外出游玩，我也抽时间读了几本好书。《代码整洁之道》让我重新思考代码质量，《人月神话》让我理解项目管理的复杂性。分享一些读书心得...</p>
+                        </div>
+                        <div class="article-tags">
+                            <span class="tag">读书</span>
+                            <span class="tag">思考</span>
+                            <span class="tag">假期</span>
+                        </div>
+                    </article>
+                </section>
+
+                <!-- 分页 -->
+                <div class="pagination">
+                    <span class="pagination-info">第 1 页 / 共 3 页</span>
+                    <div class="pagination-links">
+                        <span class="pagination-prev disabled">上一页</span>
+                        <a href="#" class="pagination-next">下一页</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 侧边栏 -->
+            <aside class="sidebar">
+                <!-- 个人简介 -->
+                <div class="widget">
+                    <div class="widget-header">
+                        <h3>关于我</h3>
+                    </div>
+                    <div class="widget-content">
+                        <div class="author-info">
+                            <div class="author-avatar">
+                            <img src="img/person/1.jpg" alt="alonepatient">
+                        </div>
+                            <div class="author-desc">
+                                <h4>alonepatient</h4>
+                                <p>全栈开发者，热爱技术与生活</p>
+                                <div class="author-stats">
+                                    <span>文章 15</span>
+                                    <span>标签 8</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 最新文章 -->
+                <div class="widget">
+                    <div class="widget-header">
+                        <h3>最新文章</h3>
+                    </div>
+                    <div class="widget-content">
+                        <ul class="recent-posts">
+                            <li><a href="#">现代Web开发技术栈的演进与思考</a></li>
+                            <li><a href="#">秋天的第一杯奶茶与程序员的思考</a></li>
+                            <li><a href="#">CSS Grid布局的实践应用与技巧分享</a></li>
+                            <li><a href="#">Node.js性能优化的几个关键点</a></li>
+                            <li><a href="#">国庆假期的读书清单与思考</a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- 标签云 -->
+                <div class="widget">
+                    <div class="widget-header">
+                        <h3>标签云</h3>
+                    </div>
+                    <div class="widget-content">
+                        <div class="tag-cloud">
+                            <a href="#" class="cloud-tag">JavaScript</a>
+                            <a href="#" class="cloud-tag">React</a>
+                            <a href="#" class="cloud-tag">Node.js</a>
+                            <a href="#" class="cloud-tag">CSS</a>
+                            <a href="#" class="cloud-tag">前端开发</a>
+                            <a href="#" class="cloud-tag">后端</a>
+                            <a href="#" class="cloud-tag">生活感悟</a>
+                            <a href="#" class="cloud-tag">读书</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 文章归档 -->
+                <div class="widget">
+                    <div class="widget-header">
+                        <h3>文章归档</h3>
+                    </div>
+                    <div class="widget-content">
+                        <ul class="archive-list">
+                            <li><a href="#">2024年10月 (5)</a></li>
+                            <li><a href="#">2024年9月 (3)</a></li>
+                            <li><a href="#">2024年8月 (4)</a></li>
+                            <li><a href="#">2024年7月 (3)</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </aside>
+        </main>
+
+        <!-- 页脚 -->
+        <footer class="footer">
+            <div class="footer-content">
+                <p>&copy; 2024 alonepatient. All rights reserved.</p>
+
+                <p>
+                    <a href="#">备案号：京ICP备xxxxxxxx号</a> | 
+                    <a href="mailto:hello@zyyo.net">联系我</a>
+                </p>
+            </div>
+        </footer>
+    </div>
+
+    <script src="js/main.js"></script>
+    <script src="js/masonry.js"></script>
+    <script src="js/stars.js"></script>
+    <script src="js/rain.js"></script>
+    <script src="js/snake.js"></script>
+    <script src="js/audio-bg.js"></script>
+    <script>
+        // 处理滚动动画效果
+        document.addEventListener('DOMContentLoaded', function() {
+            const mainContent = document.querySelector('.main');
+            const navElement = document.querySelector('.nav');
+            const headerElement = document.querySelector('.header');
+            const themeToggle = document.getElementById('themeToggle');
+            const dateTimeElement = document.querySelector('.date-time');
+            const weatherElement = document.querySelector('.weather');
+            
+            // 主内容的可见性由过渡效果控制
+            // 保留原有逻辑作为备用
+            
+            // 监听滚动事件
+            window.addEventListener('scroll', function() {
+                const scrollPosition = window.scrollY;
+                const windowHeight = window.innerHeight;
+                
+                // 当用户向下滚动超过屏幕高度的50%时，显示主内容
+                if (scrollPosition > windowHeight * 0.5) {
+                    mainContent.classList.add('visible');
+                }
+                
+                // 导航栏滚动效果
+                if (scrollPosition > windowHeight * 0.8) {
+                    navElement.classList.add('scrolled');
+                } else {
+                    navElement.classList.remove('scrolled');
+                }
+            });
+            
+            // 添加渐变显示效果
+            setTimeout(() => {
+                headerElement.style.opacity = '1';
+            }, 300);
+            
+            // 深色模式切换功能
+            // 从localStorage加载主题设置
+            if (localStorage.getItem('darkMode') === 'true' || 
+                (!localStorage.getItem('darkMode') && 
+                 window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                document.body.classList.add('dark-mode');
+                themeToggle.checked = true;
+            }
+            
+            // 主题切换事件监听
+            themeToggle.addEventListener('change', function() {
+                if (this.checked) {
+                    document.body.classList.add('dark-mode');
+                    localStorage.setItem('darkMode', 'true');
+                } else {
+                    document.body.classList.remove('dark-mode');
+                    localStorage.setItem('darkMode', 'false');
+                }
+            });
+            
+            // 更新时间和日期
+            function updateDateTime() {
+                const now = new Date();
+                const options = { 
+                    year: 'numeric', 
+                    month: 'long', 
+                    day: 'numeric', 
+                    hour: '2-digit', 
+                    minute: '2-digit', 
+                    second: '2-digit',
+                    hour12: false
+                };
+                dateTimeElement.textContent = now.toLocaleString('zh-CN', options);
+            }
+            
+            // 初始化天气信息（模拟数据，实际项目中应使用天气API）
+            function initWeatherInfo() {
+                // 天气类型和对应图标
+                const weatherIcons = {
+                    sunny: '☀️',
+                    cloudy: '☁️',
+                    rainy: '🌧️',
+                    snowy: '❄️',
+                    windy: '💨',
+                    foggy: '🌫️',
+                    stormy: '⛈️',
+                    partlyCloudy: '⛅'
+                };
+                
+                // 天气类型列表
+                const weatherTypes = [
+                    { type: 'sunny', description: '晴天', minTemp: 20, maxTemp: 30 },
+                    { type: 'cloudy', description: '多云', minTemp: 18, maxTemp: 25 },
+                    { type: 'rainy', description: '下雨', minTemp: 15, maxTemp: 22 },
+                    { type: 'partlyCloudy', description: '局部多云', minTemp: 19, maxTemp: 27 },
+                    { type: 'windy', description: '大风', minTemp: 16, maxTemp: 24 }
+                ];
+                
+                // 随机选择一种天气
+                const randomWeather = weatherTypes[Math.floor(Math.random() * weatherTypes.length)];
+                // 生成随机温度
+                const temp = Math.floor(Math.random() * (randomWeather.maxTemp - randomWeather.minTemp + 1)) + randomWeather.minTemp;
+                
+                // 模拟天气数据
+                const weatherData = {
+                    temperature: `${temp}°C`,
+                    description: randomWeather.description,
+                    icon: weatherIcons[randomWeather.type]
+                };
+                
+                weatherElement.innerHTML = `
+                    <span class="weather-icon">${weatherData.icon}</span>
+                    <span class="weather-text">${weatherData.description} ${weatherData.temperature}</span>
+                `;
+                
+                // 每隔30秒更新一次天气（模拟变化）
+                setInterval(() => {
+                    const newWeather = weatherTypes[Math.floor(Math.random() * weatherTypes.length)];
+                    const newTemp = Math.floor(Math.random() * (newWeather.maxTemp - newWeather.minTemp + 1)) + newWeather.minTemp;
+                    
+                    const updatedWeatherData = {
+                        temperature: `${newTemp}°C`,
+                        description: newWeather.description,
+                        icon: weatherIcons[newWeather.type]
+                    };
+                    
+                    // 平滑更新天气信息
+                    weatherElement.style.opacity = '0.5';
+                    setTimeout(() => {
+                        weatherElement.innerHTML = `
+                            <span class="weather-icon">${updatedWeatherData.icon}</span>
+                            <span class="weather-text">${updatedWeatherData.description} ${updatedWeatherData.temperature}</span>
+                        `;
+                        weatherElement.style.opacity = '1';
+                    }, 500);
+                }, 30000);
+            }
+            
+            // 初始化并定时更新时间
+            updateDateTime();
+            initWeatherInfo();
+            setInterval(updateDateTime, 1000);
+            
+            // 为导航链接添加平滑滚动到内容区域的功能
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    window.scrollTo({
+                        top: window.innerHeight,
+                        behavior: 'smooth'
+                    });
+                });
+            });
+        });
+    </script>
+</body>
+</html>

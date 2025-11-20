@@ -1,0 +1,1476 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>limina.top</title>
+    <style>
+        /* 全局样式重置 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Microsoft YaHei', sans-serif;
+            background-color: #1a1a1a;
+            color: #ffffff;
+            overflow: hidden;
+            height: 100vh;
+        }
+        
+        /* 加载页面 */
+        #loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #000000;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 1s ease, transform 1s ease;
+        }
+        
+        #loader.fade-out {
+            opacity: 0;
+            transform: translateY(-100%);
+        }
+        
+        .loader-text {
+            font-size: 16px;
+            letter-spacing: 8px;
+            text-transform: uppercase;
+            margin-bottom: 40px;
+            font-weight: 300;
+        }
+        
+        .loader-dots {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .loader-dot {
+            width: 12px;
+            height: 12px;
+            background-color: #ffffff;
+            border-radius: 50%;
+            opacity: 0.3;
+            animation: pulse 2s infinite;
+        }
+        
+        .loader-dot:nth-child(2) {
+            animation-delay: 0.3s;
+        }
+        
+        .loader-dot:nth-child(3) {
+            animation-delay: 0.6s;
+        }
+        
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 0.3;
+                transform: scale(1);
+            }
+            50% {
+                opacity: 1;
+                transform: scale(1.2);
+            }
+        }
+        
+        /* 主容器样式 */
+        .main-container {
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+        
+        .main-container.visible {
+            opacity: 1;
+        }
+        
+        /* 背景基础样式 */
+        .background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background-size: cover;
+            background-position: center;
+            overflow: hidden;
+            opacity: 0;
+            transition: opacity 0.8s ease-in-out, transform 0.8s ease-in-out;
+            transform: scale(1.05);
+        }
+        
+        .background.hidden {
+            opacity: 0;
+            transform: scale(1.1);
+            z-index: -2;
+            pointer-events: none;
+        }
+        
+        .background.active {
+            opacity: 1;
+            transform: scale(1);
+            z-index: -1;
+        }
+        
+        /* 确保所有背景主题中的特定元素也有平滑过渡 */
+        .cloud, .mountain, .wave, .polar-light, .sand, .tree, .city-building, .geometric-shape, .nebula, .petal, .snow-mountain {
+            transition: opacity 0.8s ease-in-out;
+        }
+        
+        /* 为特定背景的动态元素添加过渡 */
+        .background.active .cloud, .background.active .mountain, .background.active .wave,
+        .background.active .polar-light, .background.active .sand, .background.active .tree,
+        .background.active .city-building, .background.active .geometric-shape, .background.active .nebula,
+        .background.active .petal, .background.active .snow-mountain {
+            opacity: 1;
+        }
+        
+        .background.hidden .cloud, .background.hidden .mountain, .background.hidden .wave,
+        .background.hidden .polar-light, .background.hidden .sand, .background.hidden .tree,
+        .background.hidden .city-building, .background.hidden .geometric-shape, .background.hidden .nebula,
+        .background.hidden .petal, .background.hidden .snow-mountain {
+            opacity: 0;
+        }
+        
+        /* 背景主题1: 日落云彩 */
+        .bg-sunset {
+            background: linear-gradient(
+                135deg,
+                #1a0b1f 0%,
+                #3a144a 20%,
+                #6e1e4c 40%,
+                #b33b44 60%,
+                #ff7a5a 80%,
+                #ffb74d 100%
+            );
+        }
+        
+        /* 背景主题2: 星空夜景 */
+        .bg-stars {
+            background: linear-gradient(to bottom, #0a0a2a, #1a1a4a, #2a2a6a);
+        }
+        
+        /* 背景主题3: 海洋波浪 */
+        .bg-ocean {
+            background: linear-gradient(to bottom, #1a91da, #0066cc, #003366);
+        }
+        
+        /* 背景主题4: 森林晨曦 */
+        .bg-forest {
+            background: linear-gradient(135deg, #006400, #228b22, #32cd32, #98fb98);
+        }
+        
+        /* 背景主题5: 极光效果 */
+        .bg-aurora {
+            background: linear-gradient(135deg, #000033, #330066, #660099, #9900cc, #cc00ff);
+        }
+        
+        /* 背景主题6: 沙漠黄昏 */
+        .bg-desert {
+            background: linear-gradient(to bottom, #ffcc99, #ff9966, #ff6633, #cc3300);
+        }
+        
+        /* 背景主题7: 城市夜景 */
+        .bg-city {
+            background: linear-gradient(to bottom, #00001a, #000033, #00004d, #000066);
+        }
+        
+        /* 背景主题8: 几何抽象 */
+        .bg-abstract {
+            background: linear-gradient(45deg, #ff0000, #ff8000, #ffff00, #80ff00, #00ff80, #00ffff, #0080ff, #8000ff, #ff00ff);
+            background-size: 400% 400%;
+            animation: gradientShift 20s ease infinite;
+        }
+        
+        /* 背景主题9: 梦幻星云 */
+        .bg-nebula {
+            background: linear-gradient(135deg, #1a0b1f, #3a144a, #6e1e4c, #b33b44, #ff7a5a);
+        }
+        
+        /* 背景主题10: 樱花飘落 */
+        .bg-cherry {
+            background: linear-gradient(to bottom, #ffccff, #ff99ff, #ff66ff, #ff33ff);
+        }
+        
+        /* 背景主题11: 雪山日出 */
+        .bg-mountain {
+            background: linear-gradient(to bottom, #87ceeb, #b0e2ff, #e0f2fe, #f0f9ff);
+        }
+        
+        /* 云彩效果 - 适用于多个背景 */
+        .clouds {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            overflow: hidden;
+        }
+        
+        .cloud {
+            position: absolute;
+            border-radius: 100px;
+            filter: blur(30px);
+            opacity: 0.6;
+        }
+        
+        /* 日落云彩 */
+        .sunset-cloud-1 {
+            width: 600px;
+            height: 300px;
+            top: 10%;
+            left: -200px;
+            background: linear-gradient(135deg, rgba(255, 183, 77, 0.3) 0%, rgba(255, 122, 90, 0.2) 100%);
+            animation: float 180s linear infinite;
+        }
+        
+        .sunset-cloud-2 {
+            width: 400px;
+            height: 200px;
+            top: 30%;
+            right: -100px;
+            background: linear-gradient(135deg, rgba(179, 59, 68, 0.3) 0%, rgba(110, 30, 76, 0.2) 100%);
+            animation: float 150s linear infinite reverse;
+        }
+        
+        .sunset-cloud-3 {
+            width: 500px;
+            height: 250px;
+            bottom: 20%;
+            left: 10%;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.05) 100%);
+            animation: float 200s linear infinite;
+        }
+        
+        /* 海洋波浪效果 */
+        .ocean-waves {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 200%;
+            height: 150px;
+            background: linear-gradient(to top, rgba(0, 102, 204, 0.8), rgba(26, 145, 218, 0.5));
+            animation: wave 15s linear infinite;
+        }
+        
+        .ocean-waves::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 200%;
+            height: 150px;
+            background: linear-gradient(to top, rgba(0, 102, 204, 0.6), rgba(26, 145, 218, 0.3));
+            animation: wave 10s linear infinite reverse;
+        }
+        
+        /* 森林树木效果 */
+        .forest-trees {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 60%;
+            z-index: 1;
+        }
+        
+        .tree {
+            position: absolute;
+            bottom: 0;
+        }
+        
+        .tree-trunk {
+            width: 20px;
+            height: 60px;
+            background: #8B4513;
+            position: absolute;
+            bottom: 0;
+        }
+        
+        .tree-leaves {
+            position: absolute;
+            bottom: 40px;
+            width: 100px;
+            height: 100px;
+            background: #228B22;
+            border-radius: 50%;
+            transform: translateX(-40px);
+        }
+        
+        /* 极光效果 */
+        .aurora {
+            position: absolute;
+            top: 10%;
+            left: 10%;
+            width: 80%;
+            height: 60%;
+            background: linear-gradient(45deg, rgba(0, 255, 255, 0.3), rgba(255, 0, 255, 0.3));
+            filter: blur(60px);
+            animation: aurora-move 15s ease-in-out infinite;
+        }
+        
+        /* 沙漠沙丘 */
+        .desert-dunes {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 50%;
+            background: linear-gradient(to top, #cc3300, #ff6633);
+            clip-path: polygon(
+                0% 100%, 5% 85%, 10% 100%, 15% 90%, 20% 100%, 25% 80%, 30% 100%, 35% 85%, 40% 100%, 
+                45% 90%, 50% 100%, 55% 85%, 60% 100%, 65% 80%, 70% 100%, 75% 90%, 80% 100%, 85% 85%, 
+                90% 100%, 95% 90%, 100% 100%
+            );
+        }
+        
+        /* 城市灯光 */
+        .city-lights {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 30%;
+            z-index: 1;
+        }
+        
+        .city-building {
+            position: absolute;
+            bottom: 0;
+            background: #1a1a1a;
+        }
+        
+        .window {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: #ffff99;
+            border-radius: 2px;
+        }
+        
+        /* 樱花飘落效果 */
+        .cherry-petals {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            overflow: hidden;
+        }
+        
+        .petal {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: #ff99cc;
+            border-radius: 100% 0 100% 0;
+            animation: fall linear infinite;
+        }
+        
+        /* 雪山效果 */
+        .snow-mountains {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 60%;
+            background: linear-gradient(to top, #666666, #999999);
+            clip-path: polygon(
+                0% 100%, 10% 80%, 20% 90%, 30% 70%, 40% 85%, 50% 60%, 60% 80%, 70% 70%, 80% 85%, 90% 60%, 100% 80%, 100% 100%
+            );
+            z-index: 1;
+        }
+        
+        .snow-cap {
+            position: absolute;
+            bottom: 30%;
+            left: 0;
+            width: 100%;
+            height: 70%;
+            background: white;
+            clip-path: polygon(
+                0% 100%, 10% 60%, 20% 70%, 30% 50%, 40% 65%, 50% 40%, 60% 60%, 70% 50%, 80% 65%, 90% 40%, 100% 60%, 100% 100%
+            );
+        }
+        
+        /* 动画 */
+        @keyframes float {
+            0% {
+                transform: translateX(0) translateY(0);
+            }
+            25% {
+                transform: translateX(100px) translateY(-50px);
+            }
+            50% {
+                transform: translateX(200px) translateY(0);
+            }
+            75% {
+                transform: translateX(100px) translateY(50px);
+            }
+            100% {
+                transform: translateX(0) translateY(0);
+            }
+        }
+        
+        @keyframes gradientShift {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+        
+        @keyframes wave {
+            0% {
+                transform: translateX(0);
+            }
+            100% {
+                transform: translateX(-50%);
+            }
+        }
+        
+        @keyframes aurora-move {
+            0%, 100% {
+                transform: translateX(-20%) translateY(-20%) rotate(-10deg);
+                opacity: 0.3;
+            }
+            50% {
+                transform: translateX(20%) translateY(20%) rotate(10deg);
+                opacity: 0.6;
+            }
+        }
+        
+        @keyframes fall {
+            0% {
+                transform: translateY(-10%) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+        
+        /* 星星效果 */
+        .stars {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+        }
+        
+        .star {
+            position: absolute;
+            background-color: white;
+            border-radius: 50%;
+            animation: twinkle 2s infinite;
+        }
+        
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.2; }
+            50% { opacity: 0.8; }
+        }
+        
+        /* 主容器 */
+        .main-container {
+            width: 100vw;
+            max-width: 1600px;
+            height: 85vh;
+            display: grid;
+            grid-template-columns: 3fr 3fr;
+            grid-template-rows: 1fr 1fr;
+            gap: 60px;
+            padding: 120px;
+            position: relative;
+            z-index: 10;
+        }
+        
+        /* 左侧区域 */
+        .left-panel {
+            grid-row: 1 / -1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            gap: 80px;
+        }
+        
+        /* Logo区域 */
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .hexagon-logo {
+            width: 80px;
+            height: 80px;
+            background-color: rgba(65, 105, 225, 0.3);
+            border: 2px solid rgba(65, 105, 225, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+            backdrop-filter: blur(10px);
+        }
+        
+        .dna-symbol {
+            width: 40px;
+            height: 40px;
+            fill: #ffffff;
+        }
+        
+        .logo-text {
+            font-size: 32px;
+            font-weight: 300;
+            letter-spacing: 2px;
+            background: linear-gradient(90deg, #ffffff, #b8c6db);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        /* 介绍区域 */
+        .intro-section {
+            background-color: rgba(0, 0, 0, 0.3);
+            padding: 25px;
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .intro-quote {
+            font-size: 20px;
+            font-style: italic;
+            margin-bottom: 15px;
+            line-height: 1.6;
+            color: #ffffff;
+        }
+        
+        .intro-description {
+            font-size: 16px;
+            color: #cccccc;
+            margin-bottom: 20px;
+        }
+        
+        /* 联系信息 */
+        .contact-section {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .contact-icon {
+            width: 40px;
+            height: 40px;
+            background-color: rgba(0, 0, 0, 0.4);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .contact-icon:hover {
+            background-color: rgba(65, 105, 225, 0.3);
+            transform: translateY(-3px);
+            border-color: rgba(65, 105, 225, 0.5);
+        }
+        
+        .contact-icon img {
+            width: 20px;
+            height: 20px;
+        }
+        
+        .contact-hint {
+            text-align: center;
+            color: #999999;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+        
+        /* 右侧顶部区域 */
+        /* 欢迎信息 */
+        .welcome-message {
+            position: fixed;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 10px 20px;
+            border-radius: 0 0 20px 20px;
+            font-size: 16px;
+            color: #ffffff;
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-top: none;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+        
+        .welcome-message.show {
+            opacity: 1;
+            transform: translateX(-50%);
+        }
+        
+        .welcome-message.hide {
+            opacity: 0;
+            transform: translateX(-50%) translateY(-100%);
+        }
+        
+        .top-right {
+            display: flex;
+            gap: 15px;
+            justify-content: space-between;
+        }
+        
+        .quote-box,
+        .time-box {
+            flex: 1;
+            background-color: rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .quote-content {
+            font-size: 16px;
+            line-height: 1.6;
+            margin-bottom: 10px;
+            color: #ffffff;
+        }
+        
+        .quote-source {
+            font-size: 14px;
+            color: #cccccc;
+            text-align: right;
+        }
+        
+        .time-display {
+            font-size: 32px;
+            font-weight: 300;
+            text-align: center;
+            margin-bottom: 5px;
+            color: #ffffff;
+        }
+        
+        .date-weather {
+            font-size: 13px;
+            color: #cccccc;
+            text-align: center;
+            line-height: 1.4;
+        }
+        
+        /* 网站列表 */
+        .website-list {
+            background-color: rgba(0, 0, 0, 0.3);
+            padding: 12px 20px;
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .website-list-icon {
+            color: #4169e1;
+            font-size: 16px;
+        }
+        
+        .website-list-title {
+            font-size: 16px;
+            color: #ffffff;
+        }
+        
+        /* 功能网格 */
+        .function-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(2, 1fr);
+            gap: 15px;
+        }
+        
+        .function-card {
+            background-color: rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .function-card:hover {
+            background-color: rgba(65, 105, 225, 0.2);
+            transform: translateY(-3px);
+            border-color: rgba(65, 105, 225, 0.5);
+        }
+        
+        .function-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+        
+        .function-icon {
+            font-size: 24px;
+            color: #ffffff;
+        }
+        
+        .function-title {
+            font-size: 18px;
+            font-weight: 400;
+            color: #ffffff;
+        }
+        
+        /* 底部版权信息 */
+        .footer {
+            position: fixed;
+            bottom: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+            font-size: 12px;
+            color: #999999;
+            background-color: rgba(0, 0, 0, 0.5);
+            padding: 5px 20px;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .footer-link {
+            color: #cccccc;
+            text-decoration: none;
+            margin: 0 5px;
+            transition: color 0.3s ease;
+        }
+        
+        .footer-link:hover {
+            color: #ffffff;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 1200px) {
+            .main-container {
+                grid-template-columns: 1fr;
+                grid-template-rows: auto;
+                height: auto;
+                max-height: 90vh;
+                overflow-y: auto;
+            }
+            
+            .left-panel {
+                grid-row: 1;
+                flex-direction: column;
+            }
+            
+            .top-right {
+                grid-row: 2;
+                flex-direction: column;
+            }
+            
+            .function-grid {
+                grid-row: 3;
+                grid-template-columns: repeat(2, 1fr);
+                grid-template-rows: repeat(3, 1fr);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .function-grid {
+                grid-template-columns: 1fr;
+                grid-template-rows: repeat(6, 1fr);
+            }
+            
+            .logo-section {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .footer {
+                position: static;
+                transform: none;
+                margin-top: 20px;
+                padding-bottom: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 加载页面 -->
+    <div id="loader">
+        <div class="loader-text">Loading</div>
+        <div class="loader-dots">
+            <div class="loader-dot"></div>
+            <div class="loader-dot"></div>
+            <div class="loader-dot"></div>
+        </div>
+    </div>
+    
+    <!-- 背景容器 -->
+    <div id="background-container">
+        <!-- 背景1: 日落云彩 -->
+        <div class="background bg-sunset active">
+            <div class="clouds">
+                <div class="cloud sunset-cloud-1"></div>
+                <div class="cloud sunset-cloud-2"></div>
+                <div class="cloud sunset-cloud-3"></div>
+            </div>
+            <div class="stars"></div>
+        </div>
+        
+        <!-- 背景2: 星空夜景 -->
+        <div class="background bg-stars">
+            <div class="stars"></div>
+        </div>
+        
+        <!-- 背景3: 海洋波浪 -->
+        <div class="background bg-ocean">
+            <div class="ocean-waves"></div>
+        </div>
+        
+        <!-- 背景4: 森林晨曦 -->
+        <div class="background bg-forest">
+            <div class="forest-trees" id="forest-trees-container"></div>
+        </div>
+        
+        <!-- 背景5: 极光效果 -->
+        <div class="background bg-aurora">
+            <div class="aurora"></div>
+            <div class="stars"></div>
+        </div>
+        
+        <!-- 背景6: 沙漠黄昏 -->
+        <div class="background bg-desert">
+            <div class="desert-dunes"></div>
+        </div>
+        
+        <!-- 背景7: 城市夜景 -->
+        <div class="background bg-city">
+            <div class="city-lights" id="city-lights-container"></div>
+            <div class="stars"></div>
+        </div>
+        
+        <!-- 背景8: 几何抽象 -->
+        <div class="background bg-abstract"></div>
+        
+        <!-- 背景9: 梦幻星云 -->
+        <div class="background bg-nebula">
+            <div class="stars"></div>
+        </div>
+        
+        <!-- 背景10: 樱花飘落 -->
+        <div class="background bg-cherry">
+            <div class="cherry-petals" id="cherry-petals-container"></div>
+        </div>
+        
+        <!-- 背景11: 雪山日出 -->
+        <div class="background bg-mountain">
+            <div class="snow-mountains">
+                <div class="snow-cap"></div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 欢迎信息 -->
+    <div class="welcome-message">
+        <span>🌙 上午好 欢迎来到我的主页</span>
+    </div>
+    
+    <!-- 主容器 -->
+    <div class="main-container">
+        <!-- 左侧面板 -->
+        <div class="left-panel">
+            <!-- Logo区域 -->
+            <div class="logo-section">
+                <div class="hexagon-logo">
+                    <svg class="dna-symbol" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M30,10 Q50,0 70,10 Q80,15 90,25 Q85,45 90,65 Q80,75 70,80 Q50,90 30,80 Q20,75 10,65 Q15,45 10,25 Q20,15 30,10 Z M30,10 Q20,30 30,50 Q20,70 30,80 Q50,70 70,80 Q80,60 70,50 Q80,30 70,10 Q50,30 30,10 Z" />
+                        <path d="M30,10 L30,80 M70,10 L70,80" stroke="#ffffff" stroke-width="2" fill="none" />
+                    </svg>
+                </div>
+                <div class="logo-text">limina.top</div>
+            </div>
+            
+            <!-- 介绍区域 -->
+            <div class="intro-section">
+                <div class="intro-quote">" Hello World! "</div>
+                <div class="intro-description">一个喜欢折腾一些好玩东西的人的空间</div>
+                
+                <!-- 联系信息 -->
+                <div class="contact-section">
+                    <div class="contact-icon">
+                        <img src="https://cdn-icons-png.flaticon.com/512/1632/1632590.png" alt="GitHub" />
+                    </div>
+                    <div class="contact-icon">
+                        <img src="https://cdn-icons-png.flaticon.com/512/646/646095.png" alt="Twitter" />
+                    </div>
+                    <div class="contact-icon">
+                        <img src="https://cdn-icons-png.flaticon.com/512/5968/5968649.png" alt="Email" />
+                    </div>
+                </div>
+                <div class="contact-hint">通过这里联系我吧</div>
+            </div>
+        </div>
+        
+        <!-- 右侧顶部 -->
+        <div class="top-right">
+            <!-- 语录盒子 -->
+            <div class="quote-box">
+                <div class="quote-content">回首某个瞬间，下个瞬间即告消逝。</div>
+                <div class="quote-source">- 「密教模拟器」</div>
+            </div>
+            
+            <!-- 时间和天气 -->
+            <div class="time-box">
+                <div class="time-display" id="current-time">10:35:06</div>
+                <div class="date-weather">2025年11月18日 星期二<br>兰州市 -晴 -4℃ 东风 3级</div>
+            </div>
+        </div>
+        
+        <!-- 右侧底部 -->
+        <div class="bottom-right">
+            <!-- 网站列表标题 -->
+            <div class="website-list">
+                <span class="website-list-icon">☁️</span>
+                <span class="website-list-title">网站列表</span>
+            </div>
+            
+            <!-- 功能网格 -->
+            <div class="function-grid">
+                <div class="function-card">
+                    <div class="function-header">
+                        <span class="function-icon">👤</span>
+                        <span class="function-title">简历</span>
+                    </div>
+                </div>
+                
+                <div class="function-card">
+                    <div class="function-header">
+                        <span class="function-icon">📝</span>
+                        <span class="function-title">博客</span>
+                    </div>
+                </div>
+                
+                <div class="function-card">
+                    <div class="function-header">
+                        <span class="function-icon">🤖</span>
+                        <span class="function-title">GPT</span>
+                    </div>
+                </div>
+                
+                <div class="function-card">
+                    <div class="function-header">
+                        <span class="function-icon">💾</span>
+                        <span class="function-title">网盘</span>
+                    </div>
+                </div>
+                
+                <div class="function-card">
+                    <div class="function-header">
+                        <span class="function-icon">🎵</span>
+                        <span class="function-title">音乐</span>
+                    </div>
+                </div>
+                
+                <div class="function-card">
+                    <div class="function-header">
+                        <span class="function-icon">🧰</span>
+                        <span class="function-title">工具箱</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 底部版权信息 -->
+    <div class="footer">
+        <span>Copyright © 2021 - 2025 WhyLIM | Made by imsyj | </span>
+        <a href="#" class="footer-link">又拍云 提供 CDN 加速</a>
+        <span>|</span>
+        <a href="#" class="footer-link">苏 ICP 备 2021008103 号</a>
+        <span>|</span>
+        <a href="#" class="footer-link">苏公网安备 32062302000380</a>
+        <span>|</span>
+        <a href="#" class="footer-link">开往</a>
+    </div>
+    
+    <script>
+        // 页面加载完成后执行
+        document.addEventListener('DOMContentLoaded', function() {
+            // 模拟加载过程
+            setTimeout(function() {
+                const loader = document.getElementById('loader');
+                const mainContainer = document.querySelector('.main-container');
+                
+                loader.classList.add('fade-out');
+                
+                setTimeout(function() {
+                    loader.style.display = 'none';
+                    mainContainer.classList.add('visible');
+                    
+                    // 初始化页面功能
+                    initPageFunctions();
+                }, 1000);
+            }, 2000);
+        });
+
+        // 生成星星 - 支持传入目标容器
+        function createStars(targetElement = null) {
+            // 如果没有指定目标，则生成当前激活背景中的所有星星容器
+            const starsElements = targetElement ? 
+                [targetElement] : 
+                document.querySelectorAll('.background.active .stars');
+            
+            starsElements.forEach(stars => {
+                // 清空现有星星
+                stars.innerHTML = '';
+                const count = 150;
+                
+                for (let i = 0; i < count; i++) {
+                    const star = document.createElement('div');
+                    star.classList.add('star');
+                    
+                    // 随机位置
+                    const x = Math.random() * 100;
+                    const y = Math.random() * 70; // 只在上方70%区域生成星星
+                    
+                    // 随机大小
+                    const size = Math.random() * 2 + 1;
+                    
+                    // 随机透明度
+                    const opacity = Math.random() * 0.5 + 0.2;
+                    
+                    // 随机动画延迟
+                    const delay = Math.random() * 3;
+                    
+                    star.style.left = `${x}%`;
+                    star.style.top = `${y}%`;
+                    star.style.width = `${size}px`;
+                    star.style.height = `${size}px`;
+                    star.style.opacity = opacity;
+                    star.style.animationDelay = `${delay}s`;
+                    
+                    stars.appendChild(star);
+                }
+            });
+        }
+        
+        // 生成森林树木
+        function createForest() {
+            const container = document.getElementById('forest-trees-container');
+            if (!container) return;
+            
+            container.innerHTML = '';
+            const treeCount = 30;
+            
+            for (let i = 0; i < treeCount; i++) {
+                const tree = document.createElement('div');
+                tree.classList.add('tree');
+                
+                // 随机位置
+                const x = Math.random() * 100;
+                
+                // 随机高度
+                const height = Math.random() * 100 + 100;
+                const trunkHeight = height * 0.4;
+                const leafSize = height * 0.6;
+                
+                // 创建树干
+                const trunk = document.createElement('div');
+                trunk.classList.add('tree-trunk');
+                trunk.style.height = `${trunkHeight}px`;
+                
+                // 创建树叶
+                const leaves = document.createElement('div');
+                leaves.classList.add('tree-leaves');
+                leaves.style.width = `${leafSize}px`;
+                leaves.style.height = `${leafSize}px`;
+                leaves.style.bottom = `${trunkHeight * 0.6}px`;
+                leaves.style.transform = `translateX(-${leafSize / 2 - 10}px)`;
+                
+                // 随机树叶颜色（不同深浅的绿色）
+                const greenShades = ['#228B22', '#32CD32', '#006400', '#008000'];
+                const randomGreen = greenShades[Math.floor(Math.random() * greenShades.length)];
+                leaves.style.background = randomGreen;
+                
+                tree.appendChild(trunk);
+                tree.appendChild(leaves);
+                tree.style.left = `${x}%`;
+                
+                container.appendChild(tree);
+            }
+        }
+        
+        // 生成城市灯光
+        function createCityLights() {
+            const container = document.getElementById('city-lights-container');
+            if (!container) return;
+            
+            container.innerHTML = '';
+            const buildingCount = 20;
+            
+            for (let i = 0; i < buildingCount; i++) {
+                const building = document.createElement('div');
+                building.classList.add('city-building');
+                
+                // 随机位置和宽度
+                const x = (i / buildingCount) * 100 + Math.random() * 2;
+                const width = Math.random() * 40 + 20;
+                const height = Math.random() * 100 + 60;
+                
+                building.style.left = `${x}%`;
+                building.style.width = `${width}px`;
+                building.style.height = `${height}px`;
+                
+                // 随机窗户数量
+                const windowRows = Math.floor(height / 20);
+                const windowCols = Math.floor(width / 12);
+                
+                for (let row = 0; row < windowRows; row++) {
+                    for (let col = 0; col < windowCols; col++) {
+                        // 30%概率有窗户（模拟灯光）
+                        if (Math.random() > 0.7) {
+                            const window = document.createElement('div');
+                            window.classList.add('window');
+                            
+                            // 随机窗户颜色
+                            const colors = ['#ffff99', '#ffcc99', '#ffffff'];
+                            const randomColor = colors[Math.floor(Math.random() * colors.length)];
+                            window.style.background = randomColor;
+                            
+                            window.style.left = `${col * 12 + 4}px`;
+                            window.style.top = `${row * 15 + 10}px`;
+                            
+                            building.appendChild(window);
+                        }
+                    }
+                }
+                
+                container.appendChild(building);
+            }
+        }
+        
+        // 生成樱花花瓣
+        function createCherryPetals() {
+            const container = document.getElementById('cherry-petals-container');
+            if (!container) return;
+            
+            container.innerHTML = '';
+            const petalCount = 50;
+            
+            for (let i = 0; i < petalCount; i++) {
+                const petal = document.createElement('div');
+                petal.classList.add('petal');
+                
+                // 随机位置
+                const x = Math.random() * 100;
+                
+                // 随机大小
+                const size = Math.random() * 8 + 6;
+                
+                // 随机颜色
+                const pinkShades = ['#ff99cc', '#ff66cc', '#ff99ff', '#ff66ff'];
+                const randomPink = pinkShades[Math.floor(Math.random() * pinkShades.length)];
+                
+                // 随机动画持续时间
+                const duration = Math.random() * 10 + 15;
+                
+                // 随机延迟
+                const delay = Math.random() * 5;
+                
+                petal.style.left = `${x}%`;
+                petal.style.width = `${size}px`;
+                petal.style.height = `${size}px`;
+                petal.style.background = randomPink;
+                petal.style.animationDuration = `${duration}s`;
+                petal.style.animationDelay = `${delay}s`;
+                
+                container.appendChild(petal);
+            }
+        }
+        
+        // 初始化特定背景的动态元素
+        function initBackgroundElements(backgroundIndex) {
+            // 清除所有动态元素
+            const forestContainer = document.getElementById('forest-trees-container');
+            const cityContainer = document.getElementById('city-lights-container');
+            const cherryContainer = document.getElementById('cherry-petals-container');
+            
+            if (forestContainer) forestContainer.innerHTML = '';
+            if (cityContainer) cityContainer.innerHTML = '';
+            if (cherryContainer) cherryContainer.innerHTML = '';
+            
+            // 根据当前背景初始化相应元素
+            switch(backgroundIndex) {
+                case 1: // 星空夜景
+                case 4: // 极光效果
+                case 6: // 城市夜景
+                case 8: // 梦幻星云
+                    // 重新生成星星
+                    createStars();
+                    break;
+                case 3: // 森林晨曦
+                    createForest();
+                    break;
+                case 6: // 城市夜景
+                    createCityLights();
+                    break;
+                case 9: // 樱花飘落
+                    createCherryPetals();
+                    break;
+            }
+        }
+        
+        // 更新欢迎语
+        function updateGreeting() {
+            const greeting = document.querySelector('.welcome-message span');
+            const now = new Date();
+            const hours = now.getHours();
+            
+            let timeOfDay, icon;
+            
+            if (hours >= 5 && hours < 12) {
+                timeOfDay = '上午好';
+                icon = '🌙';
+            } else if (hours >= 12 && hours < 18) {
+                timeOfDay = '下午好';
+                icon = '☀️';
+            } else if (hours >= 18 && hours < 22) {
+                timeOfDay = '晚上好';
+                icon = '🌆';
+            } else {
+                timeOfDay = '夜深了';
+                icon = '🌌';
+            }
+            
+            greeting.textContent = `${icon} ${timeOfDay} 欢迎来到我的主页`;
+        }
+        
+        // 切换背景函数
+        function switchBackground() {
+            const backgrounds = document.querySelectorAll('.background');
+            const currentActive = document.querySelector('.background.active');
+            const currentIndex = Array.from(backgrounds).indexOf(currentActive);
+            
+            // 随机选择一个不同的背景
+            let randomIndex;
+            do {
+                randomIndex = Math.floor(Math.random() * backgrounds.length);
+            } while (randomIndex === currentIndex);
+            
+            // 获取新的背景元素
+            const newBackground = backgrounds[randomIndex];
+            
+            // 设置新背景为准备状态，使其显示在当前背景下方
+            newBackground.style.zIndex = -2;
+            newBackground.classList.remove('hidden', 'active');
+            
+            // 初始化新背景的动态元素（在过渡开始前）
+            initBackgroundElements(randomIndex);
+            
+            // 短暂延迟后开始过渡
+            setTimeout(() => {
+                // 将新背景移至当前背景之上并激活
+                newBackground.style.zIndex = -1;
+                newBackground.classList.add('active');
+                
+                // 隐藏当前背景
+                currentActive.classList.add('hidden');
+                currentActive.classList.remove('active');
+                currentActive.style.zIndex = -2;
+                
+            }, 100);
+        }
+        
+        // 性能优化：限制动画帧率
+        function optimizePerformance() {
+            // 对于移动设备，降低动画复杂度
+            if (window.innerWidth < 768) {
+                // 减少动画持续时间
+                document.documentElement.style.setProperty('--animation-duration', '15s');
+                // 降低某些元素的透明度以提升性能
+                const dynamicElements = document.querySelectorAll('.cloud, .wave, .petal');
+                dynamicElements.forEach(el => {
+                    el.style.willChange = 'opacity, transform';
+                });
+            }
+            
+            // 使用CSS will-change属性优化过渡效果
+            const backgrounds = document.querySelectorAll('.background');
+            backgrounds.forEach(bg => {
+                bg.style.willChange = 'opacity, transform';
+            });
+        }
+        
+        // 初始化背景
+        function initBackground() {
+            try {
+                const backgrounds = document.querySelectorAll('.background');
+                
+                if (backgrounds.length === 0) {
+                    console.warn('没有找到背景元素');
+                    return;
+                }
+                
+                // 隐藏所有背景
+                backgrounds.forEach(bg => {
+                    bg.classList.add('hidden');
+                    bg.classList.remove('active');
+                });
+                
+                // 随机选择一个背景作为初始背景
+                const randomIndex = Math.floor(Math.random() * backgrounds.length);
+                const initialBackground = backgrounds[randomIndex];
+                
+                // 设置选中的背景为活动状态
+                initialBackground.classList.remove('hidden');
+                initialBackground.classList.add('active');
+                initialBackground.style.zIndex = -1;
+                
+                // 隐藏其他背景
+                backgrounds.forEach((bg, index) => {
+                    if (index !== randomIndex) {
+                        bg.classList.add('hidden');
+                        bg.classList.remove('active');
+                        bg.style.zIndex = -2;
+                    }
+                });
+                
+                // 初始化当前背景的动态元素
+                initBackgroundElements(randomIndex);
+                
+                console.log(`已成功初始化背景: ${initialBackground.classList[1]}`);
+            } catch (error) {
+                console.error('初始化背景时出错:', error);
+            }
+        }
+        
+        // 初始化页面功能
+        function initPageFunctions() {
+            try {
+                // 性能优化
+                optimizePerformance();
+                
+                // 初始化背景
+                initBackground();
+                
+                // 更新欢迎语
+                updateGreeting();
+                
+                // 显示欢迎信息并设置定时隐藏
+                const welcomeMessage = document.querySelector('.welcome-message');
+                if (welcomeMessage) {
+                    setTimeout(() => {
+                        welcomeMessage.classList.add('show');
+                        
+                        // 5秒后隐藏欢迎信息
+                        setTimeout(() => {
+                            welcomeMessage.classList.remove('show');
+                            welcomeMessage.classList.add('hide');
+                        }, 5000);
+                    }, 500);
+                }
+                
+                // 更新当前时间
+                function updateTime() {
+                    const now = new Date();
+                    let hours = now.getHours().toString().padStart(2, '0');
+                    let minutes = now.getMinutes().toString().padStart(2, '0');
+                    let seconds = now.getSeconds().toString().padStart(2, '0');
+                    const timeElement = document.getElementById('current-time');
+                    if (timeElement) {
+                        timeElement.textContent = `${hours}:${minutes}:${seconds}`;
+                    }
+                }
+                
+                // 初始化时间更新
+                updateTime();
+                setInterval(updateTime, 1000);
+                
+                // 功能卡片点击效果
+                const functionCards = document.querySelectorAll('.function-card');
+                functionCards.forEach(card => {
+                    card.addEventListener('click', function() {
+                        // 这里可以添加功能卡片点击后的逻辑
+                        const title = this.querySelector('.function-title');
+                        if (title) {
+                            console.log('Clicked:', title.textContent);
+                        }
+                    });
+                });
+                
+                // 联系图标点击效果
+                const contactIcons = document.querySelectorAll('.contact-icon');
+                contactIcons.forEach(icon => {
+                    icon.addEventListener('click', function() {
+                        // 这里可以添加联系图标的点击逻辑
+                        console.log('Contact icon clicked');
+                    });
+                });
+                
+                // 为了调试方便，可以添加一个快捷键切换背景
+                document.addEventListener('keydown', function(e) {
+                    // 按下Ctrl+B切换背景
+                    if (e.ctrlKey && e.key === 'b') {
+                        switchBackground();
+                    }
+                });
+                
+                console.log('页面功能初始化完成');
+            } catch (error) {
+                console.error('初始化页面功能时出错:', error);
+            }
+        }
+        
+        // 页面加载完成后执行初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            // 延迟初始化，确保所有元素都已加载
+            setTimeout(initPageFunctions, 100);
+        });
+    </script>
+</body>
+</html>
