@@ -1,0 +1,67 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: ["main"]  # 触发分支，根据需要修改
+  pull_request:
+    branches: ["main"]
+  
+  # 允许手动触发部署
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  # 构建工作
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      
+      - name: 设置构建环境
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+          
+      - name: 安装依赖（如果有package.json）
+        run: |
+          if [ -f "package.json" ]; then
+            npm ci
+          fi
+          
+      - name: 构建网站
+        run: |
+          # 这里添加你的构建命令
+          # 例如: npm run build, hugo, jekyll build, 或直接复制文件
+          echo "执行构建步骤..."
+          
+          # 如果没有构建步骤，可以直接创建dist目录
+          mkdir -p dist
+          
+          # 复制所有文件到dist（如果没有构建工具）
+          # cp -r ./* dist/ 2>/dev/null || true
+          
+      - name: 上传构建产物
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./dist  # 你的构建输出目录
+
+  # 部署工作
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: 部署到GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
