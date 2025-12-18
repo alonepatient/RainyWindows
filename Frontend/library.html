@@ -238,7 +238,7 @@
         .npc {
             position: absolute;
             width: 40px;
-            height: 40px;
+            height: 48px;
             z-index: 2;
             pointer-events: none; /* 禁用鼠标交互 */
             image-rendering: pixelated;
@@ -266,136 +266,367 @@
             }
         }
         
-        /* 像素风格NPC头部 - 采用两层矩形创建圆形效果，与玩家角色一致 */
+        /* NPC移动动画 */
+        @keyframes npcWalk {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            25% {
+                transform: translateY(-2px);
+            }
+            50% {
+                transform: translateY(0);
+            }
+            75% {
+                transform: translateY(-2px);
+            }
+        }
+        
+        /* 移动中的NPC样式 */
+        .npc.moving {
+            animation: npcWalk 0.5s infinite linear;
+        }
+        
+        /* 移动时的腿部动画 */
+        .npc.moving .npc-leg-left {
+            animation: legMoveLeft 0.5s infinite alternate;
+        }
+        
+        .npc.moving .npc-leg-right {
+            animation: legMoveRight 0.5s infinite alternate;
+        }
+        
+        @keyframes legMoveLeft {
+            0% {
+                transform: translateX(0) translateY(0);
+            }
+            100% {
+                transform: translateX(-2px) translateY(2px);
+            }
+        }
+        
+        @keyframes legMoveRight {
+            0% {
+                transform: translateX(0) translateY(0);
+            }
+            100% {
+                transform: translateX(2px) translateY(2px);
+            }
+        }
+        
+        /* 新NPC头部设计 - 圆形头部 */
         .npc-head {
             position: absolute;
             top: 0;
-            left: 6px;
-            width: 20px;
-            height: 12px;
+            left: 8px;
+            width: 24px;
+            height: 24px;
             background-color: #f5deb3;
+            border-radius: 50%;
         }
         
-        /* 头部第二层，创建圆形效果 */
-        .npc-head::before {
+        /* 新头发设计 */
+        .npc-hair {
+            position: absolute;
+            top: 0;
+            left: 8px;
+            width: 24px;
+            height: 16px;
+            background-color: #333333;
+            border-radius: 12px 12px 0 0;
+        }
+        
+        /* 头发细节 */
+        .npc-hair::before {
             content: '';
             position: absolute;
-            top: 2px;
+            top: 8px;
             left: -2px;
-            width: 24px;
+            width: 28px;
             height: 8px;
-            background-color: #f5deb3;
+            background-color: #333333;
         }
         
-        /* 面部特征 - 调整位置以匹配新的头部结构 */
-        .npc-face {
+        /* 绅士帽样式 */
+        .npc-hat {
             position: absolute;
-            top: 2px;
-            left: 0;
+            top: -8px;
+            left: 6px;
+            width: 28px;
+            height: 16px;
+            z-index: 5;
+        }
+        
+        /* 绅士帽顶部 */
+        .npc-hat::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 4px;
             width: 20px;
             height: 10px;
+            background-color: #2c3e50;
+            border-radius: 5px 5px 0 0;
         }
         
-        /* 像素眼睛 - 方形 */
+        /* 绅士帽帽檐 */
+        .npc-hat::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 28px;
+            height: 6px;
+            background-color: #2c3e50;
+            border-radius: 3px;
+            box-shadow: 0 2px 3px rgba(0, 0, 0, 0.2);
+        }
+        
+        /* 面部特征容器 */
+        .npc-face {
+            position: absolute;
+            top: 6px;
+            left: 2px;
+            width: 20px;
+            height: 12px;
+        }
+        
+        /* 新眼睛设计 - 圆形眼睛 */
         .npc-eye {
             position: absolute;
-            width: 3px;
-            height: 3px;
-            background-color: #333333;
+            width: 4px;
+            height: 4px;
+            background-color: #000000;
+            border-radius: 50%;
         }
         
         .npc-eye.left {
             left: 4px;
-            top: 4px;
+            top: 3px;
         }
         
         .npc-eye.right {
             right: 4px;
-            top: 4px;
+            top: 3px;
         }
         
-        /* 像素嘴巴 - 方形 */
+        /* 眼睛高光 */
+        .npc-eye::after {
+            content: '';
+            position: absolute;
+            top: 1px;
+            left: 1px;
+            width: 1px;
+            height: 1px;
+            background-color: #ffffff;
+            border-radius: 50%;
+        }
+        
+        /* 新嘴巴设计 - 微笑 */
         .npc-mouth {
             position: absolute;
-            bottom: 0;
-            left: 4px;
-            width: 12px;
+            bottom: 1px;
+            left: 6px;
+            width: 8px;
             height: 2px;
             background-color: #8b4513;
+            border-radius: 0 0 4px 4px;
         }
         
         /* 身体 */
         .npc-body {
             position: absolute;
-            top: 12px;
-            left: 8px;
-            width: 24px;
+            top: 20px;
+            left: 10px;
+            width: 20px;
             height: 16px;
             background-color: #f5deb3;
         }
         
-        /* 服装 - 使用与玩家相同的蓝色 */
+        /* 新服装设计 */
         .npc-outfit {
             position: absolute;
-            top: 12px;
-            left: 8px;
-            width: 24px;
+            top: 20px;
+            left: 10px;
+            width: 20px;
             height: 16px;
-            background-color: #3498db; /* 与玩家相同的蓝色上衣 */
+            background-color: #3498db; /* 蓝色上衣 */
+            border-radius: 4px 4px 0 0;
         }
         
-        /* 像素手臂 */
+        /* 服装细节 */
+        .npc-outfit::before {
+            content: '';
+            position: absolute;
+            top: 8px;
+            left: 0;
+            width: 20px;
+            height: 2px;
+            background-color: rgba(0, 0, 0, 0.1);
+        }
+        
+        /* 图书管理员绿色上衣 */
+        .npc-outfit.librarian {
+            background-color: #2ecc71; /* 绿色上衣 */
+        }
+        
+        /* 新手臂设计 */
         .npc-arm-left,
         .npc-arm-right {
             position: absolute;
-            top: 14px;
-            width: 8px;
-            height: 14px;
+            top: 22px;
+            width: 6px;
+            height: 12px;
             background-color: #f5deb3;
         }
         
         .npc-arm-left {
-            left: 0;
+            left: 6px;
+            transform: rotate(-15deg);
         }
         
         .npc-arm-right {
-            right: 0;
+            right: 6px;
+            transform: rotate(15deg);
         }
         
-        /* 像素腿部 - 缩短长度 */
+        /* 新腿部设计 */
         .npc-leg-left,
         .npc-leg-right {
             position: absolute;
-            bottom: 0;
+            bottom: 4px;
             width: 8px;
-            height: 12px;
+            height: 14px;
             background-color: #2c3e50; /* 裤子颜色 */
+            transition: transform 0.2s ease;
+        }
+        
+        /* 图书管理员蓝色裤子 */
+        .npc-leg-left.librarian,
+        .npc-leg-right.librarian {
+            background-color: #3498db; /* 蓝色裤子 */
         }
         
         .npc-leg-left {
-            left: 8px;
+            left: 10px;
         }
         
         .npc-leg-right {
-            right: 8px;
+            right: 10px;
         }
         
-        /* 鞋子 - 调整位置 */
+        /* 行走中的NPC腿部动画 */
+        .npc.walking .npc-leg-left {
+            animation: walkLeftLeg 0.6s ease-in-out infinite;
+        }
+        
+        .npc.walking .npc-leg-right {
+            animation: walkRightLeg 0.6s ease-in-out infinite;
+        }
+        
+        /* 左腿行走动画 */
+        @keyframes walkLeftLeg {
+            0%, 100% {
+                transform: translateY(0) rotate(0deg);
+            }
+            50% {
+                transform: translateY(-5px) rotate(0deg);
+            }
+        }
+        
+        /* 右腿行走动画 - 与左腿交替 */
+        @keyframes walkRightLeg {
+            0%, 100% {
+                transform: translateY(-5px) rotate(0deg);
+            }
+            50% {
+                transform: translateY(0) rotate(0deg);
+            }
+        }
+        
+        /* 鞋子随着腿一起移动 */
+        .npc.walking .npc-shoe-left {
+            animation: walkLeftShoe 0.6s ease-in-out infinite;
+        }
+        
+        .npc.walking .npc-shoe-right {
+            animation: walkRightShoe 0.6s ease-in-out infinite;
+        }
+        
+        /* 左鞋行走动画 */
+        @keyframes walkLeftShoe {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-5px);
+            }
+        }
+        
+        /* 右鞋行走动画 - 与左鞋交替 */
+        @keyframes walkRightShoe {
+            0%, 100% {
+                transform: translateY(-5px);
+            }
+            50% {
+                transform: translateY(0);
+            }
+        }
+        
+        /* 新鞋子设计 */
         .npc-shoe-left,
         .npc-shoe-right {
             position: absolute;
             bottom: 0;
             width: 10px;
-            height: 2px;
-            background-color: #f5deb3;
+            height: 4px;
+            background-color: #333333;
+            border-radius: 2px;
         }
         
         .npc-shoe-left {
-            left: 7px;
+            left: 9px;
         }
         
         .npc-shoe-right {
-            right: 7px;
+            right: 9px;
+        }
+        
+        /* 演讲台样式 */
+        .lectern {
+            position: absolute;
+            width: 60px;
+            height: 40px;
+            background-color: #8B4513;
+            border-radius: 5px 5px 0 0;
+            z-index: 1;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+        }
+        
+        /* 演讲台顶部 */
+        .lectern::before {
+            content: '';
+            position: absolute;
+            top: -5px;
+            left: -10px;
+            right: -10px;
+            height: 10px;
+            background-color: #A0522D;
+            border-radius: 5px;
+            box-shadow: 0 2px 3px rgba(0, 0, 0, 0.2);
+        }
+        
+        /* 演讲台前面的装饰 */
+        .lectern::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40px;
+            height: 20px;
+            background-color: #654321;
+            border-radius: 5px 5px 0 0;
         }
         
         
@@ -543,7 +774,7 @@
     <div class="coordinates" id="coordinates">坐标: 0, 0</div>
     
     <div class="instructions">
-        使用方向键（↑↓←→）或WASD键移动。角色保持在中心，世界围绕角色移动。
+        使用方向键（↑↓←→）或WASD键移动。点击回车键可以与角色进行交互，各个书架可以进入对应的文档页面，与大图书管理员交互可以进入总文档页面。
     </div>
     
     <script>
@@ -1443,6 +1674,50 @@
                 return null;
             }
             
+            // 当前碰撞的书架
+            let currentCollidedBookshelf = null;
+            
+            // 书架文件夹提示元素
+            const bookshelfHint = document.createElement('div');
+            bookshelfHint.style.cssText = `
+                position: fixed;
+                bottom: 150px;
+                left: 50%;
+                transform: translateX(-50%);
+                background-color: rgba(0, 0, 0, 0.8);
+                color: white;
+                padding: 10px 20px;
+                border-radius: 5px;
+                font-size: 16px;
+                z-index: 100;
+                opacity: 0;
+                transition: opacity 0.3s ease;
+                pointer-events: none;
+            `;
+            document.body.appendChild(bookshelfHint);
+            
+            // 检查玩家与书架的碰撞
+            function checkPlayerBookshelfCollision() {
+                // 计算玩家在世界中的位置
+                const playerWorldX = -worldPositionX + (CONTAINER_WIDTH / 2) - playerCollisionBox.width / 2;
+                const playerWorldY = -worldPositionY + (CONTAINER_HEIGHT / 2) - playerCollisionBox.height / 2;
+                
+                // 检查每个书架
+                for (const shelf of bookshelvesData) {
+                    // 简化的AABB碰撞检测
+                    const collision = playerWorldX < shelf.x + shelf.width &&
+                                     playerWorldX + playerCollisionBox.width > shelf.x &&
+                                     playerWorldY < shelf.y + shelf.height &&
+                                     playerWorldY + playerCollisionBox.height > shelf.y;
+                    
+                    if (collision) {
+                        return shelf;
+                    }
+                }
+                
+                return null;
+            }
+            
             // 游戏循环更新函数
             function update() {
                 // 计算移动增量
@@ -1477,6 +1752,9 @@
                 // 检查NPC碰撞
                 const collidedNPC = checkNPCCollision();
                 
+                // 检查书架碰撞
+                const collidedBookshelf = checkPlayerBookshelfCollision();
+                
                 // 更新所有NPC的视觉反馈（移除之前可能添加的高亮效果）
                 npcsData.forEach(npc => {
                     if (!isDialogueActive || npc !== currentInteractingNPC) {
@@ -1484,7 +1762,12 @@
                     }
                 });
                 
-                // 如果与NPC碰撞并且当前没有对话在显示，或者碰撞的是当前正在对话的NPC
+                // 更新所有书架的视觉反馈（移除之前可能添加的高亮效果）
+                bookshelvesData.forEach(shelf => {
+                    shelf.element.style.boxShadow = '0 2px 5px rgba(0, 0, 0, 0.3)';
+                });
+                
+                // NPC碰撞处理
                 if (collidedNPC) {
                     // 高亮显示当前碰撞的NPC
                     collidedNPC.element.classList.add('highlight');
@@ -1498,11 +1781,56 @@
                     currentInteractingNPC = null;
                 }
                 
-                // 按空格键与NPC交互
-                if (collidedNPC && keys.interact && !isDialogueActive) {
-                    // 显示对话
-                    showDialogue(collidedNPC);
-                    isDialogueActive = true;
+                // 书架碰撞处理
+                if (collidedBookshelf) {
+                    // 高亮显示当前碰撞的书架
+                    collidedBookshelf.element.style.boxShadow = '0 0 15px rgba(255, 215, 0, 0.5)';
+                    
+                    // 设置当前碰撞的书架
+                    currentCollidedBookshelf = collidedBookshelf;
+                    
+                    // 显示书架对应的文件夹名称
+                    bookshelfHint.textContent = `文件夹: ${collidedBookshelf.folder}`;
+                    bookshelfHint.style.opacity = '1';
+                } else {
+                    // 如果没有与书架碰撞，清除当前碰撞的书架
+                    currentCollidedBookshelf = null;
+                    
+                    // 隐藏书架提示
+                    bookshelfHint.style.opacity = '0';
+                }
+                
+                // 按空格键与NPC或书架交互
+                if (keys.interact && !isDialogueActive) {
+                    if (collidedNPC) {
+                        // 处理NPC交互
+                        interactWithNPC(collidedNPC.element);
+                        isDialogueActive = true;
+                    } else if (currentCollidedBookshelf) {
+                        // 处理书架交互，跳转到对应文件夹页面
+                        const transitionOverlay = document.createElement('div');
+                        transitionOverlay.style.cssText = `
+                            position: fixed;
+                            top: 0;
+                            left: 0;
+                            width: 100%;
+                            height: 100%;
+                            background-color: rgba(0, 0, 0, 0);
+                            z-index: 1000;
+                            transition: background-color 1s ease;
+                        `;
+                        document.body.appendChild(transitionOverlay);
+                        
+                        // 触发过渡效果
+                        setTimeout(() => {
+                            transitionOverlay.style.backgroundColor = 'rgba(0, 0, 0, 1)';
+                        }, 100);
+                        
+                        // 过渡效果结束后跳转到文档页面的对应文件夹
+                        setTimeout(() => {
+                            window.location.href = `document.html?category=${currentCollidedBookshelf.folder}`;
+                        }, 1100);
+                    }
                     // 重置交互键状态
                     keys.interact = false;
                 }
@@ -1519,6 +1847,9 @@
                 const playerWorldY = -worldPositionY + CONTAINER_HEIGHT / 2;
                 coordinatesDisplay.textContent = `坐标: ${Math.round(playerWorldX)}, ${Math.round(playerWorldY)}`;
                 
+                // 更新NPC位置
+                updateNPCPositions();
+                
                 // 请求下一帧
                 requestAnimationFrame(update);
             }
@@ -1526,6 +1857,18 @@
             // 生成图书柜
             function generateBookshelves() {
                 const bookshelvesContainer = document.getElementById('bookshelves');
+                
+                // 定义文件夹列表，与文档页面的文件夹对应
+                const folders = [
+                    "ai", "art", "computer", "frontend", 
+                    "game", "literature", "music", "occult",
+                    "physics", "ai", "art",
+                    "computer", "frontend", "game", "literature",
+                    "music", "occult", "physics", 
+                    "ai", "art", "computer", "frontend",
+                    "game", "literature", "music", "occult",
+                    "physics"
+                ];
                 
                 // 在房间周围创建图书柜
                 const positions = [
@@ -1566,7 +1909,7 @@
                 ];
                 
                 // 创建图书柜元素
-                positions.forEach(pos => {
+                positions.forEach((pos, index) => {
                     const bookshelf = document.createElement('div');
                     bookshelf.classList.add('bookshelf');
                     bookshelf.style.left = `${pos.x}px`;
@@ -1599,6 +1942,37 @@
                         bookshelf.appendChild(shelfDiv);
                     }
                     
+                    // 添加文件夹名称显示
+                    const folderName = folders[index % folders.length];
+                    const folderText = document.createElement('div');
+                    folderText.style.position = 'absolute';
+                    folderText.style.top = '15px';
+                    folderText.style.left = '50%';
+                    folderText.style.transform = 'translateX(-50%)';
+                    folderText.style.fontFamily = 'Georgia, "Times New Roman", serif';
+                    folderText.style.fontSize = '16px';
+                    folderText.style.fontWeight = 'bold';
+                    folderText.style.fontStyle = 'italic';
+                    folderText.style.color = '#f4e4bc';
+                    folderText.style.backgroundColor = 'rgba(81, 45, 16, 0.95)';
+                    folderText.style.backgroundImage = 'linear-gradient(135deg, rgba(81, 45, 16, 0.95) 0%, rgba(101, 67, 33, 0.95) 100%)';
+                    folderText.style.padding = '10px 20px';
+                    folderText.style.borderRadius = '5px';
+                    folderText.style.textAlign = 'center';
+                    folderText.style.zIndex = '5';
+                    folderText.style.pointerEvents = 'none';
+                    folderText.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.2)';
+                    folderText.style.textShadow = '1px 1px 2px rgba(0, 0, 0, 0.9)';
+                    folderText.style.letterSpacing = '0.8px';
+                    folderText.style.border = '2px solid #8B4513';
+                    folderText.style.borderImage = 'linear-gradient(135deg, #8B4513 0%, #A0522D 50%, #8B4513 100%) 1';
+                    folderText.style.textTransform = 'capitalize';
+                    folderText.style.lineHeight = '1.2';
+                    folderText.style.textDecoration = 'none';
+                    folderText.style.transition = 'all 0.3s ease';
+                    folderText.textContent = folderName;
+                    bookshelf.appendChild(folderText);
+                    
                     bookshelvesContainer.appendChild(bookshelf);
                         
                         // 记录图书柜位置信息用于碰撞检测和z-index管理
@@ -1607,7 +1981,8 @@
                             y: pos.y,
                             width: 120,
                             height: 200,
-                            element: bookshelf // 保存DOM元素引用
+                            element: bookshelf, // 保存DOM元素引用
+                            folder: folderName // 分配对应的文件夹
                         });
                 });
             }
@@ -1673,6 +2048,34 @@
                         // 对话结束，重置索引并关闭对话框
                         npcData.currentDialogueIndex = 0;
                         dialogueBox.classList.remove('active');
+                        
+                        // 检查是否是图书管理员NPC（位置为1500, 2250）
+                        if (npcData.x === 1500 && npcData.y === 2250) {
+                            // 添加过渡效果
+                            const transitionOverlay = document.createElement('div');
+                            transitionOverlay.style.cssText = `
+                                position: fixed;
+                                top: 0;
+                                left: 0;
+                                width: 100%;
+                                height: 100%;
+                                background-color: rgba(0, 0, 0, 0);
+                                z-index: 1000;
+                                transition: background-color 1s ease;
+                            `;
+                            document.body.appendChild(transitionOverlay);
+                            
+                            // 触发过渡效果
+                            setTimeout(() => {
+                                transitionOverlay.style.backgroundColor = 'rgba(0, 0, 0, 1)';
+                            }, 100);
+                            
+                            // 过渡效果结束后跳转到文档页面
+                            setTimeout(() => {
+                                window.location.href = 'document.html';
+                            }, 1100);
+                        }
+                        
                         // 直接调用清理函数，确保状态重置
                         cleanup();
                     } else {
@@ -1740,6 +2143,22 @@
             function generateNPCs() {
                 const npcContainer = document.getElementById('npcContainer');
                 
+                // 定义每个NPC的移动路线
+                const npcRoutes = [
+                    // NPC 0: 左上角附近 - 水平移动
+                    [{ x: 1000, y: 800 }, { x: 1200, y: 800 }, { x: 1000, y: 800 }],
+                    // NPC 1: 右上角附近 - 垂直移动
+                    [{ x: 1800, y: 800 }, { x: 1800, y: 1000 }, { x: 1800, y: 800 }],
+                    // NPC 2: 左下角附近 - 对角线移动
+                    [{ x: 1000, y: 1800 }, { x: 1200, y: 2000 }, { x: 1000, y: 1800 }],
+                    // NPC 3: 右下角附近 - 水平移动
+                    [{ x: 1800, y: 1800 }, { x: 1600, y: 1800 }, { x: 1800, y: 1800 }],
+                    // NPC 4: 中心位置 - 正方形移动
+                    [{ x: 1400, y: 1400 }, { x: 1500, y: 1400 }, { x: 1500, y: 1500 }, { x: 1400, y: 1500 }, { x: 1400, y: 1400 }],
+                    // NPC 5: 管理员 - 静止
+                    [{ x: 1500, y: 2250 }]
+                ];
+                
                 // NPC位置数据
                 const npcPositions = [
                     { x: 1000, y: 800 },    // 左上角附近
@@ -1747,11 +2166,11 @@
                     { x: 1000, y: 1800 },   // 左下角附近
                     { x: 1800, y: 1800 },   // 右下角附近
                     { x: 1400, y: 1400 },   // 中心位置
-                    { x: 1500, y: 2200 }    // 图书馆正下方（管理员NPC）
+                    { x: 1500, y: 2250 }    // 图书馆正下方（管理员NPC）- 向下移动了50px
                 ];
                 
                 // 创建NPC元素
-                npcPositions.forEach(pos => {
+                npcPositions.forEach((pos, index) => {
                     const npc = document.createElement('div');
                     npc.classList.add('npc');
                     npc.style.left = `${pos.x}px`;
@@ -1764,6 +2183,14 @@
                     // 创建NPC头部
                     const npcHead = document.createElement('div');
                     npcHead.classList.add('npc-head');
+                    
+                    // 创建NPC头发
+                    const npcHair = document.createElement('div');
+                    npcHair.classList.add('npc-hair');
+                    
+                    // 创建绅士帽
+                    const npcHat = document.createElement('div');
+                    npcHat.classList.add('npc-hat');
                     
                     // 创建NPC面部
                     const npcFace = document.createElement('div');
@@ -1823,6 +2250,8 @@
                     npc.appendChild(leftArm);
                     npc.appendChild(rightArm);
                     npc.appendChild(npcHead);
+                    npc.appendChild(npcHair); // 头发在头部上方
+                    npc.appendChild(npcHat); // 绅士帽在最上层
                     
                     // 添加到容器
                     npcContainer.appendChild(npc);
@@ -1835,7 +2264,7 @@
                         x: pos.x,
                         y: pos.y,
                         width: 40,
-                        height: 40,
+                        height: 48,
                         element: npc,
                         // 为每个NPC添加唯一ID
                         id: 'npc_' + npcsData.length,
@@ -1845,11 +2274,17 @@
                             '这里有很多有趣的书。',
                             '你喜欢阅读吗？'
                         ],
-                        currentDialogueIndex: 0
+                        currentDialogueIndex: 0,
+                        // 移动相关属性
+                        route: npcRoutes[index], // 移动路线
+                        currentRouteIndex: 0, // 当前路线点索引
+                        moveSpeed: 1, // 移动速度
+                        moveTimer: 0, // 移动计时器
+                        moveDelay: 5 // 移动延迟（每5帧移动一次）
                     };
                     
                     // 如果是图书馆正下方的NPC（管理员），设置不同的对话内容和样式
-                    if (pos.x === 1500 && pos.y === 2200) {
+                    if (pos.x === 1500 && pos.y === 2250) {
                         // 管理员对话内容
                         npcData.dialogues = [
                             '你好，我是这里的管理员。',
@@ -1857,11 +2292,84 @@
                             '如果需要帮助，可以随时来找我。',
                             '记得把看完的书放回原位。'
                         ];
-                        // 为管理员NPC添加特殊服装样式
-                        npc.querySelector('.npc-outfit').style.backgroundColor = '#800000'; // 深红色管理员服装
+                        
+                        // 为管理员NPC添加特殊样式
+                        const outfit = npc.querySelector('.npc-outfit');
+                        const leftLegEl = npc.querySelector('.npc-leg-left');
+                        const rightLegEl = npc.querySelector('.npc-leg-right');
+                        
+                        outfit.classList.add('librarian'); // 绿色上衣
+                        leftLegEl.classList.add('librarian'); // 蓝色裤子
+                        rightLegEl.classList.add('librarian'); // 蓝色裤子
+                        
+                        // 创建演讲台
+                        const lectern = document.createElement('div');
+                        lectern.classList.add('lectern');
+                        lectern.style.left = `${pos.x - 10}px`; // 居中对齐
+                        lectern.style.top = `${pos.y + 10}px`; // 在NPC前面
+                        npcContainer.appendChild(lectern);
                     }
                     
                     npcsData.push(npcData);
+                });
+            }
+            
+            // 更新NPC位置
+            function updateNPCPositions() {
+                npcsData.forEach(npc => {
+                    // 跳过管理员NPC（位置为1500, 2250）
+                    if (npc.x === 1500 && npc.y === 2250) {
+                        return;
+                    }
+                    
+                    // 更新移动计时器
+                    npc.moveTimer++;
+                    
+                    // 获取当前目标点
+                    const currentTarget = npc.route[npc.currentRouteIndex];
+                    
+                    // 计算移动方向和距离
+                    let dx = currentTarget.x - npc.x;
+                    let dy = currentTarget.y - npc.y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+                    
+                    // 检测是否正在移动
+                    const isMoving = distance > npc.moveSpeed;
+                    
+                    // 更新移动状态类
+                    if (isMoving) {
+                        npc.element.classList.add('walking');
+                        npc.element.classList.remove('moving');
+                    } else {
+                        npc.element.classList.remove('walking');
+                        npc.element.classList.remove('moving');
+                    }
+                    
+                    // 每moveDelay帧移动一次
+                    if (npc.moveTimer >= npc.moveDelay) {
+                        // 重置计时器
+                        npc.moveTimer = 0;
+                        
+                        if (distance <= npc.moveSpeed) {
+                            // 到达目标点，移动到下一个路线点
+                            npc.x = currentTarget.x;
+                            npc.y = currentTarget.y;
+                            
+                            // 更新路线点索引
+                            npc.currentRouteIndex = (npc.currentRouteIndex + 1) % npc.route.length;
+                        } else {
+                            // 向目标点移动
+                            const moveX = (dx / distance) * npc.moveSpeed;
+                            const moveY = (dy / distance) * npc.moveSpeed;
+                            
+                            npc.x += moveX;
+                            npc.y += moveY;
+                        }
+                        
+                        // 更新NPC元素位置
+                        npc.element.style.left = `${npc.x}px`;
+                        npc.element.style.top = `${npc.y}px`;
+                    }
                 });
             }
             

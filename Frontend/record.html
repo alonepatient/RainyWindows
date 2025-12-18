@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>生活记录 - 竖向翻页</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/transition.css">
+    <style>
+        /* 动漫风格背景和竖向翻页样式 */
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 99%, #fad0c4 100%);
+            position: relative;
+        }
+        
+        /* 动漫风格背景元素 */
+        .anime-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+        
+        .anime-bg::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000"><defs><linearGradient id="a" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:%23ff6b6b;stop-opacity:0.3"></stop><stop offset="100%" style="stop-color:%234ecdc4;stop-opacity:0.3"></stop></linearGradient></defs><g fill="url(%23a)"><circle cx="200" cy="200" r="50"></circle><circle cx="800" cy="300" r="80"></circle><circle cx="400" cy="700" r="60"></circle><circle cx="700" cy="800" r="70"></circle><circle cx="100" cy="800" r="40"></circle></g></svg>') repeat;
+            animation: float 20s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(5deg); }
+        }
+        
+        /* 翻页容器 */
+        .page-container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        /* 单页样式 */
+        .page {
+            position: absolute;
+            width: 60%;
+            max-width: 500px;
+            height: 90vh;
+            max-height: 700px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.98);
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            transition: all 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            transform-origin: center;
+            overflow: hidden;
+        }
+        
+        /* 页面内容 */
+        .page-content {
+            max-width: 100%;
+            width: 90%;
+            text-align: center;
+            padding: 1.5rem;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.8s ease;
+        }
+        
+        .page.active .page-content {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        /* 标题样式 */
+        .page-title {
+            font-size: 2rem;
+            color: #333;
+            margin-bottom: 1rem;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* 图片容器 */
+        .image-container {
+            width: 100%;
+            margin: 1rem 0;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            justify-content: center;
+        }
+        
+        /* 单张图片样式 */
+        .page-image {
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+            object-fit: cover;
+        }
+        
+        /* 图片布局 */
+        .page-image.single {
+            width: 100%;
+            max-width: 400px;
+            height: auto;
+        }
+        
+        /* 两张图片 */
+        .page-image.double {
+            width: 48%;
+            max-width: 200px;
+            height: 200px;
+        }
+        
+        /* 三张图片 */
+        .page-image.triple {
+            width: 31%;
+            max-width: 150px;
+            height: 150px;
+        }
+        
+        /* 九宫格图片 */
+        .page-image.grid {
+            width: 30%;
+            max-width: 120px;
+            height: 120px;
+        }
+        
+        .page-image:hover {
+            transform: scale(1.03);
+        }
+        
+        /* 页面文字 */
+        .page-text {
+            font-size: 1rem;
+            line-height: 1.5;
+            color: #666;
+            margin: 0.8rem 0;
+        }
+        
+        /* 日期样式 */
+        .page-date {
+            font-size: 0.8rem;
+            color: #999;
+            margin-top: 1rem;
+            font-style: italic;
+        }
+        
+        /* 翻页按钮 */
+        .page-nav {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 1rem;
+            z-index: 100;
+        }
+        
+        .nav-btn {
+            padding: 1rem 2rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .nav-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .nav-btn:active {
+            transform: translateY(0);
+        }
+        
+        .nav-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        /* 翻页指示器 */
+        .page-indicator {
+            position: fixed;
+            top: 50%;
+            right: 2rem;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            z-index: 100;
+        }
+        
+        .indicator-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: rgba(102, 126, 234, 0.5);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .indicator-dot.active {
+            width: 12px;
+            height: 12px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        /* 页面切换动画 */
+        .page.next {
+            transform: translateY(95%);
+            opacity: 0.3;
+        }
+        
+        .page.prev {
+            transform: translateY(-95%);
+            opacity: 0.3;
+        }
+        
+        /* 装饰元素 */
+        .decoration {
+            position: absolute;
+            font-size: 3rem;
+            opacity: 0.1;
+            animation: bounce 3s ease-in-out infinite;
+        }
+        
+        .decoration:nth-child(1) {
+            top: 10%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+        
+        .decoration:nth-child(2) {
+            top: 20%;
+            right: 15%;
+            animation-delay: 1s;
+        }
+        
+        .decoration:nth-child(3) {
+            bottom: 20%;
+            left: 15%;
+            animation-delay: 2s;
+        }
+        
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .page-title {
+                font-size: 2rem;
+            }
+            
+            .page-content {
+                padding: 1rem;
+            }
+            
+            .page-nav {
+                bottom: 1rem;
+            }
+            
+            .nav-btn {
+                padding: 0.8rem 1.5rem;
+                font-size: 0.9rem;
+            }
+            
+            .page-indicator {
+                right: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 动漫风格背景 -->
+    <div class="anime-bg"></div>
+    
+    <!-- 翻页容器 -->
+    <div class="page-container" id="pageContainer">
+        <!-- 页面1 -->
+        <div class="page active" data-page="1">
+            <div class="decoration">🌸</div>
+            <div class="page-content">
+                <h1 class="page-title">新征程</h1>
+                <div class="image-container">
+                    <img src="img/life/school.jpg" alt="新征程" class="page-image single">
+                </div>
+                <p class="page-text">从未离开过家的我独自北漂</p>
+                <p class="page-text">我将从这里开始我的新生活</p>
+                <p class="page-date">2025年9月3日</p>
+            </div>
+        </div>
+        
+        <!-- 页面2 -->
+        <!-- <div class="page next" data-page="2">
+            <div class="decoration">🌻</div>
+            <div class="page-content">
+                <h1 class="page-title">夏日小确幸</h1>
+                <div class="image-container">
+                    <img src="img/person/2.jpg" alt="夏日风景" class="page-image double">
+                    <img src="img/person/1.jpg" alt="夏日风景" class="page-image double">
+                </div>
+                <p class="page-text">夏天的夜晚，和家人一起在院子里乘凉。星星布满天空，萤火虫在草丛中飞舞。我们吃着西瓜，聊着家常，享受着这份宁静与幸福。</p>
+                <p class="page-text">生活中的小确幸，往往就藏在这些平凡的瞬间里。珍惜每一个当下，就是对生活最好的热爱。</p>
+                <p class="page-date">2025年7月20日</p>
+            </div>
+        </div> -->
+        
+        <!-- 页面3 -->
+        <!-- <div class="page next" data-page="3">
+            <div class="decoration">🍂</div>
+            <div class="page-content">
+                <h1 class="page-title">秋日私语</h1>
+                <div class="image-container">
+                    <img src="img/person/1.jpg" alt="秋日风景" class="page-image triple">
+                    <img src="img/person/2.jpg" alt="秋日风景" class="page-image triple">
+                    <img src="img/person/1.jpg" alt="秋日风景" class="page-image triple">
+                </div>
+                <p class="page-text">秋天是收获的季节，也是思考的季节。走在铺满落叶的小路上，听着脚下沙沙的声音，感受着大自然的变化。</p>
+                <p class="page-text">每一片落叶都有自己的故事，每一个季节都有独特的美丽。让我们放慢脚步，去发现生活中的美好。</p>
+                <p class="page-date">2025年10月8日</p>
+            </div>
+        </div> -->
+        
+        <!-- 页面4 -->
+        <!-- <div class="page next" data-page="4">
+            <div class="decoration">❄️</div>
+            <div class="page-content">
+                <h1 class="page-title">冬日恋歌</h1>
+                <div class="image-container">
+                    <img src="img/person/2.jpg" alt="冬日风景" class="page-image grid">
+                    <img src="img/person/1.jpg" alt="冬日风景" class="page-image grid">
+                    <img src="img/person/2.jpg" alt="冬日风景" class="page-image grid">
+                    <img src="img/person/1.jpg" alt="冬日风景" class="page-image grid">
+                    <img src="img/person/2.jpg" alt="冬日风景" class="page-image grid">
+                    <img src="img/person/1.jpg" alt="冬日风景" class="page-image grid">
+                    <img src="img/person/2.jpg" alt="冬日风景" class="page-image grid">
+                    <img src="img/person/1.jpg" alt="冬日风景" class="page-image grid">
+                    <img src="img/person/2.jpg" alt="冬日风景" class="page-image grid">
+                </div>
+                <p class="page-text">冬天的第一场雪，整个世界都变得洁白无瑕。和爱人一起堆雪人、打雪仗，仿佛回到了童年时光。</p>
+                <p class="page-text">寒冷的冬天，因为有爱的陪伴而变得温暖。愿我们都能在寒冷的日子里，找到属于自己的温暖。</p>
+                <p class="page-date">2025年12月25日</p>
+            </div>
+        </div>
+    </div> -->
+    
+    <!-- 翻页按钮 -->
+    <div class="page-nav">
+        <button class="nav-btn" id="prevBtn" disabled>上一页</button>
+        <button class="nav-btn" id="nextBtn">下一页</button>
+    </div>
+    
+    <!-- 翻页指示器 -->
+    <div class="page-indicator" id="pageIndicator">
+        <div class="indicator-dot active" data-page="1"></div>
+        <div class="indicator-dot" data-page="2"></div>
+        <div class="indicator-dot" data-page="3"></div>
+        <div class="indicator-dot" data-page="4"></div>
+    </div>
+    
+    <script>
+        // 页面切换功能
+        document.addEventListener('DOMContentLoaded', function() {
+            const pages = document.querySelectorAll('.page');
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            const indicators = document.querySelectorAll('.indicator-dot');
+            let currentPage = 1;
+            const totalPages = pages.length;
+            
+            // 更新页面状态
+            function updatePages() {
+                pages.forEach((page, index) => {
+                    const pageNum = index + 1;
+                    if (pageNum === currentPage) {
+                        page.classList.remove('prev', 'next');
+                        page.classList.add('active');
+                    } else if (pageNum < currentPage) {
+                        page.classList.remove('active', 'next');
+                        page.classList.add('prev');
+                    } else {
+                        page.classList.remove('active', 'prev');
+                        page.classList.add('next');
+                    }
+                });
+                
+                // 更新指示器
+                indicators.forEach((indicator, index) => {
+                    if (index + 1 === currentPage) {
+                        indicator.classList.add('active');
+                    } else {
+                        indicator.classList.remove('active');
+                    }
+                });
+                
+                // 更新按钮状态
+                prevBtn.disabled = currentPage === 1;
+                nextBtn.disabled = currentPage === totalPages;
+            }
+            
+            // 下一页
+            nextBtn.addEventListener('click', function() {
+                if (currentPage < totalPages) {
+                    currentPage++;
+                    updatePages();
+                }
+            });
+            
+            // 上一页
+            prevBtn.addEventListener('click', function() {
+                if (currentPage > 1) {
+                    currentPage--;
+                    updatePages();
+                }
+            });
+            
+            // 指示器点击
+            indicators.forEach(indicator => {
+                indicator.addEventListener('click', function() {
+                    currentPage = parseInt(this.dataset.page);
+                    updatePages();
+                });
+            });
+            
+            // 键盘导航
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'ArrowUp' || e.key === 'PageUp') {
+                    prevBtn.click();
+                } else if (e.key === 'ArrowDown' || e.key === 'PageDown') {
+                    nextBtn.click();
+                }
+            });
+            
+            // 触摸滑动
+            let startY = 0;
+            let endY = 0;
+            
+            document.addEventListener('touchstart', function(e) {
+                startY = e.touches[0].clientY;
+            });
+            
+            document.addEventListener('touchend', function(e) {
+                endY = e.changedTouches[0].clientY;
+                if (startY - endY > 50) {
+                    // 向上滑动，下一页
+                    nextBtn.click();
+                } else if (endY - startY > 50) {
+                    // 向下滑动，上一页
+                    prevBtn.click();
+                }
+            });
+            
+            // 鼠标滚轮事件
+            document.addEventListener('wheel', function(e) {
+                e.preventDefault();
+                if (e.deltaY > 0) {
+                    // 向下滚动，下一页
+                    nextBtn.click();
+                } else if (e.deltaY < 0) {
+                    // 向上滚动，上一页
+                    prevBtn.click();
+                }
+            });
+            
+            // 初始化
+            updatePages();
+        });
+        
+        // 添加额外的动画效果
+        document.addEventListener('DOMContentLoaded', function() {
+            // 页面加载时的动画
+            const pageContainer = document.getElementById('pageContainer');
+            pageContainer.style.opacity = '0';
+            pageContainer.style.transform = 'scale(0.95)';
+            
+            setTimeout(() => {
+                pageContainer.style.transition = 'all 0.8s ease';
+                pageContainer.style.opacity = '1';
+                pageContainer.style.transform = 'scale(1)';
+            }, 100);
+        });
+    </script>
+</body>
+</html>

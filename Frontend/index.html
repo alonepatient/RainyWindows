@@ -9,13 +9,35 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            image-rendering: pixelated;
+            image-rendering: -moz-crisp-edges;
+            image-rendering: crisp-edges;
+            border-radius: 0 !important;
+            font-smooth: never;
+            -webkit-font-smoothing: none;
+            -moz-osx-font-smoothing: none;
         }
         
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            font-family: 'Courier New', Courier, monospace, 'Press Start 2P';
             line-height: 1.6;
-            color: #333;
-            background-color: #f8f9fa;
+            color: #000;
+            background-color: #f0f0f0;
+            image-rendering: pixelated;
+            text-rendering: optimizeSpeed;
+            text-shadow: 1px 1px 0 #fff;
+            font-smooth: never;
+            -webkit-font-smoothing: none;
+            -moz-osx-font-smoothing: none;
+        }
+        
+        h1, h2, h3, h4, h5, h6, p, a, span, div, button, input, textarea, select {
+            font-smooth: never;
+            -webkit-font-smoothing: none;
+            -moz-osx-font-smoothing: none;
+            font-family: 'Courier New', Courier, monospace, 'Press Start 2P';
+            text-shadow: 1px 1px 0 #fff;
+            letter-spacing: 1px;
         }
         
         .container {
@@ -24,29 +46,59 @@
             padding: 0 20px;
         }
         
+        /* 为固定侧边导航留出空间 */
+        main.container {
+            padding: 20px 20px 20px 100px;
+            max-width: calc(1200px + 80px);
+        }
+        
+        /* 调整移动端菜单按钮位置 */
+        .mobile-menu-btn {
+            margin: 10px 0;
+        }
+        
         header {
-            background-color: #fff;
-            padding: 15px 0;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.08);
-            position: sticky;
+            background-color: transparent;
+            padding: 20px 0px;
+            position: fixed;
+            left: 0;
             top: 0;
+            height: 100vh;
+            width: 70px;
             z-index: 100;
             transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            box-shadow: none;
+            overflow: hidden;
+        }
+        
+        header:hover {
+            width: 150px;
+            padding: 20px;
         }
         
         header.scrolled {
-            padding: 10px 0;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.12);
+            background-color: rgba(0, 0,0, 0);
+            backdrop-filter: blur(10px);
         }
         
         .header-content {
             display: flex;
-            justify-content: space-between;
+            flex-direction: column;
             align-items: center;
+            gap: 30px;
+            width: 100%;
+            transition: all 0.3s ease;
+        }
+        
+        header:hover .header-content {
+            align-items: flex-start;
         }
         
         .logo {
-            font-size: 28px;
+            font-size: 18px;
             font-weight: 700;
             color: #333;
             text-decoration: none;
@@ -54,6 +106,7 @@
             display: flex;
             align-items: center;
             transition: all 0.3s ease;
+            white-space: nowrap;
         }
         
         .logo:hover {
@@ -63,22 +116,31 @@
         
         .nav-links {
             display: flex;
-            gap: 30px;
+            flex-direction: column;
+            gap: 20px;
             list-style: none;
+            padding: 0;
+            margin: 0;
+            width: 100%;
         }
         
         .nav-links a {
             text-decoration: none;
-            color: #666;
-            font-size: 15px;
-            font-weight: 500;
+            color: #333;
+            font-size: 16px;
+            font-weight: bold;
             position: relative;
             transition: all 0.3s ease;
-            padding: 5px 0;
+            padding: 10px 0;
+            display: flex;
+            align-items: center;
+            width: 100%;
+            white-space: nowrap;
         }
         
         .nav-links a:hover {
             color: #3498db;
+            text-shadow: 1px 1px 0 #000;
         }
         
         .nav-links a::after {
@@ -96,10 +158,147 @@
             width: 100%;
         }
         
-        .header-right {
+        /* 导航图标和文字样式 */
+        .nav-icon {
+            font-size: 20px;
+            margin-right: 10px;
+            display: inline-block;
+            width: 20px;
+            text-align: center;
+        }
+        
+        .nav-text {
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            margin-left: 5px;
+        }
+        
+        header:hover .nav-text {
+            opacity: 1;
+            visibility: visible;
+            margin-left: 10px;
+        }
+        
+        /* Logo图标样式 */
+        .logo .nav-icon {
+            margin-right: 0;
+        }
+        
+        .logo .nav-text {
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            margin-left: 5px;
+        }
+        
+        header:hover .logo .nav-text {
+            opacity: 1;
+            visibility: visible;
+            margin-left: 10px;
+        }
+        
+        .logo .nav-text span {
+            line-height: 1.2;
+        }
+        
+        /* 打赏图标样式 */
+        .donate-icon {
+            text-decoration: none;
+            color: #333;
+            font-size: 16px;
+            font-weight: bold;
+            position: relative;
+            transition: all 0.3s ease;
+            padding: 10px 0;
             display: flex;
             align-items: center;
-            gap: 20px;
+            width: 100%;
+            white-space: nowrap;
+            cursor: pointer;
+            margin-top: 380px;
+        }
+        
+        .donate-icon:hover {
+            color: #3498db;
+            text-shadow: 1px 1px 0 #000;
+        }
+        
+        .donate-icon::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: #3498db;
+            transition: width 0.3s ease;
+        }
+        
+        .donate-icon:hover::after {
+            width: 100%;
+        }
+        
+        /* 打赏弹窗样式 */
+        .donate-popup {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .donate-popup.active {
+            display: flex;
+        }
+        
+        .popup-content {
+            position: relative;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+            max-width: 90%;
+            max-height: 90%;
+            overflow: auto;
+        }
+        
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 24px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #666;
+            transition: color 0.3s ease;
+        }
+        
+        .close-btn:hover {
+            color: #3498db;
+        }
+        
+        .popup-image {
+            text-align: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .popup-image img {
+            max-width: 400px;
+            max-height: 70vh;
+            height: auto;
+            display: block;
         }
         
         .header-icon {
@@ -108,27 +307,30 @@
             cursor: pointer;
             transition: all 0.3s ease;
             padding: 5px;
-            border-radius: 50%;
+            border: 2px solid #000;
             display: flex;
             align-items: center;
             justify-content: center;
             width: 35px;
             height: 35px;
+            background-color: #fff;
         }
         
         .header-icon:hover {
             color: #3498db;
-            background-color: rgba(52, 152, 219, 0.1);
+            background-color: #fff;
             transform: translateY(-2px);
+            box-shadow: 2px 2px 0 #000;
         }
         
         /* 移动端菜单按钮 */
         .mobile-menu-btn {
             display: none;
-            background: none;
-            border: none;
+            background: #fff;
+            border: 2px solid #000;
             cursor: pointer;
             padding: 5px;
+            box-shadow: 2px 2px 0 #000;
         }
         
         .mobile-menu-btn .bar {
@@ -137,7 +339,7 @@
             height: 3px;
             margin: 5px auto;
             background-color: #333;
-            transition: all 0.3s ease;
+            transition: all 0.1s step-end;
         }
         
         .mobile-menu-btn.active .bar:nth-child(1) {
@@ -186,17 +388,126 @@
     }
     
     /* Hero Section */
-    .hero-section {
-    background-color: #ffffff;
-    padding: 30px;
-    border-radius: 12px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    position: relative;
+        .hero-section {
+        background-color: #ffffff;
+        padding: 30px;
+        box-shadow: 4px 4px 0 #000;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        position: relative;
+        overflow: hidden;
+        border: 4px solid #000;
+        background-image: 
+            linear-gradient(45deg, transparent 0%, rgba(0, 0, 0, 0.05) 100%),
+            repeating-linear-gradient(
+                0deg,
+                transparent 0px,
+                transparent 2px,
+                rgba(0, 0, 0, 0.05) 2px,
+                rgba(0, 0, 0, 0.05) 4px
+            );
+    }
+
+/* 技术栈图标背景 */
+.hero-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: 
+        linear-gradient(45deg, transparent 0%, rgba(0, 0, 0, 0.1) 100%),
+        repeating-linear-gradient(
+            0deg,
+            transparent 0px,
+            transparent 8px,
+            rgba(0, 0, 0, 0.1) 8px,
+            rgba(0, 0, 0, 0.1) 10px
+        );
+    z-index: 0;
+    animation: none;
+}
+
+/* 技术栈图标容器 */
+.tech-stack-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
     overflow: hidden;
-    border: 1px solid #e0e0e0;
+    opacity: 0.6;
+}
+
+/* 技术栈图标行 */
+.tech-row {
+    position: absolute;
+    display: flex;
+    gap: 40px;
+    align-items: center;
+    animation: scrollRow 25s linear infinite;
+    white-space: nowrap;
+}
+
+/* 第一行图标 - 斜向上 */
+.tech-row:nth-child(1) {
+    top: 20%;
+    left: -100%;
+    transform: rotate(-15deg);
+    animation-delay: 0s;
+}
+
+/* 第二行图标 - 斜向下 */
+.tech-row:nth-child(2) {
+    top: 50%;
+    left: -100%;
+    transform: rotate(15deg);
+    animation-delay: -8s;
+}
+
+/* 第三行图标 - 斜向上 */
+.tech-row:nth-child(3) {
+    top: 80%;
+    left: -100%;
+    transform: rotate(-10deg);
+    animation-delay: -16s;
+}
+
+/* 技术栈图标 */
+.tech-icon {
+    font-size: 32px;
+    opacity: 0.7;
+    transition: all 0.3s ease;
+    filter: grayscale(0.3);
+}
+
+.tech-icon:hover {
+    opacity: 1;
+    transform: scale(1.2);
+    filter: grayscale(0);
+}
+
+/* 滚动动画 */
+@keyframes scrollRow {
+    0% {
+        left: -100%;
+    }
+    100% {
+        left: 100%;
+    }
+}
+
+/* 背景旋转动画 */
+@keyframes rotateBackground {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
 }
 
 .hero-overlay {
@@ -397,16 +708,16 @@
         .social-icon {
             width: 55px;
             height: 55px;
-            border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 26px;
             color: #fff;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.1s step-end;
             position: relative;
-            overflow: hidden;
+            border: 2px solid #000;
+            box-shadow: 3px 3px 0 #000;
         }
         
         .social-icon::before {
@@ -418,12 +729,12 @@
             bottom: 0;
             background: linear-gradient(135deg, transparent 0%, rgba(255,255,255,0.2) 100%);
             opacity: 0;
-            transition: opacity 0.3s ease;
+            transition: opacity 0.1s step-end;
         }
         
         .social-icon:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 8px 15px rgba(0,0,0,0.15);
+            transform: translateY(-3px) translateX(-3px);
+            box-shadow: 5px 5px 0 #000;
         }
         
         .social-icon:hover::before {
@@ -442,51 +753,40 @@
         .hero-image {
             width: 320px;
             height: 220px;
-            border-radius: 16px;
             overflow: hidden;
             position: relative;
             z-index: 1;
-            box-shadow: 0 10px 25px rgba(52, 152, 219, 0.15);
-            transition: all 0.3s ease;
+            box-shadow: 3px 3px 0 #000;
+            transition: all 0.1s step-end;
             background: linear-gradient(135deg, #161627 0%, #1a1a2e 100%);
+            border: 2px solid #000;
         }
         
         .hero-image:hover {
-            transform: translateY(-5px) scale(1.02);
-            box-shadow: 0 15px 30px rgba(52, 152, 219, 0.2);
+            transform: translateY(-3px) translateX(-3px);
+            box-shadow: 6px 6px 0 #000;
         }
         
         .hero-image img {
             width: 100%;
             height: 100%;
             object-fit: contain;
-            transition: transform 0.5s ease;
+            transition: transform 0.1s step-end;
         }
         
         .hero-image:hover img {
             transform: scale(1.05) translateY(-5px);
         }
         
-        /* 添加光晕效果 */
+        /* 移除光晕效果，改为像素风格边框 */
         .hero-image::after {
             content: '';
             position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(52, 152, 219, 0.1) 0%, transparent 70%);
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             z-index: -1;
-            animation: glowPulse 4s ease-in-out infinite;
-        }
-        
-        @keyframes glowPulse {
-            0%, 100% {
-                opacity: 0.3;
-            }
-            50% {
-                opacity: 0.6;
-            }
         }
         
         .categories {
@@ -498,23 +798,23 @@
         .category-card {
             flex: 1;
             padding: 25px;
-            border-radius: 12px;
             color: #fff;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.1s step-end;
             position: relative;
             overflow: hidden;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            box-shadow: 3px 3px 0 #000;
+            border: 2px solid #000;
         }
         
         .category-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+            transform: translateY(-3px) translateX(-3px);
+            box-shadow: 6px 6px 0 #000;
         }
         
         .category-card h3 {
             font-size: 22px;
-            font-weight: 600;
+            font-weight: bold;
             margin-bottom: 8px;
             position: relative;
             z-index: 1;
@@ -650,27 +950,27 @@
         
         .article-card {
             background-color: #fff;
-            border-radius: 12px;
             overflow: hidden;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            box-shadow: 3px 3px 0 #000;
             margin-bottom: 30px;
             display: flex;
-            transition: all 0.3s ease;
+            transition: all 0.1s step-end;
             position: relative;
             overflow: visible;
             cursor: pointer;
+            border: 2px solid #000;
         }
         
         .article-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+            transform: translateY(-3px) translateX(-3px);
+            box-shadow: 6px 6px 0 #000;
         }
         
         /* 交互元素的统一反馈效果 */
         .user-social-icon,
         .activity-item,
         .view-more-btn {
-            transition: all 0.3s ease;
+            transition: all 0.1s step-end;
         }
         
         .user-social-icon:hover {
@@ -686,8 +986,8 @@
         }
         
         .article-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+            transform: translateY(-3px) translateX(-3px);
+            box-shadow: 6px 6px 0 #000;
         }
         
         .article-card:hover .article-image img {
@@ -700,13 +1000,14 @@
             height: 220px;
             overflow: hidden;
             position: relative;
+            border-right: 2px solid #000;
         }
         
         .article-image img {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            transition: transform 0.5s ease;
+            transition: transform 0.1s step-end;
         }
         
         .article-image::before {
@@ -799,20 +1100,20 @@
         .user-card {
             background-color: #fff;
             padding: 100px;
-            border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            box-shadow: 3px 3px 0 #000;
             margin-bottom: 30px;
             text-align: center;
+            border: 2px solid #000;
         }
         
         .user-avatar {
             width: 100px;
             height: 100px;
-            border-radius: 50%;
             margin: 0 auto 80px;
             overflow: hidden;
-            border: 3px solid #f0f0f0;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 3px solid #000;
+            transition: all 0.1s step-end;
+            box-shadow: 2px 2px 0 #000;
         }
         
         .user-avatar img {
@@ -823,7 +1124,7 @@
         
         .user-name {
             font-size: 18px;
-            font-weight: 600;
+            font-weight: bold;
             margin-bottom: 5px;
         }
         
@@ -842,19 +1143,22 @@
         .user-social-icon {
             width: 35px;
             height: 35px;
-            border-radius: 50%;
             background-color: #f0f0f0;
             display: flex;
             align-items: center;
             justify-content: center;
             color: #666;
             cursor: pointer;
-            transition: all 0.3s;
+            transition: all 0.1s step-end;
+            border: 2px solid #000;
+            box-shadow: 2px 2px 0 #000;
         }
         
         .user-social-icon:hover {
             background-color: #e0e0e0;
             color: #333;
+            transform: translateY(-2px) translateX(-2px);
+            box-shadow: 4px 4px 0 #000;
         }
         
         /* sidebar-card styles are now handled by starry-card */
@@ -885,9 +1189,10 @@
             justify-content: space-around;
             background-color: #fff;
             padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            box-shadow: 3px 3px 0 #000;
             margin-bottom: 30px;
+            border: 3px solid #000;
+            background-image: linear-gradient(45deg, transparent 0%, rgba(0, 0, 0, 0.05) 100%);
         }
         
         .user-stat {
@@ -897,15 +1202,17 @@
         .user-stat-number {
             display: block;
             font-size: 18px;
-            font-weight: 700;
-            color: #333;
+            font-weight: bold;
+            color: #000;
+            text-shadow: 1px 1px 0 #fff;
         }
         
         .user-stat-label {
             display: block;
             font-size: 12px;
-            color: #999;
+            color: #000;
             margin-top: 3px;
+            text-shadow: 1px 1px 0 #fff;
         }
         
         /* 热门标签 */
@@ -917,18 +1224,23 @@
         
         .tag-item {
             text-decoration: none;
-            color: #666;
+            color: #000;
             background-color: #f0f0f0;
             padding: 4px 12px;
-            border-radius: 16px;
             font-size: 14px;
-            transition: all 0.3s ease;
+            transition: all 0.1s step-end;
+            border: 2px solid #000;
+            box-shadow: 2px 2px 0 #000;
+            font-weight: bold;
+            text-shadow: 1px 1px 0 #fff;
         }
         
         .tag-item:hover {
             background-color: #3498db;
             color: #fff;
-            transform: translateY(-2px);
+            transform: translateY(-2px) translateX(-2px);
+            box-shadow: 4px 4px 0 #000;
+            text-shadow: 1px 1px 0 #000;
         }
         
         /* 最近活动 */
@@ -942,6 +1254,16 @@
             display: flex;
             align-items: flex-start;
             gap: 12px;
+            padding: 10px;
+            border: 2px solid #000;
+            box-shadow: 2px 2px 0 #000;
+            background-color: #fff;
+            transition: all 0.1s step-end;
+        }
+        
+        .activity-item:hover {
+            transform: translateX(5px);
+            box-shadow: 4px 4px 0 #000;
         }
         
         .activity-icon {
@@ -949,11 +1271,12 @@
             width: 30px;
             height: 30px;
             background-color: #f0f0f0;
-            border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             flex-shrink: 0;
+            border: 2px solid #000;
+            box-shadow: 1px 1px 0 #000;
         }
         
         .activity-content {
@@ -962,25 +1285,34 @@
         
         .activity-text {
             font-size: 14px;
-            color: #333;
+            color: #000;
             margin-bottom: 3px;
+            font-weight: bold;
+            text-shadow: 1px 1px 0 #fff;
         }
         
         .activity-time {
             font-size: 12px;
-            color: #999;
+            color: #000;
+            font-weight: bold;
+            text-shadow: 1px 1px 0 #fff;
         }
         
         .recommendation-card {
             display: block;
             text-decoration: none;
-            color: #333;
+            color: #000;
             margin-bottom: 15px;
-            transition: opacity 0.3s;
+            transition: all 0.1s step-end;
+            border: 2px solid #000;
+            box-shadow: 2px 2px 0 #000;
+            overflow: hidden;
         }
         
         .recommendation-card:hover {
             opacity: 0.8;
+            transform: translateY(-2px) translateX(-2px);
+            box-shadow: 4px 4px 0 #000;
         }
         
         .recommendation-card:last-child {
@@ -990,9 +1322,9 @@
         .recommendation-image {
             width: 100%;
             height: 150px;
-            border-radius: 8px;
             overflow: hidden;
             margin-bottom: 10px;
+            border-bottom: 2px solid #000;
         }
         
         .recommendation-image img {
@@ -1003,15 +1335,20 @@
         
         .recommendation-title {
             font-size: 16px;
-            font-weight: 600;
+            font-weight: bold;
             margin-bottom: 5px;
+            padding: 0 10px;
+            text-shadow: 1px 1px 0 #fff;
         }
         
         .recommendation-meta {
             display: flex;
             justify-content: space-between;
             font-size: 12px;
-            color: #999;
+            color: #000;
+            padding: 0 10px 10px;
+            font-weight: bold;
+            text-shadow: 1px 1px 0 #fff;
         }
         
         .view-more {
@@ -1021,13 +1358,23 @@
         
         .view-more-btn {
             text-decoration: none;
-            color: #3498db;
+            color: #000;
             font-size: 14px;
-            transition: color 0.3s;
+            transition: all 0.1s step-end;
+            border: 2px solid #000;
+            padding: 5px 15px;
+            background-color: #fff;
+            box-shadow: 2px 2px 0 #000;
+            font-weight: bold;
+            text-shadow: 1px 1px 0 #fff;
         }
         
         .view-more-btn:hover {
-            color: #2980b9;
+            color: #fff;
+            background-color: #000;
+            transform: translateX(3px);
+            box-shadow: 4px 4px 0 #000;
+            text-shadow: 1px 1px 0 #000;
         }
         
         .scroll-to-top {
@@ -1036,7 +1383,6 @@
             right: 30px;
             width: 50px;
             height: 50px;
-            border-radius: 50%;
             background-color: #3498db;
             color: #fff;
             display: flex;
@@ -1045,9 +1391,10 @@
             cursor: pointer;
             opacity: 0;
             transform: translateY(20px);
-            transition: all 0.3s ease;
+            transition: all 0.1s step-end;
             z-index: 1000;
-            box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+            box-shadow: 3px 3px 0 #000;
+            border: 3px solid #000;
         }
         
         .scroll-to-top.visible {
@@ -1057,17 +1404,238 @@
         
         .scroll-to-top:hover {
             background-color: #2980b9;
-            transform: translateY(-3px) scale(1.05);
-            box-shadow: 0 6px 16px rgba(52, 152, 219, 0.4);
+            transform: translateY(-3px) translateX(-3px);
+            box-shadow: 6px 6px 0 #000;
+        }
+        
+        /* Bilibili风格顶部banner动画样式 */
+        .bili-header__banner {
+            width: 100%;
+            height: 200px;
+            background-color: #f0f0f0;
+            position: relative;
+            overflow: hidden;
+            border-bottom: 4px solid #000;
+            box-shadow: 0 4px 0 #000;
+            margin-bottom: 20px;
+            animation: bannerFadeIn 1s ease-out;
+        }
+        
+        .banner-container {
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+        
+        .banner-layers {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+        
+        .banner-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.1s step-end;
+        }
+        
+        /* 背景层 */
+        .layer-bg {
+            background-size: cover;
+            background-position: center;
+        }
+        
+        /* 中层 */
+        .layer-middle {
+            background-size: cover;
+            background-position: center;
+        }
+        
+        /* 前景层 */
+        .layer-front {
+            background-size: cover;
+            background-position: center;
+        }
+        
+        /* 装饰层 */
+        .layer-decoration {
+            background-size: cover;
+            background-position: center;
+        }
+        
+        /* 淡入动画 */
+        @keyframes bannerFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* 缩放动画 */
+        @keyframes bannerScaleIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+        
+        /* 旋转动画 */
+        @keyframes bannerRotateIn {
+            from {
+                opacity: 0;
+                transform: rotate(5deg);
+            }
+            to {
+                opacity: 1;
+                transform: rotate(0deg);
+            }
+        }
+        
+        /* 脉冲动画 */
+        @keyframes bannerPulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.02);
+            }
+        }
+        
+        /* 流动背景动画 */
+        @keyframes bannerFlow {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+        
+        /* 持续浮动动画 */
+        @keyframes bannerFloat {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+        
+        /* 持续旋转动画 */
+        @keyframes bannerRotate {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        
+        /* 持续缩放动画 */
+        @keyframes bannerPulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.02);
+            }
+        }
+        
+        /* 闪烁动画 */
+        @keyframes bannerFlicker {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.8;
+            }
+        }
+        
+        /* 波浪动画 */
+        @keyframes bannerWave {
+            0% {
+                transform: translateX(0) translateY(0);
+            }
+            25% {
+                transform: translateX(10px) translateY(-5px);
+            }
+            50% {
+                transform: translateX(0) translateY(-10px);
+            }
+            75% {
+                transform: translateX(-10px) translateY(-5px);
+            }
+            100% {
+                transform: translateX(0) translateY(0);
+            }
+        }
+        
+        /* 元素流动动画 - 水平 */
+        @keyframes elementsFlowX {
+            from {
+                background-position: 0% 0%;
+            }
+            to {
+                background-position: 100% 0%;
+            }
+        }
+        
+        /* 元素流动动画 - 垂直 */
+        @keyframes elementsFlowY {
+            from {
+                background-position: 0% 0%;
+            }
+            to {
+                background-position: 0% 100%;
+            }
+        }
+        
+        /* banner内容 */
+        .banner-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            z-index: 10;
+            color: #fff;
+            text-shadow: 2px 2px 0 #000;
+        }
+        
+        .banner-title {
+            font-size: 36px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            letter-spacing: 2px;
+            text-shadow: 2px 2px 0 #000;
+        }
+        
+        .banner-subtitle {
+            font-size: 18px;
+            font-weight: bold;
+            letter-spacing: 1px;
+            text-shadow: 2px 2px 0 #000;
         }
         
         @media (max-width: 992px) {
             .nav-links {
                 gap: 20px;
-            }
-            
-            .header-right {
-                gap: 15px;
             }
         }
         
@@ -1110,10 +1678,6 @@
                 z-index: 100;
             }
             
-            .header-right {
-                gap: 10px;
-            }
-            
             /* 主要内容响应式 */
             .main-content {
                 flex-direction: column;
@@ -1154,10 +1718,19 @@
         text-align: center;
         padding: 30px 20px;
     }
-    
+
     .hero-main-content {
         flex-direction: column;
         width: 100%;
+    }
+
+    /* 移动端技术栈图标调整 */
+    .tech-icon {
+        font-size: 24px;
+    }
+
+    .tech-row {
+        gap: 20px;
     }
     
     .hero-sidebar-cards {
@@ -1257,11 +1830,35 @@
     </style>
 </head>
 <body>
+    <!-- Bilibili风格顶部banner动画 -->
+    <div class="bili-header__banner" id="bili-banner">
+        <div class="banner-container">
+            <div class="banner-layers">
+                <!-- 背景层 -->
+                <div class="banner-layer layer-bg" data-speed="0.1"></div>
+                <!-- 中层 -->
+                <div class="banner-layer layer-middle" data-speed="0.3"></div>
+                <!-- 前景层 -->
+                <div class="banner-layer layer-front" data-speed="0.5"></div>
+                <!-- 装饰层 -->
+                <div class="banner-layer layer-decoration" data-speed="0.7"></div>
+            </div>
+            <div class="banner-content">
+                <h1 class="banner-title">RainyWindows</h1>
+                <p class="banner-subtitle">分享所见 · 记录所思</p>
+            </div>
+        </div>
+    </div>
+    
     <header id="main-header">
         <div class="container">
             <div class="header-content">
-                <a href="#" class="logo">
-                    <span>RainyWindows</span>
+                <a href="index.html" class="logo">
+                    <span class="nav-icon">🌧️</span>
+                    <span class="nav-text">
+                        <span>Rainy</span>
+                        <span>Windows</span>
+                    </span>
                 </a>
                 
                 <!-- 移动端菜单按钮 -->
@@ -1273,21 +1870,31 @@
                 
                 <!-- 桌面端导航 -->
                 <nav class="nav-links" id="nav-links">
-                    <a href="#">分类</a>
-                    <a href="#">标签</a>
-                    <a href="#">归档</a>
-                    <a href="#">友链</a>
-                    <a href="#">关于</a>
+                    <a href="person.html"><span class="nav-icon">🏠</span><span class="nav-text">看看我</span></a>
+                    <a href="document.html"><span class="nav-icon">📚</span><span class="nav-text">资料</span></a>
+                    <a href="album.html"><span class="nav-icon">🎨</span><span class="nav-text">体验</span></a>
+                    <a href="studio.html"><span class="nav-icon">🎬</span><span class="nav-text">创造</span></a>
+                <!--<a href="timestamp-converter.html"><span class="nav-icon">🔧</span><span class="nav-text">工具</span></a>-->
                 </nav>
                 
-                <div class="header-right">
-                    <div class="header-icon" title="移动版本">📱</div>
-                    <div class="header-icon" title="通知">🔔</div>
-                    <div class="header-icon" title="搜索">🔍</div>
+                <!-- 打赏图标 -->
+                <div class="donate-icon" id="donate-icon">
+                    <span class="nav-icon">💰</span>
+                    <span class="nav-text">打赏</span>
                 </div>
             </div>
         </div>
     </header>
+    
+    <!-- 打赏弹窗 -->
+    <div class="donate-popup" id="donate-popup">
+        <div class="popup-content">
+            <button class="close-btn" id="close-btn">&times;</button>
+            <div class="popup-image">
+                <img src="img/person/payment.jpg" alt="打赏二维码">
+            </div>
+        </div>
+    </div>
     
     <main class="container">
         <!-- Main Content and Sidebar Container -->
@@ -1296,6 +1903,64 @@
             <div class="left-content">
                 <!-- Hero Section -->
                 <section class="hero-section">
+                    <!-- 技术栈图标背景 -->
+                    <div class="tech-stack-bg">
+                        <!-- 第一行图标 -->
+                        <div class="tech-row">
+                            <span class="tech-icon" title="HTML">🌐</span>
+                            <span class="tech-icon" title="CSS">🎨</span>
+                            <span class="tech-icon" title="JavaScript">⚡</span>
+                            <span class="tech-icon" title="React">⚛️</span>
+                            <span class="tech-icon" title="Vue">🟢</span>
+                            <span class="tech-icon" title="Node.js">🟩</span>
+                            <span class="tech-icon" title="Python">🐍</span>
+                            <span class="tech-icon" title="Java">☕</span>
+                            <span class="tech-icon" title="C++">++</span>
+                            <span class="tech-icon" title="Git">🔧</span>
+                            <span class="tech-icon" title="Docker">🐳</span>
+                            <span class="tech-icon" title="AWS">☁️</span>
+                            <span class="tech-icon" title="MongoDB">🍃</span>
+                            <span class="tech-icon" title="MySQL">🗄️</span>
+                            <span class="tech-icon" title="AI">🤖</span>
+                        </div>
+                        <!-- 第二行图标 -->
+                        <div class="tech-row">
+                            <span class="tech-icon" title="TypeScript">🔷</span>
+                            <span class="tech-icon" title="Sass">🎭</span>
+                            <span class="tech-icon" title="Webpack">📦</span>
+                            <span class="tech-icon" title="Vite">⚡</span>
+                            <span class="tech-icon" title="Next.js">🔼</span>
+                            <span class="tech-icon" title="Nuxt.js">🔼</span>
+                            <span class="tech-icon" title="Express">🚂</span>
+                            <span class="tech-icon" title="Django">🐍</span>
+                            <span class="tech-icon" title="Spring">🌸</span>
+                            <span class="tech-icon" title="Redis">🔴</span>
+                            <span class="tech-icon" title="PostgreSQL">🐘</span>
+                            <span class="tech-icon" title="GraphQL">📊</span>
+                            <span class="tech-icon" title="REST">🔗</span>
+                            <span class="tech-icon" title="WebSocket">🔄</span>
+                            <span class="tech-icon" title="CI/CD">🔄</span>
+                        </div>
+                        <!-- 第三行图标 -->
+                        <div class="tech-row">
+                            <span class="tech-icon" title="Tailwind CSS">💨</span>
+                            <span class="tech-icon" title="Bootstrap">🅱️</span>
+                            <span class="tech-icon" title="Material UI">🎨</span>
+                            <span class="tech-icon" title="Ant Design">🐜</span>
+                            <span class="tech-icon" title="Three.js">3️⃣</span>
+                            <span class="tech-icon" title="WebGL">🖼️</span>
+                            <span class="tech-icon" title="Canvas">🎨</span>
+                            <span class="tech-icon" title="Electron">💻</span>
+                            <span class="tech-icon" title="React Native">📱</span>
+                            <span class="tech-icon" title="Flutter">🦋</span>
+                            <span class="tech-icon" title="Kubernetes">☸️</span>
+                            <span class="tech-icon" title="Linux">🐧</span>
+                            <span class="tech-icon" title="Windows">🪟</span>
+                            <span class="tech-icon" title="macOS">🍎</span>
+                            <span class="tech-icon" title="DevOps">🔧</span>
+                        </div>
+                    </div>
+                    
                     <!-- 覆盖层图片 -->
                     <div class="hero-overlay">
                         <div class="explore-btn">随便逛逛</div>
@@ -1309,25 +1974,25 @@
                                 <p>blog.pengjiancheng.com</p>
                             </div>
                             <div class="social-icons">
-                                <div class="social-icon" title="React">⚛️</div>
-                                <div class="social-icon" title="Vue">🟢</div>
-                                <div class="social-icon" title="JavaScript">💻</div>
-                                <div class="social-icon" title="TypeScript">🔷</div>
-                                <div class="social-icon" title="Node.js">🌐</div>
-                                <div class="social-icon" title="CSS">🎨</div>
-                                <div class="social-icon" title="Git">📂</div>
-                                <div class="social-icon" title="Docker">🐳</div>
+                                <div class="social-icon" title="前端" onclick="window.open('markdown-document-site.html?category=frontend', '_blank')">🌐</div>
+                                <div class="social-icon" title="游戏开发" onclick="window.open('markdown-document-site.html?category=game', '_blank')">🎮</div>
+                                <div class="social-icon" title="AI" onclick="window.open('markdown-document-site.html?category=ai', '_blank')">🤖</div>
+                                <div class="social-icon" title="美术" onclick="window.open('markdown-document-site.html?category=art', '_blank')">🎨</div>
+                                <div class="social-icon" title="音乐" onclick="window.open('markdown-document-site.html?category=music', '_blank')">🎵</div>
+                                <div class="social-icon" title="文学" onclick="window.open('markdown-document-site.html?category=literature', '_blank')">📚</div>
+                                <div class="social-icon" title="神秘学" onclick="window.open('markdown-document-site.html?category=occult', '_blank')">🔮</div>
+                                <div class="social-icon" title="物理" onclick="window.open('markdown-document-site.html?category=physics', '_blank')">⚛️</div>
                             </div>
                         </div>
                         <div class="hero-image">
-                            <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='220' viewBox='0 0 320 220'%3E%3Cdefs%3E%3ClinearGradient id='cockpitGradient' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%233498db;stop-opacity:0.2'/%3E%3Cstop offset='100%25' style='stop-color:%233498db;stop-opacity:0.8'/%3E%3C/linearGradient%3E%3C/defs%3E%3C!-- 飞船驾驶舱背景 --%3E%3Crect width='320' height='220' fill='%23161627'/%3E%3C!-- 飞船驾驶舱内部结构 --%3E%3Cpath d='M0,30 L320,30' stroke='%23444' stroke-width='4'/%3E%3Cpath d='M0,200 L320,200' stroke='%23555' stroke-width='3'/%3E%3C!-- 驾驶舱边缘 --%3E%3Cpath d='M50,50 Q160,20 270,50 L270,170 Q160,190 50,170 Z' fill='none' stroke='%23666' stroke-width='8'/%3E%3Cpath d='M60,60 Q160,30 260,60 L260,160 Q160,180 60,160 Z' fill='%231a1a2e' stroke='%23555' stroke-width='2'/%3E%3C!-- 驾驶舱窗口 --%3E%3Ccircle cx='160' cy='110' r='70' fill='url(%23cockpitGradient)' stroke='%23888' stroke-width='4'/%3E%3Ccircle cx='160' cy='110' r='65' fill='%23a5e1ff'/%3E%3C!-- 窗外的云朵 --%3E%3Cpath d='M100,80 Q120,60 140,80 Q160,60 180,80 Q200,60 220,80 Q240,60 260,80' fill='%23e0f7ff' opacity='0.6'/%3E%3Cpath d='M100,140 Q120,120 140,140 Q160,120 180,140 Q200,120 220,140 Q240,120 260,140' fill='%23e0f7ff' opacity='0.6'/%3E%3C!-- 星星 --%3E%3Ccircle cx='120' cy='90' r='1.5' fill='%23fff' opacity='0.8'/%3E%3Ccircle cx='190' cy='80' r='1' fill='%23fff' opacity='0.6'/%3E%3Ccircle cx='210' cy='110' r='2' fill='%23fff' opacity='0.9'/%3E%3Ccircle cx='130' cy='130' r='1' fill='%23fff' opacity='0.7'/%3E%3Ccircle cx='170' cy='150' r='1.5' fill='%23fff' opacity='0.8'/%3E%3C!-- 小黑猫宇航员 --%3E%3Cg transform='translate(160,110)'%3E%3C!-- 头部 --%3E%3Ccircle cx='0' cy='0' r='30' fill='%23000' stroke='%23333' stroke-width='1'/%3E%3C!-- 耳朵 --%3E%3Cpath d='M-20,-30 L-15,-50 L0,-40 Z' fill='%23000' stroke='%23333' stroke-width='1'/%3E%3Cpath d='M20,-30 L15,-50 L0,-40 Z' fill='%23000' stroke='%23333' stroke-width='1'/%3E%3C!-- 身体和宇航服 --%3E%3Cpath d='M-20,20 C-20,40 -10,60 0,70 C10,60 20,40 20,20 Z' fill='%23ff8c00' stroke='%23ffa500' stroke-width='1'/%3E%3Cpath d='M-15,50 L15,50' stroke='%23ff6347' stroke-width='3'/%3E%3Cpath d='M-10,60 L10,60' stroke='%23ff6347' stroke-width='3'/%3E%3C!-- 手臂 --%3E%3Cpath d='M-20,20 C-40,15 -45,30 -30,40 Z' fill='%23ff8c00' stroke='%23ffa500' stroke-width='1'/%3E%3Cpath d='M20,20 C40,15 45,30 30,40 Z' fill='%23ff8c00' stroke='%23ffa500' stroke-width='1'/%3E%3C!-- 手和控制器 --%3E%3Ccircle cx='-30' cy='40' r='5' fill='%23000' stroke='%23333' stroke-width='1'/%3E%3Crect x='-35' y='35' width='10' height='10' rx='2' fill='%234682b4' stroke='%236495ed' stroke-width='1'/%3E%3Ccircle cx='-32' cy='38' r='2' fill='%23ff0000'/%3E%3C!-- 胡须 --%3E%3Cpath d='M-15,20 L-30,22' stroke='%23fff' stroke-width='1.5' fill='none'/%3E%3Cpath d='M-15,25 L-30,25' stroke='%23fff' stroke-width='1.5' fill='none'/%3E%3Cpath d='M-15,30 L-30,28' stroke='%23fff' stroke-width='1.5' fill='none'/%3E%3Cpath d='M15,20 L30,22' stroke='%23fff' stroke-width='1.5' fill='none'/%3E%3Cpath d='M15,25 L30,25' stroke='%23fff' stroke-width='1.5' fill='none'/%3E%3Cpath d='M15,30 L30,28' stroke='%23fff' stroke-width='1.5' fill='none'/%3E%3C!-- 眼睛反光 --%3E%3Ccircle cx='-20' cy='-10' r='1' fill='%23fff'/%3E%3Ccircle cx='20' cy='-10' r='1' fill='%23fff'/%3E%3C/g%3E%3C!-- 驾驶舱控制面板 --%3E%3Crect x='30' y='175' width='40' height='20' rx='2' fill='%23222' stroke='%23444' stroke-width='1'/%3E%3Ccircle cx='40' cy='185' r='2' fill='%23ff0000'/%3E%3Ccircle cx='50' cy='185' r='2' fill='%2300ff00'/%3E%3Ccircle cx='60' cy='185' r='2' fill='%230000ff'/%3E%3Crect x='250' y='175' width='40' height='20' rx='2' fill='%23222' stroke='%23444' stroke-width='1'/%3E%3Ccircle cx='260' cy='185' r='2' fill='%23ff0000'/%3E%3Ccircle cx='270' cy='185' r='2' fill='%2300ff00'/%3E%3Ccircle cx='280' cy='185' r='2' fill='%230000ff'/%3E%3C/svg%3E" alt="宇航员小黑猫在飞船驾驶舱" />
+                            <img src="img/person/1.jpg" alt="英雄图片" style="object-fit: cover;" />
                         </div>
                     </div>
                 </section>
                 
                 <!-- Categories -->
                 <section class="categories">
-                            <div class="category-card category-tech">
+                            <div class="category-card category-tech" onclick="window.location.href='http-100.html';" style="cursor: pointer;">
                                 <h3>创造</h3>
                                 <p>编程、设计与创意作品</p>
                             </div>
@@ -1335,7 +2000,7 @@
                                 <h3>收录</h3>
                                 <p>资料整理与知识库</p>
                             </div>
-                            <div class="category-card category-life">
+                            <div class="category-card category-life" onclick="window.location.href='album.html';" style="cursor: pointer;">
                                 <h3>体验</h3>
                                 <p>生活感悟与旅行见闻</p>
                             </div>
@@ -1365,17 +2030,17 @@
                 <!-- User Card -->
                 <div class="user-card" style="position: relative; padding-bottom: 50px; cursor: pointer;" onclick="window.location.href='person.html';">
                     <div class="user-avatar">
-                        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='45' fill='%232196f3'/%3E%3Ccircle cx='35' cy='40' r='8' fill='%23fff'/%3E%3Ccircle cx='65' cy='40' r='8' fill='%23fff'/%3E%3Cpath d='M30,65 Q50,75 70,65' stroke='%23fff' stroke-width='4' fill='none'/%3E%3C/svg%3E" alt="用户头像" />
+                        <img src="img/person/2.jpg" alt="用户头像" style="object-fit: cover;" />
                     </div>
                     <div class="random-quote" style="display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; font-size: 16px; color: #333; font-weight: 500; line-height: 1.4; max-width: 80%; opacity: 0; transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);">
                         <span class="quote-text"></span>
                     </div>
                     <div style="position: absolute; bottom: 10px; left: 10px;">
-                        <h3 class="user-name">penjc</h3>
-                        <p class="user-bio">技术博主</p>
+                        <h3 class="user-name">alonepatient</h3>
+                        <p class="user-bio">创造者</p>
                     </div>
                     <div class="user-social" style="position: absolute; bottom: 10px; right: 10px;">
-                        <div class="user-social-icon" onclick="event.stopPropagation();">🐦</div>
+                        <div class="user-social-icon" onclick="event.stopPropagation() ;" >🐦</div>
                         <div class="user-social-icon" onclick="event.stopPropagation();">🔔</div>
                         <div class="user-social-icon" onclick="event.stopPropagation();">📧</div>
                     </div>
@@ -1384,16 +2049,16 @@
                 <!-- User Stats -->
                 <div class="user-stats">
                     <div class="user-stat">
-                        <span class="user-stat-number">156</span>
+                        <span class="user-stat-number">0</span>
                         <span class="user-stat-label">文章</span>
                     </div>
                     <div class="user-stat">
-                        <span class="user-stat-number">4.2k</span>
-                        <span class="user-stat-label">粉丝</span>
+                        <span class="user-stat-number">3</span>
+                        <span class="user-stat-label">项目</span>
                     </div>
                     <div class="user-stat">
-                        <span class="user-stat-number">89</span>
-                        <span class="user-stat-label">分类</span>
+                        <span class="user-stat-number">0</span>
+                        <span class="user-stat-label">粉丝</span>
                     </div>
                 </div>
                 
@@ -1401,14 +2066,15 @@
                 <div class="sidebar-card">
                     <h3 class="sidebar-title">热门标签</h3>
                     <div class="tags-container">
-                        <a href="#" class="tag-item"># Java</a>
-                        <a href="#" class="tag-item"># Spring</a>
-                        <a href="#" class="tag-item"># 生活</a>
-                        <a href="#" class="tag-item"># 学习</a>
-                        <a href="#" class="tag-item"># 技术</a>
-                        <a href="#" class="tag-item"># 前端</a>
-                        <a href="#" class="tag-item"># 后端</a>
-                        <a href="#" class="tag-item"># 数据库</a>
+                        <a href="#" class="tag-item"># C/C++</a>
+                        <a href="#" class="tag-item"># Python</a>
+                        <a href="#" class="tag-item"># Qt</a>
+                        <a href="#" class="tag-item"># 人工智能</a>
+                        <a href="#" class="tag-item"># 神秘学</a>
+                        <a href="#" class="tag-item"># 物理学</a>
+                        <a href="#" class="tag-item"># 文学</a>
+                        <a href="#" class="tag-item"># 游戏开发</a>
+                        <a href="#" class="tag-item"># 艺术</a>
                     </div>
                 </div>
                 
@@ -1419,87 +2085,166 @@
                         <div class="activity-item">
                             <div class="activity-icon">📝</div>
                             <div class="activity-content">
-                                <p class="activity-text">发布了新文章</p>
-                                <p class="activity-time">2小时前</p>
+                                <p class="activity-text">文章编写ing...</p>
+                                <p class="activity-time">loading...</p>
                             </div>
                         </div>
                         <div class="activity-item">
                             <div class="activity-icon">💬</div>
                             <div class="activity-content">
-                                <p class="activity-text">回复了评论</p>
-                                <p class="activity-time">昨天</p>
+                                <p class="activity-text">学习新知识ing...</p>
+                                <p class="activity-time">everyday</p>
                             </div>
                         </div>
                         <div class="activity-item">
                             <div class="activity-icon">❤️</div>
                             <div class="activity-content">
-                                <p class="activity-text">收到了点赞</p>
-                                <p class="activity-time">3天前</p>
+                                <p class="activity-text">项目编写ing...</p>
+                                <p class="activity-time">任我行</p>
                             </div>
                         </div>
                     </div>
                 </div>
             </aside>
             
-            <div class="content-wrapper">
-                <!-- Breadcrumb -->
-                <nav class="breadcrumb">
-                    <a href="#">首页</a>
-                    <span>›</span>
-                    <a href="#">生活</a>
-                    <span>›</span>
-                    <a href="#">学习</a>
-                    <span>›</span>
-                    <a href="#">技术</a>
-                    <span>›</span>
-                    <a href="#">更多</a>
-                </nav>
-                
-                <!-- Articles -->
-                <section class="articles">
-                    <article class="article-card">
-                        <div class="article-image">
-                            <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='200' viewBox='0 0 300 200'%3E%3Crect width='300' height='200' fill='%23d32f2f'/%3E%3Cpath d='M50,180 L150,80 L250,180 Z' fill='%23f44336'/%3E%3Ccircle cx='150' cy='130' r='20' fill='%23ff9800'/%3E%3C/svg%3E" alt="文章图片" />
-                        </div>
-                        <div class="article-content">
-                            <div class="article-meta">
-                                <span class="article-tag">技术</span>
-                                <span class="article-tag">解析</span>
-                                <span class="article-tag">未读</span>
-                            </div>
-                            <h2 class="article-title">面向对象手写 Spring IoC - Bean 的实例化与依赖注入</h2>
-                            <p class="article-excerpt">本文将深入探讨Spring IoC容器的核心原理，通过手写实现Bean的实例化与依赖注入，帮助读者更好地理解Spring框架的工作机制。</p>
-                            <div class="article-footer">
-                                <div class="article-tags">
-                                    <span class="article-tag"># Java</span>
-                                    <span class="article-tag"># Spring</span>
+            <div class="content-wrapper" data-v-e3b4b439>
+                <!-- GameZone风格内容 -->
+                <div class="gamezone-container" style="background-color: #fff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.08); padding: 24px;">
+                    <!-- 照片公告板组件 -->
+                    <div class="photo-banner" style="position: relative; width: 100%; height: 300px; border-radius: 12px; overflow: hidden; margin-bottom: 24px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+                        <!-- 轮播图片容器 -->
+                        <div class="banner-slides" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; transition: transform 0.5s ease-in-out;">
+                            <!-- 轮播项1 -->
+                            <div class="banner-slide" style="min-width: 100%; height: 100%; position: relative; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center; overflow: hidden;">
+                                <div class="slide-content" style="position: relative; z-index: 2; text-align: center; color: white; padding: 20px;">
+                                    <h2 class="slide-title" style="font-size: 32px; font-weight: bold; margin-bottom: 12px; text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">虚拟技术</h2>
+                                    <p class="slide-description" style="font-size: 18px; margin-bottom: 20px; text-shadow: 1px 1px 2px rgba(0,0,0,0.3);">第九艺术世界创造者</p>
+                                    <a href="#" class="slide-button" style="display: inline-block; padding: 12px 24px; background-color: rgba(255,255,255,0.2); color: white; text-decoration: none; border-radius: 6px; font-weight: 500; transition: all 0.3s ease; border: 1px solid rgba(255,255,255,0.3);">立即报名</a>
                                 </div>
-                                <div class="article-date">2025-03-06</div>
+                                <div class="slide-image" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0.4;">
+                                    <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='300' viewBox='0 0 800 300'%3E%3Crect width='800' height='300' fill='%23667eea'/%3E%3Cg opacity='0.3'%3E%3Ccircle cx='200' cy='100' r='80' fill='%23764ba2'/%3E%3Ccircle cx='600' cy='200' r='100' fill='%23764ba2'/%3E%3Ccircle cx='400' cy='50' r='60' fill='%23764ba2'/%3E%3C/g%3E%3C/svg%3E" alt="游戏开发大赛" style="width: 100%; height: 100%; object-fit: cover;" />
+                                </div>
+                            </div>
+                            
+                            <!-- 轮播项2 -->
+                            <div class="banner-slide" style="min-width: 100%; height: 100%; position: relative; background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); display: flex; align-items: center; justify-content: center; overflow: hidden;">
+                                <div class="slide-content" style="position: relative; z-index: 2; text-align: center; color: white; padding: 20px;">
+                                    <h2 class="slide-title" style="font-size: 32px; font-weight: bold; margin-bottom: 12px; text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">团队协作工具</h2>
+                                    <p class="slide-description" style="font-size: 18px; margin-bottom: 20px; text-shadow: 1px 1px 2px rgba(0,0,0,0.3);">全新升级，提升团队开发效率</p>
+                                    <a href="#" class="slide-button" style="display: inline-block; padding: 12px 24px; background-color: rgba(255,255,255,0.2); color: white; text-decoration: none; border-radius: 6px; font-weight: 500; transition: all 0.3s ease; border: 1px solid rgba(255,255,255,0.3);">了解详情</a>
+                                </div>
+                                <div class="slide-image" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0.4;">
+                                    <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='300' viewBox='0 0 800 300'%3E%3Crect width='800' height='300' fill='%23f093fb'/%3E%3Cg opacity='0.3'%3E%3Crect x='100' y='50' width='150' height='150' fill='%23f5576c' transform='rotate(45 175 125)'/%3E%3Crect x='500' y='100' width='200' height='200' fill='%23f5576c' transform='rotate(-30 600 200)'/%3E%3C/g%3E%3C/svg%3E" alt="团队协作工具" style="width: 100%; height: 100%; object-fit: cover;" />
+                                </div>
+                            </div>
+                            
+                            <!-- 轮播项3 -->
+                            <div class="banner-slide" style="min-width: 100%; height: 100%; position: relative; background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); display: flex; align-items: center; justify-content: center; overflow: hidden;">
+                                <div class="slide-content" style="position: relative; z-index: 2; text-align: center; color: white; padding: 20px;">
+                                    <h2 class="slide-title" style="font-size: 32px; font-weight: bold; margin-bottom: 12px; text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">艺术展示</h2>
+                                    <p class="slide-description" style="font-size: 18px; margin-bottom: 20px; text-shadow: 1px 1px 2px rgba(0,0,0,0.3);">绘画、摄影、前端、行为艺术</p>
+                                    <a href="#" class="slide-button" style="display: inline-block; padding: 12px 24px; background-color: rgba(255,255,255,0.2); color: white; text-decoration: none; border-radius: 6px; font-weight: 500; transition: all 0.3s ease; border: 1px solid rgba(255,255,255,0.3);">立即体验</a>
+                                </div>
+                                <div class="slide-image" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0.4;">
+                                    <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='300' viewBox='0 0 800 300'%3E%3Crect width='800' height='300' fill='%234facfe'/%3E%3Cg opacity='0.3'%3E%3Cpolygon points='200,100 300,50 400,150 300,200' fill='%2300f2fe'/%3E%3Cpolygon points='500,150 600,100 700,200 600,250' fill='%2300f2fe'/%3E%3C/g%3E%3C/svg%3E" alt="热门游戏展示" style="width: 100%; height: 100%; object-fit: cover;" />
+                                </div>
+                            </div>
+                            
+                            <!-- 轮播项4 -->
+                            <div class="banner-slide" style="min-width: 100%; height: 100%; position: relative; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center; overflow: hidden;">
+                                <div class="slide-content" style="position: relative; z-index: 2; text-align: center; color: white; padding: 20px;">
+                                    <h2 class="slide-title" style="font-size: 32px; font-weight: bold; margin-bottom: 12px; text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">游戏开发大赛</h2>
+                                    <p class="slide-description" style="font-size: 18px; margin-bottom: 20px; text-shadow: 1px 1px 2px rgba(0,0,0,0.3);">丰厚奖金等你来拿，展示你的创意才华</p>
+                                    <a href="#" class="slide-button" style="display: inline-block; padding: 12px 24px; background-color: rgba(255,255,255,0.2); color: white; text-decoration: none; border-radius: 6px; font-weight: 500; transition: all 0.3s ease; border: 1px solid rgba(255,255,255,0.3);">立即报名</a>
+                                </div>
+                                <div class="slide-image" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0.4;">
+                                    <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='300' viewBox='0 0 800 300'%3E%3Crect width='800' height='300' fill='%23667eea'/%3E%3Cg opacity='0.3'%3E%3Ccircle cx='200' cy='100' r='80' fill='%23764ba2'/%3E%3Ccircle cx='600' cy='200' r='100' fill='%23764ba2'/%3E%3Ccircle cx='400' cy='50' r='60' fill='%23764ba2'/%3E%3C/g%3E%3C/svg%3E" alt="游戏开发大赛" style="width: 100%; height: 100%; object-fit: cover;" />
+                                </div>
+                            </div>
+                            
+                            <!-- 轮播项5 (轮播项1的副本，用于无缝循环) -->
+                            <div class="banner-slide" style="min-width: 100%; height: 100%; position: relative; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center; overflow: hidden;">
+                                <div class="slide-content" style="position: relative; z-index: 2; text-align: center; color: white; padding: 20px;">
+                                    <h2 class="slide-title" style="font-size: 32px; font-weight: bold; margin-bottom: 12px; text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">虚拟技术</h2>
+                                    <p class="slide-description" style="font-size: 18px; margin-bottom: 20px; text-shadow: 1px 1px 2px rgba(0,0,0,0.3);">第九艺术世界创造者</p>
+                                    <a href="#" class="slide-button" style="display: inline-block; padding: 12px 24px; background-color: rgba(255,255,255,0.2); color: white; text-decoration: none; border-radius: 6px; font-weight: 500; transition: all 0.3s ease; border: 1px solid rgba(255,255,255,0.3);">立即报名</a>
+                                </div>
+                                <div class="slide-image" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0.4;">
+                                    <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='300' viewBox='0 0 800 300'%3E%3Crect width='800' height='300' fill='%23667eea'/%3E%3Cg opacity='0.3'%3E%3Ccircle cx='200' cy='100' r='80' fill='%23764ba2'/%3E%3Ccircle cx='600' cy='200' r='100' fill='%23764ba2'/%3E%3Ccircle cx='400' cy='50' r='60' fill='%23764ba2'/%3E%3C/g%3E%3C/svg%3E" alt="虚拟技术" style="width: 100%; height: 100%; object-fit: cover;" />
+                                </div>
                             </div>
                         </div>
-                    </article>
+                        
+                        <!-- 指示器 -->
+                        <div class="banner-indicators" style="position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); display: flex; gap: 10px; z-index: 3;">
+                            <button class="indicator" style="width: 12px; height: 12px; border-radius: 50%; background-color: rgba(255,255,255,0.5); border: none; cursor: pointer; transition: all 0.3s ease;"></button>
+                            <button class="indicator" style="width: 12px; height: 12px; border-radius: 50%; background-color: rgba(255,255,255,0.5); border: none; cursor: pointer; transition: all 0.3s ease;"></button>
+                            <button class="indicator" style="width: 12px; height: 12px; border-radius: 50%; background-color: rgba(255,255,255,0.5); border: none; cursor: pointer; transition: all 0.3s ease;"></button>
+                            <button class="indicator" style="width: 12px; height: 12px; border-radius: 50%; background-color: rgba(255,255,255,0.5); border: none; cursor: pointer; transition: all 0.3s ease;"></button>
+                        </div>
+                        
+                        <!-- 控制按钮 -->
+                        <button class="banner-control prev" style="position: absolute; top: 50%; left: 20px; transform: translateY(-50%); width: 40px; height: 40px; background-color: rgba(255,255,255,0.2); color: white; border: none; border-radius: 50%; font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.3s ease; z-index: 3;">
+                            &lt;
+                        </button>
+                        <button class="banner-control next" style="position: absolute; top: 50%; right: 20px; transform: translateY(-50%); width: 40px; height: 40px; background-color: rgba(255,255,255,0.2); color: white; border: none; border-radius: 50%; font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.3s ease; z-index: 3;">
+                            &gt;
+                        </button>
+                    </div>
                     
-                    <article class="article-card">
-                        <div class="article-image">
-                            <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='200' viewBox='0 0 300 200'%3E%3Crect width='300' height='200' fill='%23388e3c'/%3E%3Cpath d='M50,180 L150,80 L250,180 Z' fill='%234caf50'/%3E%3Ccircle cx='150' cy='130' r='20' fill='%238bc34a'/%3E%3C/svg%3E" alt="文章图片" />
-                        </div>
-                        <div class="article-content">
-                            <div class="article-meta">
-                                <span class="article-tag">技术</span>
-                                <span class="article-tag">未读</span>
+                    <!-- 核心内容区域 -->
+                    <div class="gamezone-core" style="background-color: #f8f9fa; border-radius: 12px; padding: 24px; margin-bottom: 24px;">
+                        <h2 class="core-title" style="font-size: 20px; font-weight: bold; color: #333; margin-bottom: 20px; text-align: center;">组队展示创意，找到志同道合的伙伴</h2>
+                        
+                        <!-- 功能卡片网格 -->
+                        <div class="feature-grid" style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; overflow-x: auto;">
+                            <div class="feature-card" style="background-color: #fff; border-radius: 8px; padding: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); transition: all 0.3s ease; text-align: center;">
+                                <div class="feature-icon" style="font-size: 48px; margin-bottom: 12px; color: #3498db;">🔍</div>
+                                <h3 class="feature-title" style="font-size: 16px; font-weight: bold; color: #333; margin-bottom: 8px;">发现</h3>
+                                <p class="feature-desc" style="color: #666; font-size: 14px; line-height: 1.4;">探索各类创意项目，发现新的灵感来源</p>
                             </div>
-                            <h2 class="article-title">面向对象手写 Spring IoC - BeanDefinition 加载与解析</h2>
-                            <p class="article-excerpt">本文将详细介绍Spring IoC容器中BeanDefinition的加载与解析过程，通过手写实现帮助读者深入理解Spring框架的底层实现原理。</p>
-                            <div class="article-footer">
-                                <div class="article-tags">
-                                    <span class="article-tag"># Java</span>
-                                    <span class="article-tag"># Spring</span>
-                                </div>
-                                <div class="article-date">2025-03-05</div>
+                            
+                            <div class="feature-card" style="background-color: #fff; border-radius: 8px; padding: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); transition: all 0.3s ease; text-align: center;">
+                                <div class="feature-icon" style="font-size: 48px; margin-bottom: 12px; color: #2ecc71;">📝</div>
+                                <h3 class="feature-title" style="font-size: 16px; font-weight: bold; color: #333; margin-bottom: 8px;">立项</h3>
+                                <p class="feature-desc" style="color: #666; font-size: 14px; line-height: 1.4;">创建项目计划，明确目标和执行路径</p>
+                            </div>
+                            
+                            <div class="feature-card" style="background-color: #fff; border-radius: 8px; padding: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); transition: all 0.3s ease; text-align: center;">
+                                <div class="feature-icon" style="font-size: 48px; margin-bottom: 12px; color: #e67e22;">📦</div>
+                                <h3 class="feature-title" style="font-size: 16px; font-weight: bold; color: #333; margin-bottom: 8px;">资源</h3>
+                                <p class="feature-desc" style="color: #666; font-size: 14px; line-height: 1.4;">获取项目所需资源，支持项目顺利进行</p>
+                            </div>
+                            
+                            <div class="feature-card" style="background-color: #fff; border-radius: 8px; padding: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); transition: all 0.3s ease; text-align: center;">
+                                <div class="feature-icon" style="font-size: 48px; margin-bottom: 12px; color: #9b59b6;">👥</div>
+                                <h3 class="feature-title" style="font-size: 16px; font-weight: bold; color: #333; margin-bottom: 8px;">组队</h3>
+                                <p class="feature-desc" style="color: #666; font-size: 14px; line-height: 1.4;">寻找志同道合的伙伴，组建优秀团队</p>
                             </div>
                         </div>
-                    </article>
-                </section>
+                    </div>
+                </div>
+                
+                <!-- 添加CSS样式 -->
+                <style>
+                    /* GameZone风格样式 */
+                    .gamezone-container {
+                        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+                    }
+                    
+                    .feature-card:hover {
+                        transform: translateY(-2px);
+                        box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+                    }
+                    
+                    /* 响应式设计 */
+                    @media (max-width: 768px) {
+                        .feature-grid {
+                            grid-template-columns: repeat(4, minmax(0, 1fr));
+                            overflow-x: auto;
+                        }
+                    }
+                </style>
             </div>
         </div>
     </main>
@@ -1557,6 +2302,205 @@
             });
         });
         
+        // 照片公告板轮播功能
+        const photoBanner = document.querySelector('.photo-banner');
+        if (photoBanner) {
+            const slidesContainer = photoBanner.querySelector('.banner-slides');
+            const slides = photoBanner.querySelectorAll('.banner-slide');
+            const indicators = photoBanner.querySelectorAll('.indicator');
+            const prevBtn = photoBanner.querySelector('.banner-control.prev');
+            const nextBtn = photoBanner.querySelector('.banner-control.next');
+            
+            let currentIndex = 0;
+            let isTransitioning = false;
+            const slideInterval = 5000;
+            let autoPlayTimer;
+            // 轮播方向：true表示正向（从左到右），false表示反向（从右到左）
+            const carouselDirection = true; // 始终保持一个方向
+            // 真实幻灯片数量（不包括副本）
+            const realSlideCount = 4;
+            
+            // 更新指示器状态
+            function updateIndicators() {
+                // 计算当前真实索引（处理副本幻灯片的情况）
+                const realIndex = currentIndex % realSlideCount;
+                
+                indicators.forEach((indicator, index) => {
+                    if (index === realIndex) {
+                        indicator.style.width = '24px';
+                        indicator.style.height = '12px';
+                        indicator.style.borderRadius = '6px';
+                        indicator.style.backgroundColor = 'rgba(255,255,255,0.9)';
+                    } else {
+                        indicator.style.width = '12px';
+                        indicator.style.height = '12px';
+                        indicator.style.borderRadius = '50%';
+                        indicator.style.backgroundColor = 'rgba(255,255,255,0.5)';
+                    }
+                });
+            }
+            
+            // 切换到指定幻灯片
+            function goToSlide(index) {
+                if (isTransitioning) return;
+                
+                isTransitioning = true;
+                
+                // 更新当前索引
+                currentIndex = index;
+                
+                // 应用变换
+                slidesContainer.style.transform = `translateX(-${currentIndex * 100}%)`;
+                
+                // 更新指示器
+                updateIndicators();
+                
+                // 重置过渡状态
+                setTimeout(() => {
+                    isTransitioning = false;
+                }, 500);
+                
+                // 重置自动播放计时器
+                resetAutoPlay();
+            }
+            
+            // 下一张幻灯片（实现无缝循环）
+            function nextSlide() {
+                if (isTransitioning) return;
+                
+                isTransitioning = true;
+                currentIndex++;
+                
+                // 应用变换
+                slidesContainer.style.transform = `translateX(-${currentIndex * 100}%)`;
+                
+                // 更新指示器
+                updateIndicators();
+                
+                // 检查是否到达最后一个副本幻灯片
+                if (currentIndex === realSlideCount) {
+                    // 当过渡动画结束后，立即切换到第一张幻灯片，但不使用过渡动画
+                    setTimeout(() => {
+                        // 禁用过渡动画
+                        slidesContainer.style.transition = 'none';
+                        // 切换到第一张幻灯片
+                        currentIndex = 0;
+                        slidesContainer.style.transform = `translateX(0%)`;
+                        // 重新启用过渡动画
+                        setTimeout(() => {
+                            slidesContainer.style.transition = 'transform 0.5s ease-in-out';
+                            isTransitioning = false;
+                        }, 50);
+                    }, 500);
+                } else {
+                    // 正常过渡结束
+                    setTimeout(() => {
+                        isTransitioning = false;
+                    }, 500);
+                }
+                
+                // 重置自动播放计时器
+                resetAutoPlay();
+            }
+            
+            // 上一张幻灯片
+            function prevSlide() {
+                if (isTransitioning) return;
+                
+                isTransitioning = true;
+                
+                // 如果当前是第一张幻灯片，先切换到副本幻灯片，然后无缝过渡
+                if (currentIndex === 0) {
+                    // 禁用过渡动画
+                    slidesContainer.style.transition = 'none';
+                    // 切换到副本幻灯片
+                    currentIndex = realSlideCount;
+                    slidesContainer.style.transform = `translateX(-${currentIndex * 100}%)`;
+                    // 重新启用过渡动画
+                    setTimeout(() => {
+                        slidesContainer.style.transition = 'transform 0.5s ease-in-out';
+                        // 过渡到真实的最后一张幻灯片
+                        currentIndex--;
+                        slidesContainer.style.transform = `translateX(-${currentIndex * 100}%)`;
+                        // 更新指示器
+                        updateIndicators();
+                        // 重置状态
+                        setTimeout(() => {
+                            isTransitioning = false;
+                        }, 500);
+                    }, 50);
+                } else {
+                    // 正常情况，直接过渡到上一张
+                    currentIndex--;
+                    slidesContainer.style.transform = `translateX(-${currentIndex * 100}%)`;
+                    // 更新指示器
+                    updateIndicators();
+                    // 重置状态
+                    setTimeout(() => {
+                        isTransitioning = false;
+                    }, 500);
+                }
+                
+                // 重置自动播放计时器
+                resetAutoPlay();
+            }
+            
+            // 自动播放 - 始终保持一个方向
+            function startAutoPlay() {
+                // 根据设定的方向选择播放方式
+                if (carouselDirection) {
+                    autoPlayTimer = setInterval(nextSlide, slideInterval);
+                } else {
+                    autoPlayTimer = setInterval(prevSlide, slideInterval);
+                }
+            }
+            
+            // 重置自动播放
+            function resetAutoPlay() {
+                clearInterval(autoPlayTimer);
+                startAutoPlay();
+            }
+            
+            // 初始化
+            function initBanner() {
+                // 设置第一张幻灯片为当前幻灯片
+                currentIndex = 0;
+                slidesContainer.style.transform = `translateX(0%)`;
+                
+                // 更新指示器
+                updateIndicators();
+                
+                // 开始自动播放
+                startAutoPlay();
+                
+                // 添加事件监听
+                prevBtn.addEventListener('click', prevSlide);
+                nextBtn.addEventListener('click', nextSlide);
+                
+                // 指示器点击事件
+                indicators.forEach((indicator, index) => {
+                    indicator.addEventListener('click', () => {
+                        // 点击指示器直接切换到对应幻灯片
+                        currentIndex = index;
+                        slidesContainer.style.transform = `translateX(-${currentIndex * 100}%)`;
+                        updateIndicators();
+                        resetAutoPlay();
+                    });
+                });
+                
+                // 鼠标悬停时暂停自动播放
+                photoBanner.addEventListener('mouseenter', () => {
+                    clearInterval(autoPlayTimer);
+                });
+                
+                // 鼠标离开时恢复自动播放
+                photoBanner.addEventListener('mouseleave', startAutoPlay);
+            }
+            
+            // 初始化轮播
+            initBanner();
+        }
+        
         // 为文章卡片添加点击效果
         const articleCards = document.querySelectorAll('.article-card');
         articleCards.forEach(card => {
@@ -1566,6 +2510,54 @@
                     // 实际应用中可以跳转到文章详情页
                     // window.location.href = 'article-detail.html?id=' + articleId;
                 }
+            });
+        });
+        
+        // 为项目卡片添加交互效果
+        const projectCards = document.querySelectorAll('.project-card');
+        projectCards.forEach(card => {
+            // 鼠标悬停效果
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-5px)';
+                this.style.boxShadow = '0 8px 24px rgba(0,0,0,0.12)';
+                const hoverLayer = this.querySelector('.project-hover');
+                if (hoverLayer) {
+                    hoverLayer.style.opacity = '1';
+                }
+                const image = this.querySelector('.project-image img');
+                if (image) {
+                    image.style.transform = 'scale(1.05)';
+                }
+                const title = this.querySelector('.project-title');
+                if (title) {
+                    title.style.color = '#3498db';
+                }
+            });
+            
+            // 鼠标离开效果
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0)';
+                this.style.boxShadow = '0 4px 12px rgba(0,0,0,0.08)';
+                const hoverLayer = this.querySelector('.project-hover');
+                if (hoverLayer) {
+                    hoverLayer.style.opacity = '0';
+                }
+                const image = this.querySelector('.project-image img');
+                if (image) {
+                    image.style.transform = 'scale(1)';
+                }
+                const title = this.querySelector('.project-title');
+                if (title) {
+                    title.style.color = '#333';
+                }
+            });
+            
+            // 点击效果
+            card.addEventListener('click', function() {
+                const projectTitle = this.querySelector('.project-title').textContent;
+                console.log('点击了项目:', projectTitle);
+                // 实际应用中可以跳转到项目详情页
+                // window.location.href = 'project-detail.html?title=' + encodeURIComponent(projectTitle);
             });
         });
         
@@ -1666,6 +2658,170 @@
                 }, 10);
             });
         }
+        
+        // Bilibili风格banner视差动画
+        const banner = document.getElementById('bili-banner');
+        const layers = banner.querySelectorAll('.banner-layer');
+        
+        // 定义多种banner样式配置
+        const bannerStyles = [
+            {
+                name: 'blue',
+                bg: 'linear-gradient(135deg, #3498db 0%, #2980b9 100%)',
+                middle: 'url("data:image/svg+xml,%3Csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"800\" height=\"200\" viewBox=\"0 0 800 200\"%3E%3Crect width=\"800\" height=\"200\" fill=\"none\"/%3E%3Cg fill=\"%23ffffff\" opacity=\"0.3\"%3E%3Crect x=\"100\" y=\"50\" width=\"20\" height=\"20\"/%3E%3Crect x=\"200\" y=\"100\" width=\"15\" height=\"15\"/%3E%3Crect x=\"300\" y=\"30\" width=\"25\" height=\"25\"/%3E%3Crect x=\"400\" y=\"120\" width=\"18\" height=\"18\"/%3E%3Crect x=\"500\" y=\"70\" width=\"22\" height=\"22\"/%3E%3Crect x=\"600\" y=\"140\" width=\"16\" height=\"16\"/%3E%3Crect x=\"700\" y=\"90\" width=\"24\" height=\"24\"/%3E%3C/g%3E%3C/svg%3E")',
+                front: 'url("data:image/svg+xml,%3Csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"800\" height=\"200\" viewBox=\"0 0 800 200\"%3E%3Crect width=\"800\" height=\"200\" fill=\"none\"/%3E%3Cg fill=\"%23ffffff\" opacity=\"0.5\"%3E%3Crect x=\"150\" y=\"80\" width=\"10\" height=\"10\"/%3E%3Crect x=\"250\" y=\"50\" width=\"8\" height=\"8\"/%3E%3Crect x=\"350\" y=\"120\" width=\"12\" height=\"12\"/%3E%3Crect x=\"450\" y=\"90\" width=\"9\" height=\"9\"/%3E%3Crect x=\"550\" y=\"150\" width=\"11\" height=\"11\"/%3E%3Crect x=\"650\" y=\"60\" width=\"13\" height=\"13\"/%3E%3Crect x=\"750\" y=\"130\" width=\"10\" height=\"10\"/%3E%3C/g%3E%3C/svg%3E")',
+                decoration: 'url("data:image/svg+xml,%3Csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"800\" height=\"200\" viewBox=\"0 0 800 200\"%3E%3Crect width=\"800\" height=\"200\" fill=\"none\"/%3E%3Cg fill=\"%23ffffff\" opacity=\"0.7\"%3E%3Crect x=\"120\" y=\"60\" width=\"5\" height=\"5\"/%3E%3Crect x=\"220\" y=\"110\" width=\"6\" height=\"6\"/%3E%3Crect x=\"320\" y=\"40\" width=\"4\" height=\"4\"/%3E%3Crect x=\"420\" y=\"130\" width=\"7\" height=\"7\"/%3E%3Crect x=\"520\" y=\"80\" width=\"5\" height=\"5\"/%3E%3Crect x=\"620\" y=\"150\" width=\"6\" height=\"6\"/%3E%3Crect x=\"720\" y=\"100\" width=\"4\" height=\"4\"/%3E%3C/g%3E%3C/svg%3E")',
+                animation: 'bannerFadeIn'
+            },
+            {
+                name: 'green',
+                bg: 'linear-gradient(135deg, #27ae60 0%, #229954 100%)',
+                middle: 'url("data:image/svg+xml,%3Csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"800\" height=\"200\" viewBox=\"0 0 800 200\"%3E%3Crect width=\"800\" height=\"200\" fill=\"none\"/%3E%3Cg fill=\"%23ffffff\" opacity=\"0.3\"%3E%3Ccircle cx=\"100\" cy=\"50\" r=\"10\"/%3E%3Ccircle cx=\"200\" cy=\"100\" r=\"8\"/%3E%3Ccircle cx=\"300\" cy=\"30\" r=\"12\"/%3E%3Ccircle cx=\"400\" cy=\"120\" r=\"9\"/%3E%3Ccircle cx=\"500\" cy=\"70\" r=\"11\"/%3E%3Ccircle cx=\"600\" cy=\"140\" r=\"8\"/%3E%3Ccircle cx=\"700\" cy=\"90\" r=\"12\"/%3E%3C/g%3E%3C/svg%3E")',
+                front: 'url("data:image/svg+xml,%3Csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"800\" height=\"200\" viewBox=\"0 0 800 200\"%3E%3Crect width=\"800\" height=\"200\" fill=\"none\"/%3E%3Cg fill=\"%23ffffff\" opacity=\"0.5\"%3E%3Ccircle cx=\"150\" cy=\"80\" r=\"5\"/%3E%3Ccircle cx=\"250\" cy=\"50\" r=\"4\"/%3E%3Ccircle cx=\"350\" cy=\"120\" r=\"6\"/%3E%3Ccircle cx=\"450\" cy=\"90\" r=\"5\"/%3E%3Ccircle cx=\"550\" cy=\"150\" r=\"6\"/%3E%3Ccircle cx=\"650\" cy=\"60\" r=\"7\"/%3E%3Ccircle cx=\"750\" cy=\"130\" r=\"5\"/%3E%3C/g%3E%3C/svg%3E")',
+                decoration: 'url("data:image/svg+xml,%3Csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"800\" height=\"200\" viewBox=\"0 0 800 200\"%3E%3Crect width=\"800\" height=\"200\" fill=\"none\"/%3E%3Cg fill=\"%23ffffff\" opacity=\"0.7\"%3E%3Ccircle cx=\"120\" cy=\"60\" r=\"3\"/%3E%3Ccircle cx=\"220\" cy=\"110\" r=\"3\"/%3E%3Ccircle cx=\"320\" cy=\"40\" r=\"2\"/%3E%3Ccircle cx=\"420\" cy=\"130\" r=\"4\"/%3E%3Ccircle cx=\"520\" cy=\"80\" r=\"3\"/%3E%3Ccircle cx=\"620\" cy=\"150\" r=\"3\"/%3E%3Ccircle cx=\"720\" cy=\"100\" r=\"2\"/%3E%3C/g%3E%3C/svg%3E")',
+                animation: 'bannerScaleIn'
+            },
+            {
+                name: 'purple',
+                bg: 'linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%)',
+                middle: 'url("data:image/svg+xml,%3Csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"800\" height=\"200\" viewBox=\"0 0 800 200\"%3E%3Crect width=\"800\" height=\"200\" fill=\"none\"/%3E%3Cg fill=\"%23ffffff\" opacity=\"0.3\"%3E%3Cpolygon points=\"100,50 120,30 140,50 120,70\"/%3E%3Cpolygon points=\"200,100 220,80 240,100 220,120\"/%3E%3Cpolygon points=\"300,30 320,10 340,30 320,50\"/%3E%3Cpolygon points=\"400,120 420,100 440,120 420,140\"/%3E%3Cpolygon points=\"500,70 520,50 540,70 520,90\"/%3E%3Cpolygon points=\"600,140 620,120 640,140 620,160\"/%3E%3Cpolygon points=\"700,90 720,70 740,90 720,110\"/%3E%3C/g%3E%3C/svg%3E")',
+                front: 'url("data:image/svg+xml,%3Csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"800\" height=\"200\" viewBox=\"0 0 800 200\"%3E%3Crect width=\"800\" height=\"200\" fill=\"none\"/%3E%3Cg fill=\"%23ffffff\" opacity=\"0.5\"%3E%3Cpolygon points=\"150,80 160,70 170,80 160,90\"/%3E%3Cpolygon points=\"250,50 260,40 270,50 260,60\"/%3E%3Cpolygon points=\"350,120 360,110 370,120 360,130\"/%3E%3Cpolygon points=\"450,90 460,80 470,90 460,100\"/%3E%3Cpolygon points=\"550,150 560,140 570,150 560,160\"/%3E%3Cpolygon points=\"650,60 660,50 670,60 660,70\"/%3E%3Cpolygon points=\"750,130 760,120 770,130 760,140\"/%3E%3C/g%3E%3C/svg%3E")',
+                decoration: 'url("data:image/svg+xml,%3Csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"800\" height=\"200\" viewBox=\"0 0 800 200\"%3E%3Crect width=\"800\" height=\"200\" fill=\"none\"/%3E%3Cg fill=\"%23ffffff\" opacity=\"0.7\"%3E%3Cpolygon points=\"120,60 125,55 130,60 125,65\"/%3E%3Cpolygon points=\"220,110 225,105 230,110 225,115\"/%3E%3Cpolygon points=\"320,40 325,35 330,40 325,45\"/%3E%3Cpolygon points=\"420,130 425,125 430,130 425,135\"/%3E%3Cpolygon points=\"520,80 525,75 530,80 525,85\"/%3E%3Cpolygon points=\"620,150 625,145 630,150 625,155\"/%3E%3Cpolygon points=\"720,100 725,95 730,100 725,105\"/%3E%3C/g%3E%3C/svg%3E")',
+                animation: 'bannerRotateIn'
+            },
+            {
+                name: 'orange',
+                bg: 'linear-gradient(135deg, #f39c12 0%, #e67e22 100%)',
+                middle: 'url("data:image/svg+xml,%3Csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"800\" height=\"200\" viewBox=\"0 0 800 200\"%3E%3Crect width=\"800\" height=\"200\" fill=\"none\"/%3E%3Cg fill=\"%23ffffff\" opacity=\"0.3\"%3E%3Crect x=\"100,50\" width=\"30\" height=\"10\"/%3E%3Crect x=\"200,100\" width=\"25\" height=\"10\"/%3E%3Crect x=\"300,30\" width=\"35\" height=\"10\"/%3E%3Crect x=\"400,120\" width=\"28\" height=\"10\"/%3E%3Crect x=\"500,70\" width=\"32\" height=\"10\"/%3E%3Crect x=\"600,140\" width=\"26\" height=\"10\"/%3E%3Crect x=\"700,90\" width=\"34\" height=\"10\"/%3E%3C/g%3E%3C/svg%3E")',
+                front: 'url("data:image/svg+xml,%3Csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"800\" height=\"200\" viewBox=\"0 0 800 200\"%3E%3Crect width=\"800\" height=\"200\" fill=\"none\"/%3E%3Cg fill=\"%23ffffff\" opacity=\"0.5\"%3E%3Crect x=\"150,80\" width=\"20\" height=\"8\"/%3E%3Crect x=\"250,50\" width=\"18\" height=\"8\"/%3E%3Crect x=\"350,120\" width=\"22\" height=\"8\"/%3E%3Crect x=\"450,90\" width=\"19\" height=\"8\"/%3E%3Crect x=\"550,150\" width=\"21\" height=\"8\"/%3E%3Crect x=\"650,60\" width=\"23\" height=\"8\"/%3E%3Crect x=\"750,130\" width=\"20\" height=\"8\"/%3E%3C/g%3E%3C/svg%3E")',
+                decoration: 'url("data:image/svg+xml,%3Csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"800\" height=\"200\" viewBox=\"0 0 800 200\"%3E%3Crect width=\"800\" height=\"200\" fill=\"none\"/%3E%3Cg fill=\"%23ffffff\" opacity=\"0.7\"%3E%3Crect x=\"120,60\" width=\"15\" height=\"5\"/%3E%3Crect x=\"220,110\" width=\"16\" height=\"5\"/%3E%3Crect x=\"320,40\" width=\"14\" height=\"5\"/%3E%3Crect x=\"420,130\" width=\"17\" height=\"5\"/%3E%3Crect x=\"520,80\" width=\"15\" height=\"5\"/%3E%3Crect x=\"620,150\" width=\"16\" height=\"5\"/%3E%3Crect x=\"720,100\" width=\"14\" height=\"5\"/%3E%3C/g%3E%3C/svg%3E")',
+                animation: 'bannerFadeIn'
+            }
+        ];
+        
+        // 定义持续动画效果列表
+        const continuousAnimations = [
+            'bannerFloat 6s ease-in-out infinite',
+            'bannerWave 8s ease-in-out infinite',
+            'bannerPulse 4s ease-in-out infinite',
+            'bannerFlicker 3s ease-in-out infinite',
+            'bannerFlow 20s linear infinite'
+        ];
+        
+        // 随机选择一个banner样式
+        function applyRandomBannerStyle() {
+            const randomIndex = Math.floor(Math.random() * bannerStyles.length);
+            const selectedStyle = bannerStyles[randomIndex];
+            
+            // 应用样式到各层
+            const bgLayer = banner.querySelector('.layer-bg');
+            const middleLayer = banner.querySelector('.layer-middle');
+            const frontLayer = banner.querySelector('.layer-front');
+            const decorationLayer = banner.querySelector('.layer-decoration');
+            
+            if (bgLayer) {
+                bgLayer.style.background = selectedStyle.bg;
+            }
+            if (middleLayer) {
+                middleLayer.style.backgroundImage = selectedStyle.middle;
+            }
+            if (frontLayer) {
+                frontLayer.style.backgroundImage = selectedStyle.front;
+            }
+            if (decorationLayer) {
+                decorationLayer.style.backgroundImage = selectedStyle.decoration;
+            }
+            
+            // 应用入场动画
+            banner.style.animation = `${selectedStyle.animation} 1s ease-out`;
+            
+            console.log('Applied banner style:', selectedStyle.name);
+        }
+        
+        // 为banner图层添加持续动态效果
+        function applyContinuousAnimations() {
+            const layers = banner.querySelectorAll('.banner-layer');
+            
+            layers.forEach((layer, index) => {
+                // 为每个图层随机选择一个持续动画
+                const randomAnimation = continuousAnimations[Math.floor(Math.random() * continuousAnimations.length)];
+                
+                // 为不同图层设置不同的动画延迟，创造层次感
+                const delay = index * 0.5;
+                
+                // 应用动画到图层
+                layer.style.animation = `${randomAnimation} ${delay}s forwards`;
+                layer.style.animationFillMode = 'forwards';
+                
+                // 为装饰层添加额外的流动效果
+                if (layer.classList.contains('layer-decoration')) {
+                    layer.style.backgroundSize = 'cover';
+                    layer.style.backgroundRepeat = 'repeat';
+                    layer.style.animation = `${randomAnimation} ${delay}s forwards, elementsFlowX 25s linear infinite`;
+                }
+                
+                console.log(`Applied continuous animation to layer ${index}:`, randomAnimation);
+            });
+        }
+        
+        if (banner) {
+            // 页面加载时应用随机样式
+            applyRandomBannerStyle();
+            
+            // 应用持续动画效果
+            applyContinuousAnimations();
+            
+            banner.addEventListener('mousemove', function(e) {
+                const rect = banner.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+                
+                const deltaX = (x - centerX) / centerX;
+                const deltaY = (y - centerY) / centerY;
+                
+                layers.forEach(layer => {
+                    const speed = parseFloat(layer.dataset.speed) || 0.1;
+                    const translateX = deltaX * 50 * speed;
+                    const translateY = deltaY * 30 * speed;
+                    
+                    // 保留持续动画的同时添加鼠标交互效果
+                    layer.style.transform = `translate(${translateX}px, ${translateY}px)`;
+                });
+            });
+            
+            // 鼠标离开时重置位置，但保持持续动画
+            banner.addEventListener('mouseleave', function() {
+                layers.forEach(layer => {
+                    layer.style.transform = 'translate(0, 0)';
+                });
+            });
+        }
+    </script>
+    <script>
+        // 打赏弹窗功能
+        const donateIcon = document.getElementById('donate-icon');
+        const donatePopup = document.getElementById('donate-popup');
+        const closeBtn = document.getElementById('close-btn');
+        
+        // 点击打赏图标显示弹窗
+        donateIcon.addEventListener('click', function() {
+            donatePopup.classList.add('active');
+        });
+        
+        // 点击关闭按钮隐藏弹窗
+        closeBtn.addEventListener('click', function() {
+            donatePopup.classList.remove('active');
+        });
+        
+        // 点击弹窗外部关闭弹窗
+        donatePopup.addEventListener('click', function(e) {
+            if (e.target === donatePopup) {
+                donatePopup.classList.remove('active');
+            }
+        });
     </script>
 </body>
 </html>

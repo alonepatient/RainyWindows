@@ -1,0 +1,1274 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>相册 - RainyWindows</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f8f9fa;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        header {
+            background-color: #fff;
+            padding: 15px 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            transition: all 0.3s ease;
+        }
+        
+        header.scrolled {
+            padding: 10px 0;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.12);
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 28px;
+            font-weight: 700;
+            color: #333;
+            text-decoration: none;
+            letter-spacing: -0.5px;
+            display: flex;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+        
+        .logo:hover {
+            color: #3498db;
+            transform: scale(1.05);
+        }
+        
+        
+        .header-icon {
+            font-size: 19px;
+            color: #666;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            padding: 5px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 35px;
+            height: 35px;
+        }
+        
+        .header-icon:hover {
+            color: #3498db;
+            background-color: rgba(52, 152, 219, 0.1);
+            transform: translateY(-2px);
+        }
+        
+        /* 移动端菜单按钮 */
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 5px;
+        }
+        
+        .mobile-menu-btn .bar {
+            display: block;
+            width: 25px;
+            height: 3px;
+            margin: 5px auto;
+            background-color: #333;
+            transition: all 0.3s ease;
+        }
+        
+        .mobile-menu-btn.active .bar:nth-child(1) {
+            transform: translateY(8px) rotate(45deg);
+        }
+        
+        .mobile-menu-btn.active .bar:nth-child(2) {
+            opacity: 0;
+        }
+        
+        .mobile-menu-btn.active .bar:nth-child(3) {
+            transform: translateY(-8px) rotate(-45deg);
+        }
+        
+
+        
+        /* Top Cards Section - Fan Layout */
+        .top-cards-container {
+            position: relative;
+            width: 100%;
+            height: 450px;
+            margin-bottom: 50px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            perspective: 1500px;
+        }
+        
+        .top-cards {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transform-style: preserve-3d;
+            transition: transform 0.5s ease;
+            cursor: grab;
+        }
+        
+        .top-cards:active {
+            cursor: grabbing;
+        }
+        
+        .top-card {
+            position: absolute;
+            background-color: #fff;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12), 0 0 60px rgba(0, 0, 0, 0.08) inset;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            width: 350px;
+            max-width: 90%;
+            transform-origin: center center;
+            user-select: none;
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.95);
+            transform-style: preserve-3d;
+        }
+        
+        .top-card:hover {
+            box-shadow: 0 16px 56px rgba(0, 0, 0, 0.2);
+            transform: translateZ(40px) rotateY(8deg) rotateX(3deg) translateY(-8px) scale(1.03);
+        }
+        
+        .top-card-image {
+            width: 100%;
+            height: 240px;
+            overflow: hidden;
+            position: relative;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            background-size: 200% 200%;
+            animation: pulseBackground 1.5s ease-in-out infinite;
+        }
+        
+        .top-card-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            opacity: 0;
+            animation: fadeIn 0.6s ease forwards;
+        }
+        
+        .top-card:hover .top-card-image img {
+            transform: scale(1.1);
+        }
+        
+        /* Image loading animations */
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        
+        @keyframes pulseBackground {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+        
+        .top-card-content {
+            padding: 20px;
+        }
+        
+        .top-card-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #333;
+            transition: color 0.3s ease;
+        }
+        
+        .top-card:hover .top-card-title {
+            color: #3498db;
+        }
+        
+        .top-card-description {
+            color: #666;
+            font-size: 14px;
+            line-height: 1.6;
+            margin-bottom: 12px;
+        }
+        
+        .top-card-stats {
+            display: flex;
+            gap: 15px;
+            font-size: 13px;
+            color: #999;
+            font-weight: 500;
+        }
+        
+        /* Fan layout positions with 3D enhancements */
+        .top-card:nth-child(1) {
+            transform: rotateY(-20deg) rotateX(-5deg) translateZ(-80px) translateX(-180px) scale(0.8);
+            z-index: 1;
+            opacity: 0.7;
+        }
+        
+        .top-card:nth-child(2) {
+            transform: rotateY(0deg) rotateX(0deg) translateZ(0) translateX(0) scale(1);
+            z-index: 3;
+            opacity: 1;
+        }
+        
+        .top-card:nth-child(3) {
+            transform: rotateY(20deg) rotateX(-5deg) translateZ(-80px) translateX(180px) scale(0.8);
+            z-index: 2;
+            opacity: 0.7;
+        }
+        
+        /* Active card with 3D enhancement */
+        .top-card.active {
+            transform: rotateY(0deg) rotateX(0deg) translateZ(20px) translateX(0) scale(1);
+            z-index: 3;
+            opacity: 1;
+            box-shadow: 0 16px 56px rgba(0, 0, 0, 0.2);
+        }
+        
+        /* Left card with 3D enhancement */
+        .top-card.left {
+            transform: rotateY(-20deg) rotateX(-5deg) translateZ(-80px) translateX(-180px) scale(0.8);
+            z-index: 1;
+            opacity: 0.7;
+        }
+        
+        /* Right card with 3D enhancement */
+        .top-card.right {
+            transform: rotateY(20deg) rotateX(-5deg) translateZ(-80px) translateX(180px) scale(0.8);
+            z-index: 2;
+            opacity: 0.7;
+        }
+        
+        /* Navigation buttons */
+        .card-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255, 255, 255, 0.95);
+            border: none;
+            border-radius: 50%;
+            width: 55px;
+            height: 55px;
+            font-size: 28px;
+            cursor: pointer;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 10;
+            font-weight: bold;
+            color: #3498db;
+        }
+        
+        .card-nav:hover {
+            background: #fff;
+            transform: translateY(-50%) scale(1.15);
+            box-shadow: 0 6px 24px rgba(0, 0, 0, 0.16);
+            color: #2980b9;
+        }
+        
+        .card-nav.prev {
+            left: 20px;
+        }
+        
+        .card-nav.next {
+            right: 20px;
+        }
+        
+        /* Drag indicator */
+        .drag-indicator {
+            position: absolute;
+            bottom: 25px;
+            text-align: center;
+            color: #666;
+            font-size: 14px;
+            z-index: 5;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 10px 20px;
+            border-radius: 25px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .drag-indicator:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+        }
+        
+        /* Responsive design for fan layout */
+        @media (max-width: 768px) {
+            .top-cards-container {
+                height: 400px;
+                border-radius: 12px;
+            }
+            
+            .top-card {
+                width: 300px;
+            }
+            
+            .top-card-image {
+                height: 200px;
+            }
+            
+            .top-card:nth-child(1),
+            .top-card.left {
+                transform: rotate(-20deg) translate(-100px) scale(0.7);
+            }
+            
+            .top-card:nth-child(3),
+            .top-card.right {
+                transform: rotate(20deg) translate(100px) scale(0.7);
+            }
+            
+            .card-nav {
+                width: 45px;
+                height: 45px;
+                font-size: 24px;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .top-cards-container {
+                height: 350px;
+            }
+            
+            .top-card {
+                width: 250px;
+            }
+            
+            .top-card-image {
+                height: 180px;
+            }
+            
+            .top-card:nth-child(1),
+            .top-card.left {
+                transform: rotate(-15deg) translate(-80px) scale(0.6);
+            }
+            
+            .top-card:nth-child(3),
+            .top-card.right {
+                transform: rotate(15deg) translate(80px) scale(0.6);
+            }
+            
+            .card-nav {
+                width: 40px;
+                height: 40px;
+                font-size: 20px;
+            }
+            
+            .drag-indicator {
+                font-size: 12px;
+                padding: 8px 16px;
+            }
+        }
+        
+        /* Album Categories */
+        .album-categories {
+            margin-bottom: 50px;
+        }
+        
+        .category-title {
+            font-size: 32px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 35px;
+            padding-bottom: 20px;
+            border-bottom: none;
+            position: relative;
+            display: inline-block;
+            background: linear-gradient(135deg, #3498db, #9b59b6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .category-title::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, #3498db, #9b59b6, transparent);
+            border-radius: 2px;
+            box-shadow: 0 2px 8px rgba(52, 152, 219, 0.3);
+        }
+        
+        .category-title::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 0;
+            width: 40px;
+            height: 4px;
+            background: linear-gradient(90deg, #9b59b6, #3498db);
+            border-radius: 2px;
+            box-shadow: 0 2px 8px rgba(155, 89, 182, 0.3);
+            animation: titlePulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes titlePulse {
+            0%, 100% { transform: scaleX(1); opacity: 1; }
+            50% { transform: scaleX(1.2); opacity: 0.8; }
+        }
+        
+        /* Album Grid */
+        .album-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+        
+        .album-item {
+            background-color: #fff;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.12), 0 0 0 1px rgba(0,0,0,0.04) inset;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            transform-style: preserve-3d;
+            position: relative;
+        }
+        
+        .album-item:hover {
+            transform: translateY(-8px) rotateX(5deg) rotateY(2deg) scale(1.02);
+            box-shadow: 0 16px 48px rgba(0,0,0,0.18), 0 0 0 2px rgba(52, 152, 219, 0.2) inset;
+        }
+        
+        .album-cover {
+            width: 100%;
+            height: 200px;
+            overflow: hidden;
+            position: relative;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            background-size: 200% 200%;
+            animation: pulseBackground 1.5s ease-in-out infinite;
+        }
+        
+        .album-cover::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(52, 152, 219, 0.1) 0%, rgba(155, 89, 182, 0.1) 100%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: 1;
+        }
+        
+        .album-item:hover .album-cover::before {
+            opacity: 1;
+        }
+        
+        .album-cover img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            z-index: 0;
+            opacity: 0;
+            animation: fadeIn 0.6s ease forwards;
+        }
+        
+        .album-item:hover .album-cover img {
+            transform: scale(1.15) rotate(2deg);
+        }
+        
+        /* Album info with enhanced hover effects */
+        .album-info {
+            padding: 20px;
+            background: linear-gradient(180deg, rgba(255,255,255,0) 0%, rgba(255,255,255,1) 50%);
+            transition: all 0.4s ease;
+        }
+        
+        .album-item:hover .album-info {
+            background: linear-gradient(180deg, rgba(52, 152, 219, 0.05) 0%, rgba(255,255,255,1) 50%);
+        }
+        
+        .album-name {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #333;
+            transition: all 0.3s ease;
+            position: relative;
+            display: inline-block;
+        }
+        
+        .album-name::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #3498db, #9b59b6);
+            transition: width 0.3s ease;
+        }
+        
+        .album-item:hover .album-name {
+            color: #3498db;
+        }
+        
+        .album-item:hover .album-name::after {
+            width: 100%;
+        }
+        
+        .album-description {
+            color: #666;
+            font-size: 13px;
+            margin-bottom: 12px;
+            line-height: 1.5;
+            transition: color 0.3s ease;
+        }
+        
+        .album-item:hover .album-description {
+            color: #444;
+        }
+        
+        .album-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 12px;
+            color: #999;
+            transition: all 0.3s ease;
+        }
+        
+        .album-item:hover .album-meta {
+            color: #777;
+        }
+        
+        .album-photo-count {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.3s ease;
+        }
+        
+        .album-item:hover .album-photo-count {
+            transform: translateX(5px);
+        }
+        
+        .album-date {
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        .album-item:hover .album-date {
+            transform: translateX(-5px);
+        }
+        
+        /* Footer */
+        footer {
+            background-color: #333;
+            color: #fff;
+            padding: 40px 0;
+            margin-top: 60px;
+        }
+        
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+        }
+        
+        .footer-section h3 {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+        
+        .footer-section p,
+        .footer-section a {
+            color: #ccc;
+            text-decoration: none;
+            line-height: 1.8;
+            font-size: 14px;
+        }
+        
+        .footer-section a:hover {
+            color: #3498db;
+        }
+        
+        .footer-bottom {
+            text-align: center;
+            padding-top: 30px;
+            margin-top: 30px;
+            border-top: 1px solid #444;
+            color: #888;
+            font-size: 13px;
+        }
+        
+        /* Scroll to top button */
+        .scroll-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #3498db, #9b59b6);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            opacity: 0;
+            transform: translateY(30px) scale(0.8);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 1000;
+            box-shadow: 0 8px 24px rgba(52, 152, 219, 0.3), 0 0 0 2px rgba(255, 255, 255, 0.2) inset;
+            font-size: 20px;
+            font-weight: 700;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        
+        .scroll-to-top::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #9b59b6, #3498db);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: -1;
+        }
+        
+        .scroll-to-top.visible {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+        
+        .scroll-to-top:hover {
+            background: linear-gradient(135deg, #2980b9, #8e44ad);
+            transform: translateY(-6px) scale(1.1) rotate(180deg);
+            box-shadow: 0 12px 32px rgba(52, 152, 219, 0.4), 0 0 0 3px rgba(255, 255, 255, 0.3) inset;
+        }
+        
+        .scroll-to-top:hover::before {
+            opacity: 1;
+            animation: pulse 1.5s infinite;
+        }
+        
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            50% {
+                transform: scale(1.2);
+                opacity: 0.7;
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .scroll-to-top {
+                width: 48px;
+                height: 48px;
+                font-size: 18px;
+                bottom: 20px;
+                right: 20px;
+            }
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            /* 导航栏响应式 */
+            
+            
+            .mobile-menu-btn {
+                display: block;
+                z-index: 100;
+            }
+            
+            
+            /* Top Cards */
+            .top-cards-container {
+                height: 400px;
+            }
+            
+            .top-card {
+                width: 300px;
+            }
+            
+            .top-card-image {
+                height: 240px !important;
+            }
+            
+            .top-card:nth-child(1),
+            .top-card.left {
+                transform: rotate(-20deg) translate(-100px) scale(0.7);
+            }
+            
+            .top-card:nth-child(3),
+            .top-card.right {
+                transform: rotate(20deg) translate(100px) scale(0.7);
+            }
+            
+            /* Album Grid */
+            .album-grid {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+                gap: 20px;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .logo {
+                font-size: 24px;
+            }
+            
+            .category-title {
+                font-size: 24px;
+            }
+            
+            .album-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            /* Top Cards */
+            .top-cards-container {
+                height: 350px;
+            }
+            
+            .top-card {
+                width: 250px;
+            }
+            
+            .top-card-image {
+                height: 200px !important;
+            }
+            
+            .top-card:nth-child(1),
+            .top-card.left {
+                transform: rotate(-15deg) translate(-80px) scale(0.6);
+            }
+            
+            .top-card:nth-child(3),
+            .top-card.right {
+                transform: rotate(15deg) translate(80px) scale(0.6);
+            }
+            
+            .card-nav {
+                width: 40px;
+                height: 40px;
+                font-size: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header id="main-header">
+        <div class="container">
+            <div class="header-content">
+                <a href="index.html" class="logo">
+                    <span>RainyWindows</span>
+                </a>
+                
+                <!-- 移动端菜单按钮 -->
+                <button class="mobile-menu-btn" id="mobile-menu-btn">
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                </button>
+                
+                <!-- 桌面端导航 -->
+                
+            </div>
+        </div>
+    </header>
+    
+
+    
+    <main class="container">
+        <!-- Top Cards Section -->
+        <section class="top-cards-container">
+            <!-- Navigation Buttons -->
+            <button class="card-nav prev" title="上一张">‹</button>
+            <button class="card-nav next" title="下一张">›</button>
+            
+
+            
+            <div class="top-cards">
+                <!-- Photo Card 1 -->
+                <div class="top-card left">
+                    <div class="top-card-image" style="height: 280px;">
+                        <img src="img/life/nature (2).jpg" alt="人物照片1" style="object-fit: cover;" />
+                    </div>
+                    <div class="top-card-content" style="padding: 15px;">
+                        <h3 class="top-card-title" style="font-size: 18px;">1</h3>
+                        <div class="top-card-stats" style="gap: 15px;">
+                            <span>📸 摄影作品</span>
+                            <span>📅 2025-04-05</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Photo Card 2 -->
+                <div class="top-card active">
+                    <div class="top-card-image" style="height: 280px;">
+                        <img src="img/life/city.jpg" alt="人物照片2" style="object-fit: cover;" />
+                    </div>
+                    <div class="top-card-content" style="padding: 15px;">
+                        <h3 class="top-card-title" style="font-size: 18px;">2</h3>
+                        <div class="top-card-stats" style="gap: 15px;">
+                            <span>📸 摄影作品</span>
+                            <span>📅 2025-03-20</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Photo Card 3 -->
+                <div class="top-card right">
+                    <div class="top-card-image" style="height: 280px;">
+                        <img src="img/life/human (6).jpg" alt="人物照片3" style="object-fit: cover;" />
+                    </div>
+                    <div class="top-card-content" style="padding: 15px;">
+                        <h3 class="top-card-title" style="font-size: 18px;">3</h3>
+                        <div class="top-card-stats" style="gap: 15px;">
+                            <span>📸 摄影作品</span>
+                            <span>📅 2025-02-15</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Photo Card 4 -->
+                <div class="top-card">
+                    <div class="top-card-image" style="height: 280px;">
+                        <img src="img/life/city (6).jpg" alt="人物照片4" style="object-fit: cover;" />
+                    </div>
+                    <div class="top-card-content" style="padding: 15px;">
+                        <h3 class="top-card-title" style="font-size: 18px;">4</h3>
+                        <div class="top-card-stats" style="gap: 15px;">
+                            <span>📸 摄影作品</span>
+                            <span>📅 2025-01-20</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Photo Card 5 -->
+                <div class="top-card">
+                    <div class="top-card-image" style="height: 280px;">
+                        <img src="img/life/space (2).jpg" alt="人物照片5" style="object-fit: cover;" />
+                    </div>
+                    <div class="top-card-content" style="padding: 15px;">
+                        <h3 class="top-card-title" style="font-size: 18px;">5</h3>
+                        <div class="top-card-stats" style="gap: 15px;">
+                            <span>📸 摄影作品</span>
+                            <span>📅 2024-12-15</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Photo Card 6 -->
+                <div class="top-card">
+                    <div class="top-card-image" style="height: 280px;">
+                        <img src="img/life/nature (7).jpg" alt="人物照片6" style="object-fit: cover;" />
+                    </div>
+                    <div class="top-card-content" style="padding: 15px;">
+                        <h3 class="top-card-title" style="font-size: 18px;">6</h3>
+                        <div class="top-card-stats" style="gap: 15px;">
+                            <span>📸 摄影作品</span>
+                            <span>📅 2024-11-20</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Album Categories -->
+        <section class="album-categories">
+            <!-- 旅行相册 -->
+            <h2 class="category-title">✈️ 旅行相册</h2>
+            <div class="album-grid">
+                <div class="album-item">
+                    <div class="album-cover">
+                        <img src="img/life/city.jpg" alt="城市风" style="object-fit: cover;" />
+                    </div>
+                    <div class="album-info">
+                        <h3 class="album-name">城市风</h3>
+                        <p class="album-description">看见灯火与繁华</p>
+                        <div class="album-meta">
+                            <div class="album-photo-count">
+                                <span>📸</span>
+                                <span>8 张照片</span>
+                            </div>
+                            <div class="album-date">2025-02</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="album-item">
+                    <div class="album-cover">
+                        <img src="img/life/nature (2).jpg" alt="自然" style="object-fit: cover;" />
+                    </div>
+                    <div class="album-info">
+                        <h3 class="album-name">自然</h3>
+                        <p class="album-description">逃离喧嚣，寻找自我</p>
+                        <div class="album-meta">
+                            <div class="album-photo-count">
+                                <span>📸</span>
+                                <span>10 张照片</span>
+                            </div>
+                            <div class="album-date">2025-12</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="album-item">
+                    <div class="album-cover">
+                        <img src="img/life/human (3).jpg" alt="人文风情" style="object-fit: cover;" />
+                    </div>
+                    <div class="album-info">
+                        <h3 class="album-name">人文风情</h3>
+                        <p class="album-description">在人民生活中感受人类的文化</p>
+                        <div class="album-meta">
+                            <div class="album-photo-count">
+                                <span>📸</span>
+                                <span>7 张照片</span>
+                            </div>
+                            <div class="album-date">2025-12</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 生活相册 -->
+            <h2 class="category-title">🏡 生活相册</h2>
+            <div class="album-grid">
+                <div class="album-item">
+                    <div class="album-cover">
+                        <img src="img/life/college.jpg" alt="大学生活" style="object-fit: cover;" />
+                    </div>
+                    <div class="album-info">
+                        <h3 class="album-name">大学生活</h3>
+                        <p class="album-description">在学术中探戈</p>
+                        <div class="album-meta">
+                            <div class="album-photo-count">
+                                <span>📸</span>
+                                <span>2 张照片</span>
+                            </div>
+                            <div class="album-date">2025-12</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="album-item">
+                    <div class="album-cover">
+                        <img src="img/person/1.jpg" alt="美食记录" style="object-fit: cover;" />
+                    </div>
+                    <div class="album-info">
+                        <h3 class="album-name">美食记录</h3>
+                        <p class="album-description">探索各种美食，从街头小吃到高级餐厅</p>
+                        <div class="album-meta">
+                            <div class="album-photo-count">
+                                <span>📸</span>
+                                <span>67 张照片</span>
+                            </div>
+                            <div class="album-date">2025-01</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="album-item">
+                    <div class="album-cover">
+                        <img src="img/person/2.jpg" alt="节日庆典" style="object-fit: cover;" />
+                    </div>
+                    <div class="album-info">
+                        <h3 class="album-name">节日庆典</h3>
+                        <p class="album-description">记录各种节日和庆典活动的精彩瞬间</p>
+                        <div class="album-meta">
+                            <div class="album-photo-count">
+                                <span>📸</span>
+                                <span>52 张照片</span>
+                            </div>
+                            <div class="album-date">2024-12</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 摄影作品 -->
+            <h2 class="category-title">📸 摄影作品</h2>
+            <div class="album-grid">
+                <div class="album-item">
+                    <div class="album-cover">
+                        <img src="img/life/space.jpg" alt="星空图" style="object-fit: cover;" />
+                    </div>
+                    <div class="album-info">
+                        <h3 class="album-name">星空图</h3>
+                        <p class="album-description">漫游太空2077</p>
+                        <div class="album-meta">
+                            <div class="album-photo-count">
+                                <span>📸</span>
+                                <span>2 张照片</span>
+                            </div>
+                            <div class="album-date">2025-12</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="album-item">
+                    <div class="album-cover">
+                        <img src="img/person/2.jpg" alt="自然风光" style="object-fit: cover;" />
+                    </div>
+                    <div class="album-info">
+                        <h3 class="album-name">自然风光</h3>
+                        <p class="album-description">山水、森林、湖泊等自然景观摄影</p>
+                        <div class="album-meta">
+                            <div class="album-photo-count">
+                                <span>📸</span>
+                                <span>92 张照片</span>
+                            </div>
+                            <div class="album-date">2024-11</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="album-item">
+                    <div class="album-cover">
+                        <img src="img/person/1.jpg" alt="人像摄影" style="object-fit: cover;" />
+                    </div>
+                    <div class="album-info">
+                        <h3 class="album-name">人像摄影</h3>
+                        <p class="album-description">人物肖像和生活写真摄影作品</p>
+                        <div class="album-meta">
+                            <div class="album-photo-count">
+                                <span>📸</span>
+                                <span>56 张照片</span>
+                            </div>
+                            <div class="album-date">2025-01</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+    
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>关于我们</h3>
+                    <p>RainyWindows 是一个分享生活、记录美好的平台，致力于为用户提供优质的内容和服务。</p>
+                </div>
+                <div class="footer-section">
+                    <h3>快速链接</h3>
+                    <p><a href="index.html">首页</a></p>
+                    <p><a href="album.html">相册</a></p>
+                    <p><a href="library.html">收录</a></p>
+                    <p><a href="studio.html">工作室</a></p>
+                    <p><a href="person.html">关于</a></p>
+                </div>
+                <div class="footer-section">
+                    <h3>联系方式</h3>
+                    <p>📧 contact@rainywindows.com</p>
+                    <p>🐦 @RainyWindows</p>
+                    <p>📱 +86 123 4567 8910</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 RainyWindows. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+    
+    <div class="scroll-to-top">↑</div>
+    
+    <script>
+        // 导航栏滚动效果
+        const header = document.getElementById('main-header');
+        
+        window.addEventListener('scroll', () => {
+            if (window.pageYOffset > 50) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+        });
+        
+        // 移动端菜单功能
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        
+        // 移动端菜单功能暂时禁用，因为没有导航链接
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenuBtn.classList.toggle('active');
+            
+            // 点击菜单时禁止背景滚动
+            document.body.style.overflow = mobileMenuBtn.classList.contains('active') ? 'hidden' : 'auto';
+        });
+        
+        // 滚动到顶部按钮功能
+        const scrollBtn = document.querySelector('.scroll-to-top');
+        
+        window.addEventListener('scroll', () => {
+            if (window.pageYOffset > 300) {
+                scrollBtn.classList.add('visible');
+            } else {
+                scrollBtn.classList.remove('visible');
+            }
+        });
+        
+        scrollBtn.addEventListener('click', () => {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+        
+        // 卡片切换功能
+        const cardsContainer = document.querySelector('.top-cards');
+        const cards = document.querySelectorAll('.top-card');
+        const prevBtn = document.querySelector('.card-nav.prev');
+        const nextBtn = document.querySelector('.card-nav.next');
+        
+        let currentIndex = 0;
+        const cardCount = cards.length;
+        let autoPlayInterval = null;
+        const autoPlayDelay = 5000;
+        
+        // 更新卡片状态
+        function updateCards() {
+            cards.forEach((card, index) => {
+                // 重置卡片样式
+                card.className = 'top-card';
+                card.style.opacity = '1';
+                card.style.zIndex = '1';
+                
+                // 设置卡片位置
+                if (index === currentIndex) {
+                    card.classList.add('active');
+                } else if (index === (currentIndex - 1 + cardCount) % cardCount) {
+                    card.classList.add('left');
+                } else if (index === (currentIndex + 1) % cardCount) {
+                    card.classList.add('right');
+                } else {
+                    // 隐藏其他卡片
+                    card.style.opacity = '0';
+                    card.style.zIndex = '0';
+                }
+            });
+        }
+        
+        // 下一张卡片
+        function nextCard() {
+            currentIndex = (currentIndex + 1) % cardCount;
+            updateCards();
+            resetAutoPlay();
+        }
+        
+        // 上一张卡片
+        function prevCard() {
+            currentIndex = (currentIndex - 1 + cardCount) % cardCount;
+            updateCards();
+            resetAutoPlay();
+        }
+        
+        // 开始自动播放
+        function startAutoPlay() {
+            autoPlayInterval = setInterval(nextCard, autoPlayDelay);
+        }
+        
+        // 重置自动播放
+        function resetAutoPlay() {
+            if (autoPlayInterval) {
+                clearInterval(autoPlayInterval);
+                startAutoPlay();
+            }
+        }
+        
+        // 停止自动播放
+        function stopAutoPlay() {
+            if (autoPlayInterval) {
+                clearInterval(autoPlayInterval);
+                autoPlayInterval = null;
+            }
+        }
+        
+        // 导航按钮事件
+        prevBtn.addEventListener('click', prevCard);
+        nextBtn.addEventListener('click', nextCard);
+        
+        // 卡片点击事件
+        cards.forEach(card => {
+            card.addEventListener('click', function() {
+                const title = this.querySelector('.top-card-title').textContent;
+                console.log('点击了顶部卡片:', title);
+                // 实际应用中可以跳转到对应页面
+                // window.location.href = 'album-detail.html?type=' + encodeURIComponent(title);
+            });
+        });
+        
+        // 初始化卡片
+        updateCards();
+        
+        // 开始自动播放
+        startAutoPlay();
+        
+        // 鼠标悬停时停止自动播放
+        cardsContainer.addEventListener('mouseenter', stopAutoPlay);
+        cardsContainer.addEventListener('mouseleave', startAutoPlay);
+        
+        // 为相册项添加点击效果
+        const albumItems = document.querySelectorAll('.album-item');
+        albumItems.forEach(item => {
+            item.addEventListener('click', function() {
+                const albumName = this.querySelector('.album-name').textContent;
+                console.log('点击了相册:', albumName);
+                // 跳转到相册详情页
+                window.location.href = 'album-detail.html?name=' + encodeURIComponent(albumName);
+            });
+        });
+    </script>
+</body>
+</html>

@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/transition.css">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📝</text></svg>">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="js/typing-effect.js" defer></script>
     <script src="js/transition-effect.js" defer></script>
 </head>
@@ -26,79 +27,12 @@
                 <!-- 时间和天气信息将在这里添加 -->
                 <div class="time-weather-info">
                     <div class="date-time"></div>
-                    <div class="weather"></div>
                 </div>
                 <!-- 3D角色元素 -->
                 <div class="character-3d">
-                    <!-- 晴天娃娃（基于经典形象的标准设计） -->
-                    <svg class="sun-doll" width="80" height="100" viewBox="0 0 100 140" xmlns="http://www.w3.org/2000/svg">
-                        <!-- 悬挂绳 -->
-                        <line x1="50" y1="0" x2="50" y2="25" stroke="#8B4513" stroke-width="2" />
-                        <circle cx="50" cy="25" r="2" fill="#8B4513" />
-                        
-                        <!-- 头部 -->
-                        <circle cx="50" cy="45" r="28" fill="white" stroke="#E0E0E0" stroke-width="1.5">
-                            <animate attributeName="transform" values="rotate(0 50 45);rotate(2 50 45);rotate(-2 50 45);rotate(0 50 45)" dur="6s" repeatCount="indefinite" />
-                        </circle>
-                        
-                        <!-- 眼睛 -->
-                        <circle cx="43" cy="45" r="3" fill="black" />
-                        <circle cx="57" cy="45" r="3" fill="black" />
-                        <!-- 高光 -->
-                        <circle cx="44" cy="44" r="1" fill="white" />
-                        <circle cx="58" cy="44" r="1" fill="white" />
-                        
-                        <!-- 微笑 -->
-                        <path d="M42 55 Q50 60 58 55" fill="none" stroke="black" stroke-width="1.2" stroke-linecap="round" />
-                        
-                        <!-- 颈部 - 增强与头部的连接 -->
-                        <path d="M50 73 C50 75, 45 78, 50 80 C55 78, 50 75, 50 73" fill="white" stroke="#E0E0E0" stroke-width="1" />
-                        
-                        <!-- 身体 - 更自然的裙摆状，增强与头部连接 -->
-                        <path d="M45 73 C30 75, 20 90, 18 115 C25 135, 50 145, 75 135 C82 115, 80 90, 65 75 C55 73, 45 73" fill="white" stroke="#E0E0E0" stroke-width="1.5" />
-                        
-                        <!-- 裙摆细节 - 多层褶皱 -->
-                        <path d="M18 115 C30 125, 50 130, 70 125 C82 115" fill="none" stroke="#F5F5F5" stroke-width="1" />
-                        <path d="M25 95 C35 105, 50 110, 65 105 C75 95" fill="none" stroke="#F9F9F9" stroke-width="0.8" />
-                    </svg>
-                    
-                    <!-- 独眼球体机器人（深色模式显示） -->
-                    <svg class="robot-sphere" width="80" height="100" viewBox="0 0 100 140" xmlns="http://www.w3.org/2000/svg">
-                        <!-- 主球体 - 基础形状 -->
-                        <circle cx="50" cy="50" r="30" fill="#2c3e50" stroke="#34495e" stroke-width="2">
-                            <animate attributeName="filter" values="brightness(1);brightness(1.2);brightness(1)" dur="4s" repeatCount="indefinite" />
-                        </circle>
-                        
-                        <!-- 破裂效果 - 裂纹 -->
-                        <path d="M50 20 C60 25, 70 35, 80 45" fill="none" stroke="#2c3e50" stroke-width="1.5" stroke-linecap="round" />
-                        <path d="M20 50 C25 40, 35 30, 50 25" fill="none" stroke="#2c3e50" stroke-width="1.5" stroke-linecap="round" />
-                        <path d="M30 25 C35 35, 45 40, 50 45" fill="none" stroke="#2c3e50" stroke-width="1.2" stroke-linecap="round" />
-                        <path d="M70 70 C65 60, 55 55, 50 50" fill="none" stroke="#2c3e50" stroke-width="1.2" stroke-linecap="round" />
-                        
-                        <!-- 破裂效果 - 缺失部分 -->
-                        <path d="M15 40 A35 35 0 0 1 25 30" fill="none" stroke="#2c3e50" stroke-width="2" stroke-dasharray="5,2" />
-                        <path d="M85 40 A35 35 0 0 0 75 30" fill="none" stroke="#2c3e50" stroke-width="2" stroke-dasharray="5,2" />
-                        
-                        <!-- 球体细节 - 装饰线条 -->
-                        <path d="M20 50 C20 35, 35 20, 50 20 C65 20, 80 35, 80 50" fill="none" stroke="#34495e" stroke-width="0.8" opacity="0.7" />
-                        
-                        <!-- 中心独眼 -->
-                        <circle id="robot-eye-main" cx="50" cy="45" r="8" fill="#e74c3c" />
-                        <circle id="robot-eye-pupil" cx="50" cy="45" r="4" fill="#2c3e50" />
-                        <circle id="robot-eye-highlight" cx="52" cy="43" r="2" fill="white" />
-                        
-                        <!-- 机械装饰 - 传感器/面板 -->
-                        <circle cx="50" cy="65" r="6" fill="#34495e" stroke="#2c3e50" stroke-width="1.5" />
-                        <line x1="47" y1="65" x2="53" y2="65" stroke="#2c3e50" stroke-width="1.5" />
-                        <line x1="50" y1="62" x2="50" y2="68" stroke="#2c3e50" stroke-width="1.5" />
-                        
-                        <!-- 侧边接收器 -->
-                        <rect x="15" y="45" width="5" height="10" rx="1" fill="#34495e" />
-                        <rect x="80" y="45" width="5" height="10" rx="1" fill="#34495e" />
-                        
-                        <!-- 底部连接部分 -->
-                        <ellipse cx="50" cy="80" rx="12" ry="5" fill="#34495e" />
-                    </svg>
+                    <!-- Three.js 3D场景容器 -->
+                    <div id="sunDollScene" class="sun-doll"></div>
+                    <div id="robotScene" class="robot-sphere"></div>
                 </div>
             </div>
             <div class="header-profile">
@@ -111,7 +45,7 @@
                     </div>
                 </div>
                 <div class="profile-info">
-                    <h1 class="profile-greeting">Hello I'm <span class="profile-name">alonepatient</span></h1>
+                    <h1 class="profile-greeting">Hello I'm a <span class="profile-name">alonepatient</span></h1>
                     <p class="profile-role">👦 Full Stack Developer</p>
                     <p class="profile-motto">📝 The only way to do great is to love what you do.</p>
                     <!-- 社交链接卡片 -->
@@ -131,7 +65,7 @@
                                 </svg>
                             </div>
                         </a>
-                        <a href="https://twitter.com" class="social-card" style="--index: 2" target="_blank" title="X">
+                        <a href="https://x.com/lyr20061227?_refluxos=a10" class="social-card" style="--index: 2" target="_blank" title="X">
                             <div class="social-card-logo">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                     <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
@@ -146,7 +80,7 @@
                                 </svg>
                             </div>
                         </a>
-                        <a href="https://csdn.net" class="social-card" style="--index: 4" target="_blank" title="CSDN">
+                        <a href="https://blog.csdn.net/lyr_1227?spm=1000.2115.3001.5343" class="social-card" style="--index: 4" target="_blank" title="CSDN">
                             <div class="social-card-logo">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                     <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
@@ -165,11 +99,11 @@
         <!-- 导航栏 - 移至header外部，下拉时显示 -->
         <nav class="nav">
             <ul class="nav-list">
-                <li class="nav-item"><a href="index.html" class="nav-link active">首页</a></li>
-                <li class="nav-item"><a href="about.html" class="nav-link">关于</a></li>
-                <li class="nav-item"><a href="gallery.html" class="nav-link">相册</a></li>
-                <li class="nav-item"><a href="links.html" class="nav-link">友链</a></li>
-                <li class="nav-item"><a href="message.html" class="nav-link">留言</a></li>
+                <li class="nav-item"><a href="index.html" class="nav-link">我的社区</a></li>
+                <li class="nav-item"><a href="http-100.html" class="nav-link">简历</a></li>
+                <li class="nav-item"><a href="record.html" class="nav-link">记录</a></li>
+                <li class="nav-item"><a href="http-100.html" class="nav-link">友链</a></li>
+                <li class="nav-item"><a href="http-100.html" class="nav-link">留言</a></li>
             </ul>
         </nav>
 
@@ -185,7 +119,7 @@
                         </div>
                         <h3 class="card-title">👋 Hi, I'm alonepatient</h3>
                         <div class="card-content">
-                            <p>全栈开发者，热爱技术创新与分享。专注于前端技术、Node.js开发和用户体验设计。</p>
+                            <p>创造是我实现自由的必备手段之一。人类的自由赞歌就是对全知的无尽追求</p>
                         </div>
                     </div>
 
@@ -195,27 +129,27 @@
                         <h3 class="card-title">技能专长</h3>
                         <div class="card-content">
                             <div class="skill-item">
-                                <span class="skill-name">JavaScript</span>
+                                <span class="skill-name">C/C++</span>
                                 <div class="skill-level">
-                                    <div class="skill-progress" style="width: 90%"></div>
+                                    <div class="skill-progress" style="width: 75%"></div>
                                 </div>
                             </div>
                             <div class="skill-item">
-                                <span class="skill-name">React/Vue</span>
+                                <span class="skill-name">前端</span>
                                 <div class="skill-level">
-                                    <div class="skill-progress" style="width: 85%"></div>
+                                    <div class="skill-progress" style="width: 50%"></div>
                                 </div>
                             </div>
                             <div class="skill-item">
-                                <span class="skill-name">Node.js</span>
+                                <span class="skill-name">Python</span>
                                 <div class="skill-level">
-                                    <div class="skill-progress" style="width: 80%"></div>
+                                    <div class="skill-progress" style="width: 45%"></div>
                                 </div>
                             </div>
                             <div class="skill-item">
-                                <span class="skill-name">CSS/SCSS</span>
+                                <span class="skill-name">Unity</span>
                                 <div class="skill-level">
-                                    <div class="skill-progress" style="width: 88%"></div>
+                                    <div class="skill-progress" style="width: 25%"></div>
                                 </div>
                             </div>
                         </div>
@@ -224,153 +158,31 @@
                     <!-- 数据统计功能卡片 -->
                     <div class="feature-card stats-card">
                         <span class="card-icon">📊</span>
-                        <h3 class="card-title">博客统计</h3>
+                        <h3 class="card-title">数据统计</h3>
                         <div class="card-content">
                             <div class="stats-grid">
                                 <div class="stat-item">
-                                    <span class="stat-number">15</span>
+                                    <span class="stat-number">0</span>
                                     <span class="stat-label">文章总数</span>
                                 </div>
                                 <div class="stat-item">
-                                    <span class="stat-number">2.3K</span>
-                                    <span class="stat-label">总访问量</span>
+                                    <span class="stat-number">3</span>
+                                    <span class="stat-label">项目数量</span>
                                 </div>
                                 <div class="stat-item">
                                     <span class="stat-number">8</span>
                                     <span class="stat-label">技术标签</span>
                                 </div>
                                 <div class="stat-item">
-                                    <span class="stat-number">3</span>
+                                    <span class="stat-number">0</span>
                                     <span class="stat-label">运行年数</span>
                                 </div>
                             </div>
                         </div>
                     </div>
-
-                    <!-- 快捷链接功能卡片 -->
-                    <div class="feature-card links-card">
-                        <span class="card-icon">🔗</span>
-                        <h3 class="card-title">快捷导航</h3>
-                        <div class="card-content">
-                            <div class="links-grid">
-                                <a href="https://github.com" class="link-item" target="_blank">
-                                    <span class="link-icon">💻</span>
-                                    <span class="link-text">GitHub</span>
-                                </a>
-                                <a href="mailto:hello@zyyo.net" class="link-item">
-                                    <span class="link-icon">📧</span>
-                                    <span class="link-text">Email</span>
-                                </a>
-                                <a href="#" class="link-item">
-                                    <span class="link-icon">📱</span>
-                                    <span class="link-text">微信</span>
-                                </a>
-                                <a href="#" class="link-item">
-                                    <span class="link-icon">🎨</span>
-                                    <span class="link-text">作品集</span>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-
-                    <article class="article-card">
-                        <div class="article-meta">
-                            <time class="article-date" datetime="2024-10-26">2024年10月26日</time>
-                            <span class="article-category">技术</span>
-                        </div>
-                        <h2 class="article-title">
-                            <a href="article.html?id=1" class="article-link">现代Web开发技术栈的演进与思考</a>
-                        </h2>
-                        <div class="article-excerpt">
-                            <p>随着前端技术的快速发展，从jQuery到React、Vue，从Webpack到Vite，整个Web开发生态发生了翻天覆地的变化。本文将分享我对现代Web开发技术栈的一些思考和实践经验...</p>
-                        </div>
-                        <div class="article-tags">
-                            <span class="tag">JavaScript</span>
-                            <span class="tag">前端开发</span>
-                            <span class="tag">React</span>
-                        </div>
-                    </article>
-
-                    <article class="article-card">
-                        <div class="article-meta">
-                            <time class="article-date" datetime="2024-10-20">2024年10月20日</time>
-                            <span class="article-category">生活</span>
-                        </div>
-                        <h2 class="article-title">
-                            <a href="article.html?id=2" class="article-link">秋天的第一杯奶茶与程序员的思考</a>
-                        </h2>
-                        <div class="article-excerpt">
-                            <p>秋天来了，朋友圈又开始刷屏"秋天的第一杯奶茶"。作为一名程序员，我想聊聊关于生活与工作平衡的一些感悟。代码很重要，但生活中的这些小美好同样珍贵...</p>
-                        </div>
-                        <div class="article-tags">
-                            <span class="tag">生活感悟</span>
-                            <span class="tag">工作平衡</span>
-                        </div>
-                    </article>
-
-                    <article class="article-card">
-                        <div class="article-meta">
-                            <time class="article-date" datetime="2024-10-15">2024年10月15日</time>
-                            <span class="article-category">技术</span>
-                        </div>
-                        <h2 class="article-title">
-                            <a href="article.html?id=3" class="article-link">CSS Grid布局的实践应用与技巧分享</a>
-                        </h2>
-                        <div class="article-excerpt">
-                            <p>CSS Grid是现代Web布局的强大工具，它为我们提供了二维布局的完美解决方案。通过实际项目的应用，我总结了一些Grid布局的实用技巧和最佳实践...</p>
-                        </div>
-                        <div class="article-tags">
-                            <span class="tag">CSS</span>
-                            <span class="tag">布局</span>
-                            <span class="tag">前端</span>
-                        </div>
-                    </article>
-
-                    <article class="article-card">
-                        <div class="article-meta">
-                            <time class="article-date" datetime="2024-10-10">2024年10月10日</time>
-                            <span class="article-category">技术</span>
-                        </div>
-                        <h2 class="article-title">
-                            <a href="article.html?id=4" class="article-link">Node.js性能优化的几个关键点</a>
-                        </h2>
-                        <div class="article-excerpt">
-                            <p>在开发高并发的Node.js应用时，性能优化是一个不可忽视的话题。本文将从内存管理、异步处理、数据库优化等几个维度，分享一些实用的性能优化技巧...</p>
-                        </div>
-                        <div class="article-tags">
-                            <span class="tag">Node.js</span>
-                            <span class="tag">性能优化</span>
-                            <span class="tag">后端</span>
-                        </div>
-                    </article>
-
-                    <article class="article-card">
-                        <div class="article-meta">
-                            <time class="article-date" datetime="2024-10-05">2024年10月5日</time>
-                            <span class="article-category">生活</span>
-                        </div>
-                        <h2 class="article-title">
-                            <a href="article.html?id=5" class="article-link">国庆假期的读书清单与思考</a>
-                        </h2>
-                        <div class="article-excerpt">
-                            <p>国庆七天假期，除了外出游玩，我也抽时间读了几本好书。《代码整洁之道》让我重新思考代码质量，《人月神话》让我理解项目管理的复杂性。分享一些读书心得...</p>
-                        </div>
-                        <div class="article-tags">
-                            <span class="tag">读书</span>
-                            <span class="tag">思考</span>
-                            <span class="tag">假期</span>
-                        </div>
-                    </article>
                 </section>
 
-                <!-- 分页 -->
-                <div class="pagination">
-                    <span class="pagination-info">第 1 页 / 共 3 页</span>
-                    <div class="pagination-links">
-                        <span class="pagination-prev disabled">上一页</span>
-                        <a href="#" class="pagination-next">下一页</a>
-                    </div>
-                </div>
+                
             </div>
 
             <!-- 侧边栏 -->
@@ -386,10 +198,10 @@
                             <img src="img/person/1.jpg" alt="alonepatient">
                         </div>
                             <div class="author-desc">
-                                <h4>alonepatient</h4>
-                                <p>全栈开发者，热爱技术与生活</p>
+                                <h4>AlonePatient</h4>
+                                <p>人的价值是由自己决定的</p>
                                 <div class="author-stats">
-                                    <span>文章 15</span>
+                                    <span>文章 0</span>
                                     <span>标签 8</span>
                                 </div>
                             </div>
@@ -400,15 +212,15 @@
                 <!-- 最新文章 -->
                 <div class="widget">
                     <div class="widget-header">
-                        <h3>最新文章</h3>
+                        <h3>药方</h3>
                     </div>
                     <div class="widget-content">
                         <ul class="recent-posts">
-                            <li><a href="#">现代Web开发技术栈的演进与思考</a></li>
-                            <li><a href="#">秋天的第一杯奶茶与程序员的思考</a></li>
-                            <li><a href="#">CSS Grid布局的实践应用与技巧分享</a></li>
-                            <li><a href="#">Node.js性能优化的几个关键点</a></li>
-                            <li><a href="#">国庆假期的读书清单与思考</a></li>
+                            <li><a href="#">外向的孤独患者有何不可</a></li>
+                            <li><a href="#">不要没于众生相的繁杂之中</a></li>
+                            <li><a href="#">不要担忧任何无法控制的事</a></li>
+                            <li><a href="#">世界一切都立体，就应该有我喜欢与不喜欢的一切</a></li>
+                            <li><a href="#">绝对的自由</a></li>
                         </ul>
                     </div>
                 </div>
@@ -435,14 +247,14 @@
                 <!-- 文章归档 -->
                 <div class="widget">
                     <div class="widget-header">
-                        <h3>文章归档</h3>
+                        <h3>更新记录</h3>
                     </div>
                     <div class="widget-content">
                         <ul class="archive-list">
-                            <li><a href="#">2024年10月 (5)</a></li>
-                            <li><a href="#">2024年9月 (3)</a></li>
-                            <li><a href="#">2024年8月 (4)</a></li>
-                            <li><a href="#">2024年7月 (3)</a></li>
+                            <li><a href="#">暂</a></li>
+                            <li><a href="#">无</a></li>
+                            <li><a href="#">信</a></li>
+                            <li><a href="#">息</a></li>
                         </ul>
                     </div>
                 </div>
@@ -452,11 +264,11 @@
         <!-- 页脚 -->
         <footer class="footer">
             <div class="footer-content">
-                <p>&copy; 2024 alonepatient. All rights reserved.</p>
+                <p>&copy; 2025 alonepatient. HELLO WORLD.</p>
 
                 <p>
-                    <a href="#">备案号：京ICP备xxxxxxxx号</a> | 
-                    <a href="mailto:hello@zyyo.net">联系我</a>
+                    <a href="#">雨是有生命的</a> | 
+                    <a href="#">找到我</a>
                 </p>
             </div>
         </footer>
@@ -539,85 +351,280 @@
                 dateTimeElement.textContent = now.toLocaleString('zh-CN', options);
             }
             
-            // 初始化天气信息（模拟数据，实际项目中应使用天气API）
-            function initWeatherInfo() {
-                // 天气类型和对应图标
-                const weatherIcons = {
-                    sunny: '☀️',
-                    cloudy: '☁️',
-                    rainy: '🌧️',
-                    snowy: '❄️',
-                    windy: '💨',
-                    foggy: '🌫️',
-                    stormy: '⛈️',
-                    partlyCloudy: '⛅'
-                };
-                
-                // 天气类型列表
-                const weatherTypes = [
-                    { type: 'sunny', description: '晴天', minTemp: 20, maxTemp: 30 },
-                    { type: 'cloudy', description: '多云', minTemp: 18, maxTemp: 25 },
-                    { type: 'rainy', description: '下雨', minTemp: 15, maxTemp: 22 },
-                    { type: 'partlyCloudy', description: '局部多云', minTemp: 19, maxTemp: 27 },
-                    { type: 'windy', description: '大风', minTemp: 16, maxTemp: 24 }
-                ];
-                
-                // 随机选择一种天气
-                const randomWeather = weatherTypes[Math.floor(Math.random() * weatherTypes.length)];
-                // 生成随机温度
-                const temp = Math.floor(Math.random() * (randomWeather.maxTemp - randomWeather.minTemp + 1)) + randomWeather.minTemp;
-                
-                // 模拟天气数据
-                const weatherData = {
-                    temperature: `${temp}°C`,
-                    description: randomWeather.description,
-                    icon: weatherIcons[randomWeather.type]
-                };
-                
-                weatherElement.innerHTML = `
-                    <span class="weather-icon">${weatherData.icon}</span>
-                    <span class="weather-text">${weatherData.description} ${weatherData.temperature}</span>
-                `;
-                
-                // 每隔30秒更新一次天气（模拟变化）
-                setInterval(() => {
-                    const newWeather = weatherTypes[Math.floor(Math.random() * weatherTypes.length)];
-                    const newTemp = Math.floor(Math.random() * (newWeather.maxTemp - newWeather.minTemp + 1)) + newWeather.minTemp;
-                    
-                    const updatedWeatherData = {
-                        temperature: `${newTemp}°C`,
-                        description: newWeather.description,
-                        icon: weatherIcons[newWeather.type]
-                    };
-                    
-                    // 平滑更新天气信息
-                    weatherElement.style.opacity = '0.5';
-                    setTimeout(() => {
-                        weatherElement.innerHTML = `
-                            <span class="weather-icon">${updatedWeatherData.icon}</span>
-                            <span class="weather-text">${updatedWeatherData.description} ${updatedWeatherData.temperature}</span>
-                        `;
-                        weatherElement.style.opacity = '1';
-                    }, 500);
-                }, 30000);
-            }
-            
             // 初始化并定时更新时间
             updateDateTime();
-            initWeatherInfo();
             setInterval(updateDateTime, 1000);
             
-            // 为导航链接添加平滑滚动到内容区域的功能
-            document.querySelectorAll('.nav-link').forEach(link => {
-                link.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    window.scrollTo({
-                        top: window.innerHeight,
-                        behavior: 'smooth'
-                    });
-                });
-            });
+            
         });
+    </script>
+    
+    <!-- Three.js 3D模型代码 -->
+    <script>
+        // Three.js 3D晴天娃娃实现
+        function createSunDoll() {
+            const container = document.getElementById('sunDollScene');
+            container.style.width = '80px';
+            container.style.height = '100px';
+            
+            // 创建场景
+            const scene = new THREE.Scene();
+            
+            // 创建相机
+            const camera = new THREE.PerspectiveCamera(75, 0.8, 0.1, 1000);
+            camera.position.z = 5;
+            
+            // 创建渲染器
+            const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+            renderer.setSize(80, 100);
+            container.appendChild(renderer.domElement);
+            
+            // 环境光
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+            scene.add(ambientLight);
+            
+            // 方向光
+            const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+            directionalLight.position.set(5, 5, 5);
+            scene.add(directionalLight);
+            
+            // 创建晴天娃娃头部
+            const headGeometry = new THREE.SphereGeometry(1.5, 32, 32);
+            const headMaterial = new THREE.MeshStandardMaterial({ 
+                color: 0xffffff,
+                roughness: 0.3,
+                metalness: 0.1
+            });
+            const head = new THREE.Mesh(headGeometry, headMaterial);
+            head.position.y = 0.5;
+            scene.add(head);
+            
+            // 创建眼睛组，用于控制眼睛整体旋转
+            const eyesGroup = new THREE.Group();
+            eyesGroup.position.y = 0.5;
+            scene.add(eyesGroup);
+            
+            // 创建眼睛
+            const eyeGeometry = new THREE.SphereGeometry(0.2, 16, 16);
+            const eyeMaterial = new THREE.MeshStandardMaterial({ color: 0x000000 });
+            
+            const leftEye = new THREE.Mesh(eyeGeometry, eyeMaterial);
+            leftEye.position.set(-0.6, 0, 1.3);
+            eyesGroup.add(leftEye);
+            
+            const rightEye = new THREE.Mesh(eyeGeometry, eyeMaterial);
+            rightEye.position.set(0.6, 0, 1.3);
+            eyesGroup.add(rightEye);
+            
+            // 创建高光
+            const highlightGeometry = new THREE.SphereGeometry(0.08, 8, 8);
+            const highlightMaterial = new THREE.MeshStandardMaterial({ color: 0xffffff });
+            
+            const leftHighlight = new THREE.Mesh(highlightGeometry, highlightMaterial);
+            leftHighlight.position.set(-0.5, 0.1, 1.4);
+            eyesGroup.add(leftHighlight);
+            
+            const rightHighlight = new THREE.Mesh(highlightGeometry, highlightMaterial);
+            rightHighlight.position.set(0.7, 0.1, 1.4);
+            eyesGroup.add(rightHighlight);
+            
+            // 创建微笑
+            const smileGeometry = new THREE.TorusGeometry(0.5, 0.05, 8, 32, Math.PI);
+            const smileMaterial = new THREE.MeshStandardMaterial({ color: 0x000000 });
+            const smile = new THREE.Mesh(smileGeometry, smileMaterial);
+            smile.rotation.x = Math.PI / 2;
+            smile.position.set(0, -0.1, 1.4); // 将y坐标从0.2改为-0.1，向下移动0.3个单位
+            scene.add(smile);
+            
+            // 创建身体
+            const bodyGeometry = new THREE.ConeGeometry(1.2, 2.5, 32);
+            const bodyMaterial = new THREE.MeshStandardMaterial({ 
+                color: 0xffffff,
+                roughness: 0.3,
+                metalness: 0.1
+            });
+            const body = new THREE.Mesh(bodyGeometry, bodyMaterial);
+            body.position.y = -1.2;
+            scene.add(body);
+            
+            // 创建悬挂绳
+            const ropeGeometry = new THREE.CylinderGeometry(0.03, 0.03, 2, 8);
+            const ropeMaterial = new THREE.MeshStandardMaterial({ color: 0x8B4513 });
+            const rope = new THREE.Mesh(ropeGeometry, ropeMaterial);
+            rope.position.y = 2;
+            scene.add(rope);
+            
+            // 眼睛目标位置
+            const eyeTarget = new THREE.Vector3();
+            
+            // 监听全局鼠标移动，使用整个窗口作为参考
+            document.addEventListener('mousemove', (event) => {
+                // 获取容器在页面中的位置
+                const rect = container.getBoundingClientRect();
+                
+                // 计算鼠标相对于容器中心的偏移
+                const x = event.clientX - rect.left - rect.width / 2;
+                const y = event.clientY - rect.top - rect.height / 2;
+                
+                // 归一化偏移量，控制眼睛转动范围（减小范围）
+                const maxOffset = 100; // 增大maxOffset，减小敏感度
+                const normalizedX = Math.max(-0.5, Math.min(0.5, x / maxOffset)); // 限制范围为-0.5到0.5
+                const normalizedY = Math.max(-0.5, Math.min(0.5, y / maxOffset)); // 限制范围为-0.5到0.5
+                
+                // 设置眼睛目标位置（减小移动幅度）
+                eyeTarget.x = normalizedX * 1;
+                eyeTarget.y = -normalizedY * 1;
+                eyeTarget.z = 10; // 增大z值，减小转动幅度
+            });
+            
+            // 动画循环
+            function animate() {
+                requestAnimationFrame(animate);
+                
+                // 头部摇摆动画
+                head.rotation.z = Math.sin(Date.now() * 0.002) * 0.1;
+                body.rotation.z = Math.sin(Date.now() * 0.002) * 0.05;
+                
+                // 眼睛跟随鼠标
+                eyesGroup.lookAt(eyeTarget);
+                
+                renderer.render(scene, camera);
+            }
+            
+            animate();
+        }
+        
+        // Three.js 3D机器人实现
+        function createRobot() {
+            const container = document.getElementById('robotScene');
+            container.style.width = '80px';
+            container.style.height = '100px';
+            
+            // 创建场景
+            const scene = new THREE.Scene();
+            
+            // 创建相机
+            const camera = new THREE.PerspectiveCamera(75, 0.8, 0.1, 1000);
+            camera.position.z = 5;
+            
+            // 创建渲染器
+            const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+            renderer.setSize(80, 100);
+            container.appendChild(renderer.domElement);
+            
+            // 环境光
+            const ambientLight = new THREE.AmbientLight(0x404040, 0.5);
+            scene.add(ambientLight);
+            
+            // 方向光
+            const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+            directionalLight.position.set(5, 5, 5);
+            scene.add(directionalLight);
+            
+            // 创建机器人主体
+            const bodyGeometry = new THREE.SphereGeometry(1.5, 32, 32);
+            const bodyMaterial = new THREE.MeshStandardMaterial({ 
+                color: 0x2c3e50,
+                roughness: 0.2,
+                metalness: 0.8
+            });
+            const body = new THREE.Mesh(bodyGeometry, bodyMaterial);
+            scene.add(body);
+            
+            // 创建眼睛组
+            const eyeGroup = new THREE.Group();
+            scene.add(eyeGroup);
+            
+            // 创建独眼
+            const eyeGeometry = new THREE.SphereGeometry(0.4, 16, 16);
+            const eyeMaterial = new THREE.MeshStandardMaterial({ color: 0xe74c3c });
+            const eye = new THREE.Mesh(eyeGeometry, eyeMaterial);
+            eye.position.z = 1.3;
+            eyeGroup.add(eye);
+            
+            const pupilGeometry = new THREE.SphereGeometry(0.2, 16, 16);
+            const pupilMaterial = new THREE.MeshStandardMaterial({ color: 0x2c3e50 });
+            const pupil = new THREE.Mesh(pupilGeometry, pupilMaterial);
+            pupil.position.z = 1.6;
+            eyeGroup.add(pupil);
+            
+            const highlightGeometry = new THREE.SphereGeometry(0.1, 8, 8);
+            const highlightMaterial = new THREE.MeshStandardMaterial({ color: 0xffffff });
+            const highlight = new THREE.Mesh(highlightGeometry, highlightMaterial);
+            highlight.position.set(0.1, 0.1, 1.7);
+            eyeGroup.add(highlight);
+            
+            // 创建传感器
+            const sensorGeometry = new THREE.CylinderGeometry(0.3, 0.3, 0.1, 8);
+            const sensorMaterial = new THREE.MeshStandardMaterial({ color: 0x34495e });
+            const sensor = new THREE.Mesh(sensorGeometry, sensorMaterial);
+            sensor.position.y = -0.8;
+            sensor.rotation.x = Math.PI / 2;
+            scene.add(sensor);
+            
+            // 创建侧边接收器
+            const receiverGeometry = new THREE.BoxGeometry(0.2, 0.8, 0.2);
+            const receiverMaterial = new THREE.MeshStandardMaterial({ color: 0x34495e });
+            
+            const leftReceiver = new THREE.Mesh(receiverGeometry, receiverMaterial);
+            leftReceiver.position.set(-1.7, 0, 0);
+            scene.add(leftReceiver);
+            
+            const rightReceiver = new THREE.Mesh(receiverGeometry, receiverMaterial);
+            rightReceiver.position.set(1.7, 0, 0);
+            scene.add(rightReceiver);
+            
+            // 创建装饰线条
+            const lineGeometry = new THREE.TorusGeometry(1.3, 0.05, 8, 32);
+            const lineMaterial = new THREE.MeshStandardMaterial({ color: 0x34495e });
+            const line = new THREE.Mesh(lineGeometry, lineMaterial);
+            scene.add(line);
+            
+            // 眼睛目标位置
+            const eyeTarget = new THREE.Vector3();
+            
+            // 监听全局鼠标移动，使用整个窗口作为参考
+            document.addEventListener('mousemove', (event) => {
+                // 获取容器在页面中的位置
+                const rect = container.getBoundingClientRect();
+                
+                // 计算鼠标相对于容器中心的偏移
+                const x = event.clientX - rect.left - rect.width / 2;
+                const y = event.clientY - rect.top - rect.height / 2;
+                
+                // 归一化偏移量，控制眼睛转动范围（减小范围）
+                const maxOffset = 100; // 增大maxOffset，减小敏感度
+                const normalizedX = Math.max(-0.5, Math.min(0.5, x / maxOffset)); // 限制范围为-0.5到0.5
+                const normalizedY = Math.max(-0.5, Math.min(0.5, y / maxOffset)); // 限制范围为-0.5到0.5
+                
+                // 设置眼睛目标位置（减小移动幅度）
+                eyeTarget.x = normalizedX * 1;
+                eyeTarget.y = -normalizedY * 1;
+                eyeTarget.z = 10; // 增大z值，减小转动幅度
+            });
+            
+            // 动画循环
+            function animate() {
+                requestAnimationFrame(animate);
+                
+                // 旋转动画
+                body.rotation.y += 0.01;
+                
+                // 眼睛跟随鼠标
+                eyeGroup.lookAt(eyeTarget);
+                
+                // 眼睛发光效果
+                eyeMaterial.emissiveIntensity = 0.3 + Math.sin(Date.now() * 0.005) * 0.2;
+                
+                renderer.render(scene, camera);
+            }
+            
+            animate();
+        }
+        
+        // 初始化3D模型
+        createSunDoll();
+        createRobot();
     </script>
 </body>
 </html>

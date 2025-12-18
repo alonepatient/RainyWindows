@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>文本加密解密 - RainyWindows</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f8f9fa;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        header {
+            background-color: #fff;
+            padding: 15px 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            transition: all 0.3s ease;
+        }
+        
+        header.scrolled {
+            padding: 10px 0;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.12);
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 28px;
+            font-weight: 700;
+            color: #333;
+            text-decoration: none;
+            letter-spacing: -0.5px;
+            display: flex;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+        
+        .logo:hover {
+            color: #3498db;
+            transform: scale(1.05);
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            list-style: none;
+        }
+        
+        .nav-links a {
+            text-decoration: none;
+            color: #666;
+            font-size: 15px;
+            font-weight: 500;
+            position: relative;
+            transition: all 0.3s ease;
+            padding: 5px 0;
+        }
+        
+        .nav-links a:hover {
+            color: #3498db;
+        }
+        
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: #3498db;
+            transition: width 0.3s ease;
+        }
+        
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+        
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .header-icon {
+            font-size: 19px;
+            color: #666;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            padding: 5px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 35px;
+            height: 35px;
+        }
+        
+        .header-icon:hover {
+            color: #3498db;
+            background-color: rgba(52, 152, 219, 0.1);
+            transform: translateY(-2px);
+        }
+        
+        /* 移动端菜单按钮 */
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 5px;
+        }
+        
+        .mobile-menu-btn .bar {
+            display: block;
+            width: 25px;
+            height: 3px;
+            margin: 5px auto;
+            background-color: #333;
+            transition: all 0.3s ease;
+        }
+        
+        .mobile-menu-btn.active .bar:nth-child(1) {
+            transform: translateY(8px) rotate(45deg);
+        }
+        
+        .mobile-menu-btn.active .bar:nth-child(2) {
+            opacity: 0;
+        }
+        
+        .mobile-menu-btn.active .bar:nth-child(3) {
+            transform: translateY(-8px) rotate(-45deg);
+        }
+
+        /* 主内容区域 */
+        main {
+            padding: 50px 0;
+        }
+
+        /* 标题样式 */
+        .page-title {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .page-title h1 {
+            font-size: 36px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 15px;
+            background: linear-gradient(135deg, #3498db, #9b59b6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .page-title p {
+            font-size: 18px;
+            color: #666;
+        }
+
+        /* 加密解密容器 */
+        .encryptor-container {
+            background-color: #fff;
+            border-radius: 16px;
+            padding: 40px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.12), 0 0 0 1px rgba(0,0,0,0.04) inset;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        /* 选项区域 */
+        .options-section {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .option-group {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .option-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .option-group select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            background-color: #fff;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .option-group select:hover {
+            border-color: #3498db;
+        }
+
+        .option-group select:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        }
+
+        /* 按钮区域 */
+        .buttons-section {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #3498db, #9b59b6);
+            color: #fff;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(52, 152, 219, 0.3);
+        }
+
+        .btn-secondary {
+            background-color: #e0e0e0;
+            color: #333;
+        }
+
+        .btn-secondary:hover {
+            background-color: #bdbdbd;
+            transform: translateY(-2px);
+        }
+
+        /* 输入输出区域 */
+        .input-output-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .io-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .io-group label {
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .io-group textarea {
+            width: 100%;
+            height: 200px;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            font-family: 'Courier New', Courier, monospace;
+            resize: vertical;
+            transition: all 0.3s ease;
+        }
+
+        .io-group textarea:hover {
+            border-color: #3498db;
+        }
+
+        .io-group textarea:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        }
+
+        /* 复制按钮 */
+        .copy-btn {
+            margin-top: 10px;
+            padding: 8px 15px;
+            align-self: flex-end;
+            background-color: #f5f5f5;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .copy-btn:hover {
+            background-color: #e0e0e0;
+        }
+
+        /* 结果提示 */
+        .result-message {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-weight: 600;
+            display: none;
+        }
+
+        .result-message.success {
+            background-color: rgba(46, 204, 113, 0.1);
+            color: #27ae60;
+            border: 1px solid #2ecc71;
+            display: block;
+        }
+
+        .result-message.error {
+            background-color: rgba(231, 76, 60, 0.1);
+            color: #c0392b;
+            border: 1px solid #e74c3c;
+            display: block;
+        }
+
+        /* 页脚 */
+        footer {
+            background-color: #333;
+            color: #fff;
+            padding: 40px 0;
+            margin-top: 60px;
+        }
+        
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+        }
+        
+        .footer-section h3 {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+        
+        .footer-section p,
+        .footer-section a {
+            color: #ccc;
+            text-decoration: none;
+            line-height: 1.8;
+            font-size: 14px;
+        }
+        
+        .footer-section a:hover {
+            color: #3498db;
+        }
+        
+        .footer-bottom {
+            text-align: center;
+            padding-top: 30px;
+            margin-top: 30px;
+            border-top: 1px solid #444;
+            color: #888;
+            font-size: 13px;
+        }
+
+        /* 滚动到顶部按钮 */
+        .scroll-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #3498db, #9b59b6);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            opacity: 0;
+            transform: translateY(30px) scale(0.8);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 1000;
+            box-shadow: 0 8px 24px rgba(52, 152, 219, 0.3), 0 0 0 2px rgba(255, 255, 255, 0.2) inset;
+            font-size: 20px;
+            font-weight: 700;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        
+        .scroll-to-top.visible {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+        
+        .scroll-to-top:hover {
+            background: linear-gradient(135deg, #2980b9, #8e44ad);
+            transform: translateY(-6px) scale(1.1) rotate(180deg);
+            box-shadow: 0 12px 32px rgba(52, 152, 219, 0.4), 0 0 0 3px rgba(255, 255, 255, 0.3) inset;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .nav-links {
+                position: fixed;
+                top: 70px;
+                left: 0;
+                width: 100%;
+                background-color: #fff;
+                flex-direction: column;
+                align-items: center;
+                padding: 20px 0;
+                gap: 15px;
+                box-shadow: 0 10px 15px rgba(0,0,0,0.1);
+                transform: translateY(-150%);
+                transition: transform 0.3s ease;
+                z-index: 90;
+            }
+            
+            .nav-links.active {
+                transform: translateY(0);
+            }
+            
+            .mobile-menu-btn {
+                display: block;
+                z-index: 100;
+            }
+            
+            .header-right {
+                gap: 10px;
+            }
+
+            .encryptor-container {
+                padding: 20px;
+            }
+
+            .input-output-section {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .options-section {
+                flex-direction: column;
+            }
+
+            .option-group {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header id="main-header">
+        <div class="container">
+            <div class="header-content">
+                <a href="index.html" class="logo">
+                    <span>RainyWindows</span>
+                </a>
+                
+                <!-- 移动端菜单按钮 -->
+                <button class="mobile-menu-btn" id="mobile-menu-btn">
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                </button>
+                
+                <!-- 桌面端导航 -->
+                <nav class="nav-links" id="nav-links">
+                    <a href="index.html">首页</a>
+                    <a href="album.html">相册</a>
+                    <a href="library.html">收录</a>
+                    <a href="studio.html">工作室</a>
+                    <a href="person.html">关于</a>
+                    <a href="encryptor.html">加密工具</a>
+                </nav>
+                
+                <div class="header-right">
+                    <div class="header-icon" title="移动版本">📱</div>
+                    <div class="header-icon" title="通知">🔔</div>
+                    <div class="header-icon" title="搜索">🔍</div>
+                </div>
+            </div>
+        </div>
+    </header>
+    
+    <main class="container">
+        <section class="page-title">
+            <h1>🔒 文本加密解密工具</h1>
+            <p>支持多种加密算法，轻松进行文本加密和解密操作</p>
+        </section>
+
+        <section class="encryptor-container">
+            <div class="result-message" id="resultMessage"></div>
+
+            <div class="options-section">
+                <div class="option-group">
+                    <label for="mode">操作模式</label>
+                    <select id="mode">
+                        <option value="encrypt">加密</option>
+                        <option value="decrypt">解密</option>
+                    </select>
+                </div>
+                <div class="option-group">
+                    <label for="algorithm">加密算法</label>
+                    <select id="algorithm">
+                        <option value="base64">Base64</option>
+                        <option value="url">URL编码</option>
+                        <option value="md2">MD2</option>
+                        <option value="md4">MD4</option>
+                        <option value="md5">MD5</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="buttons-section">
+                <button class="btn btn-primary" id="processBtn">执行操作</button>
+                <button class="btn btn-secondary" id="clearBtn">清空内容</button>
+            </div>
+
+            <div class="input-output-section">
+                <div class="io-group">
+                    <label for="inputText">输入文本</label>
+                    <textarea id="inputText" placeholder="请输入要加密或解密的文本..."></textarea>
+                </div>
+                <div class="io-group">
+                    <label for="outputText">输出结果</label>
+                    <textarea id="outputText" readonly placeholder="结果将显示在这里..."></textarea>
+                    <button class="copy-btn" id="copyBtn">复制结果</button>
+                </div>
+            </div>
+        </section>
+    </main>
+    
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>关于我们</h3>
+                    <p>RainyWindows 是一个分享生活、记录美好的平台，致力于为用户提供优质的内容和服务。</p>
+                </div>
+                <div class="footer-section">
+                    <h3>快速链接</h3>
+                    <p><a href="index.html">首页</a></p>
+                    <p><a href="album.html">相册</a></p>
+                    <p><a href="library.html">收录</a></p>
+                    <p><a href="studio.html">工作室</a></p>
+                    <p><a href="person.html">关于</a></p>
+                    <p><a href="encryptor.html">加密工具</a></p>
+                </div>
+                <div class="footer-section">
+                    <h3>联系方式</h3>
+                    <p>📧 contact@rainywindows.com</p>
+                    <p>🐦 @RainyWindows</p>
+                    <p>📱 +86 123 4567 8910</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 RainyWindows. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+    
+    <div class="scroll-to-top">↑</div>
+    
+    <script>
+        // 导航栏滚动效果
+        const header = document.getElementById('main-header');
+        
+        window.addEventListener('scroll', () => {
+            if (window.pageYOffset > 50) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+        });
+        
+        // 移动端菜单功能
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const navLinks = document.getElementById('nav-links');
+        
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenuBtn.classList.toggle('active');
+            navLinks.classList.toggle('active');
+            
+            // 点击菜单时禁止背景滚动
+            document.body.style.overflow = navLinks.classList.contains('active') ? 'hidden' : 'auto';
+        });
+        
+        // 点击导航链接后关闭菜单
+        navLinks.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenuBtn.classList.remove('active');
+                navLinks.classList.remove('active');
+                document.body.style.overflow = 'auto';
+            });
+        });
+        
+        // 滚动到顶部按钮功能
+        const scrollBtn = document.querySelector('.scroll-to-top');
+        
+        window.addEventListener('scroll', () => {
+            if (window.pageYOffset > 300) {
+                scrollBtn.classList.add('visible');
+            } else {
+                scrollBtn.classList.remove('visible');
+            }
+        });
+        
+        scrollBtn.addEventListener('click', () => {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+
+        // 加密解密功能
+        const modeSelect = document.getElementById('mode');
+        const algorithmSelect = document.getElementById('algorithm');
+        const inputText = document.getElementById('inputText');
+        const outputText = document.getElementById('outputText');
+        const processBtn = document.getElementById('processBtn');
+        const clearBtn = document.getElementById('clearBtn');
+        const copyBtn = document.getElementById('copyBtn');
+        const resultMessage = document.getElementById('resultMessage');
+
+        // 显示消息
+        function showMessage(message, type) {
+            resultMessage.textContent = message;
+            resultMessage.className = `result-message ${type}`;
+            setTimeout(() => {
+                resultMessage.style.display = 'none';
+            }, 3000);
+        }
+
+        // 复制到剪贴板
+        copyBtn.addEventListener('click', () => {
+            if (outputText.value.trim() === '') {
+                showMessage('没有可复制的内容', 'error');
+                return;
+            }
+            outputText.select();
+            document.execCommand('copy');
+            showMessage('已复制到剪贴板', 'success');
+        });
+
+        // 清空内容
+        clearBtn.addEventListener('click', () => {
+            inputText.value = '';
+            outputText.value = '';
+            resultMessage.style.display = 'none';
+        });
+
+        // 执行加密解密操作
+        processBtn.addEventListener('click', () => {
+            const mode = modeSelect.value;
+            const algorithm = algorithmSelect.value;
+            const input = inputText.value;
+
+            if (input.trim() === '') {
+                showMessage('请输入要处理的文本', 'error');
+                return;
+            }
+
+            try {
+                let result;
+                
+                if (mode === 'encrypt') {
+                    result = encrypt(input, algorithm);
+                } else {
+                    result = decrypt(input, algorithm);
+                }
+                
+                outputText.value = result;
+                showMessage('操作成功完成', 'success');
+            } catch (error) {
+                showMessage(`操作失败: ${error.message}`, 'error');
+            }
+        });
+
+        // 加密函数
+        function encrypt(text, algorithm) {
+            switch (algorithm) {
+                case 'base64':
+                    return btoa(unescape(encodeURIComponent(text)));
+                case 'url':
+                    return encodeURIComponent(text);
+                case 'md2':
+                    return CryptoJS.MD2(text).toString();
+                case 'md4':
+                    return CryptoJS.MD4(text).toString();
+                case 'md5':
+                    return CryptoJS.MD5(text).toString();
+                default:
+                    throw new Error('不支持的加密算法');
+            }
+        }
+
+        // 解密函数
+        function decrypt(text, algorithm) {
+            switch (algorithm) {
+                case 'base64':
+                    return decodeURIComponent(escape(atob(text)));
+                case 'url':
+                    return decodeURIComponent(text);
+                case 'md2':
+                case 'md4':
+                case 'md5':
+                    throw new Error('哈希算法不可逆，无法解密');
+                default:
+                    throw new Error('不支持的解密算法');
+            }
+        }
+    </script>
+    
+    <!-- 引入CryptoJS库用于MD2、MD4、MD5哈希 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/md2.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/md4.min.js"></script>
+</body>
+</html>

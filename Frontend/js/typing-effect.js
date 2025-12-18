@@ -9,13 +9,13 @@
 const textContent = {
     role: {
         icon: '👦',
-        en: ' Full Stack Developer',
-        zh: ' 全栈开发者'
+        en: ' A AlonePatient Bound By Freedom',
+        zh: ' 推动自由巨石的西西弗斯'
     },
     motto: {
         icon: '📝',
         en: ' The only way to do great is to love what you do.',
-        zh: ' 成就卓越的唯一途径是热爱你所做的事。'
+        zh: ' 人注定是要受自由之苦的'
     }
 };
 

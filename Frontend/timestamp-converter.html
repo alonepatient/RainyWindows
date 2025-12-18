@@ -1,0 +1,940 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>时间戳转换器 - RainyWindows</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            image-rendering: pixelated;
+            image-rendering: -moz-crisp-edges;
+            image-rendering: crisp-edges;
+            border-radius: 0 !important;
+            font-smooth: never;
+            -webkit-font-smoothing: none;
+            -moz-osx-font-smoothing: none;
+        }
+        
+        body {
+            font-family: 'Courier New', Courier, monospace, 'Press Start 2P';
+            line-height: 1.6;
+            color: #000;
+            background-color: #f0f0f0;
+            image-rendering: pixelated;
+            text-rendering: optimizeSpeed;
+            text-shadow: 1px 1px 0 #fff;
+            font-smooth: never;
+            -webkit-font-smoothing: none;
+            -moz-osx-font-smoothing: none;
+        }
+        
+        h1, h2, h3, h4, h5, h6, p, a, span, div, button, input, textarea, select {
+            font-smooth: never;
+            -webkit-font-smoothing: none;
+            -moz-osx-font-smoothing: none;
+            font-family: 'Courier New', Courier, monospace, 'Press Start 2P';
+            text-shadow: 1px 1px 0 #fff;
+            letter-spacing: 1px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        header {
+            background-color: #fff;
+            padding: 15px 0;
+            box-shadow: 0 2px 0 #000;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            transition: all 0.1s step-end;
+            border-bottom: 2px solid #000;
+        }
+        
+        header.scrolled {
+            padding: 10px 0;
+            box-shadow: 0 4px 0 #000;
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 28px;
+            font-weight: 700;
+            color: #333;
+            text-decoration: none;
+            letter-spacing: -0.5px;
+            display: flex;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+        
+        .logo:hover {
+            color: #3498db;
+            transform: scale(1.05);
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            list-style: none;
+        }
+        
+        .nav-links a {
+            text-decoration: none;
+            color: #666;
+            font-size: 15px;
+            font-weight: bold;
+            position: relative;
+            transition: all 0.1s step-end;
+            padding: 5px 0;
+        }
+        
+        .nav-links a:hover {
+            color: #3498db;
+            text-shadow: 1px 1px 0 #000;
+        }
+        
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: #3498db;
+            transition: width 0.1s step-end;
+        }
+        
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+        
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .header-icon {
+            font-size: 19px;
+            color: #666;
+            cursor: pointer;
+            transition: all 0.1s step-end;
+            padding: 5px;
+            border: 2px solid #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 35px;
+            height: 35px;
+            background-color: #fff;
+        }
+        
+        .header-icon:hover {
+            color: #3498db;
+            background-color: #fff;
+            transform: translateY(-2px);
+            box-shadow: 2px 2px 0 #000;
+        }
+        
+        /* 移动端菜单按钮 */
+        .mobile-menu-btn {
+            display: none;
+            background: #fff;
+            border: 2px solid #000;
+            cursor: pointer;
+            padding: 5px;
+            box-shadow: 2px 2px 0 #000;
+        }
+        
+        .mobile-menu-btn .bar {
+            display: block;
+            width: 25px;
+            height: 3px;
+            margin: 5px auto;
+            background-color: #333;
+            transition: all 0.1s step-end;
+        }
+        
+        .mobile-menu-btn.active .bar:nth-child(1) {
+            transform: translateY(8px) rotate(45deg);
+        }
+        
+        .mobile-menu-btn.active .bar:nth-child(2) {
+            opacity: 0;
+        }
+        
+        .mobile-menu-btn.active .bar:nth-child(3) {
+            transform: translateY(-8px) rotate(-45deg);
+        }
+        
+        .main-content {
+            margin-top: 30px;
+            margin-bottom: 60px;
+        }
+        
+        /* 转换器容器 */
+        .converter-container {
+            background-color: #fff;
+            padding: 40px;
+            border: 2px solid #000;
+            box-shadow: 4px 4px 0 #000;
+            margin-bottom: 30px;
+        }
+        
+        .converter-title {
+            text-align: center;
+            font-size: 32px;
+            margin-bottom: 40px;
+            color: #333;
+        }
+        
+        .converter-grid {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            gap: 30px;
+            align-items: center;
+            margin-bottom: 40px;
+        }
+        
+        /* 转换区域 */
+        .convert-section {
+            background-color: #f9f9f9;
+            padding: 30px;
+            border: 2px solid #000;
+            box-shadow: 2px 2px 0 #000;
+        }
+        
+        .section-title {
+            font-size: 20px;
+            margin-bottom: 20px;
+            color: #333;
+            text-align: center;
+        }
+        
+        /* 输入框样式 */
+        .input-group {
+            margin-bottom: 20px;
+        }
+        
+        .input-label {
+            display: block;
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #666;
+        }
+        
+        .input-field {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #000;
+            box-shadow: 2px 2px 0 #000;
+            background-color: #fff;
+            font-size: 16px;
+            transition: all 0.1s step-end;
+        }
+        
+        .input-field:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 4px 4px 0 #000;
+            transform: translateY(-2px) translateX(-2px);
+        }
+        
+        /* 日期时间选择器 */
+        .datetime-picker {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .datetime-picker select {
+            padding: 10px;
+            border: 2px solid #000;
+            box-shadow: 2px 2px 0 #000;
+            background-color: #fff;
+            font-size: 14px;
+            transition: all 0.1s step-end;
+        }
+        
+        .datetime-picker select:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 4px 4px 0 #000;
+            transform: translateY(-2px) translateX(-2px);
+        }
+        
+        /* 按钮样式 */
+        .swap-btn {
+            background-color: #3498db;
+            color: #fff;
+            border: 2px solid #000;
+            box-shadow: 2px 2px 0 #000;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.1s step-end;
+            margin: 0 auto;
+        }
+        
+        .swap-btn:hover {
+            background-color: #2980b9;
+            transform: translateY(-3px) translateX(-3px);
+            box-shadow: 5px 5px 0 #000;
+        }
+        
+        .convert-btn {
+            background-color: #27ae60;
+            color: #fff;
+            border: 2px solid #000;
+            box-shadow: 2px 2px 0 #000;
+            padding: 12px 24px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.1s step-end;
+            width: 100%;
+            margin-top: 10px;
+        }
+        
+        .convert-btn:hover {
+            background-color: #229954;
+            transform: translateY(-2px) translateX(-2px);
+            box-shadow: 4px 4px 0 #000;
+        }
+        
+        /* 结果区域 */
+        .result-section {
+            background-color: #e8f4f8;
+            padding: 20px;
+            border: 2px solid #000;
+            box-shadow: 2px 2px 0 #000;
+            margin-top: 20px;
+        }
+        
+        .result-title {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #333;
+        }
+        
+        .result-value {
+            font-size: 18px;
+            font-weight: bold;
+            color: #3498db;
+            word-break: break-all;
+        }
+        
+        /* 历史记录 */
+        .history-container {
+            background-color: #fff;
+            padding: 30px;
+            border: 2px solid #000;
+            box-shadow: 4px 4px 0 #000;
+        }
+        
+        .history-title {
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #333;
+            text-align: center;
+        }
+        
+        .history-list {
+            max-height: 300px;
+            overflow-y: auto;
+            border: 2px solid #000;
+            box-shadow: inset 2px 2px 0 #000;
+            background-color: #f9f9f9;
+        }
+        
+        .history-item {
+            padding: 15px;
+            border-bottom: 1px solid #ddd;
+            transition: all 0.1s step-end;
+            cursor: pointer;
+        }
+        
+        .history-item:hover {
+            background-color: #f0f0f0;
+            transform: translateX(5px);
+        }
+        
+        .history-item:last-child {
+            border-bottom: none;
+        }
+        
+        .history-time {
+            font-size: 12px;
+            color: #999;
+            margin-bottom: 5px;
+        }
+        
+        .history-conversion {
+            font-size: 14px;
+            color: #333;
+        }
+        
+        .clear-history-btn {
+            background-color: #e74c3c;
+            color: #fff;
+            border: 2px solid #000;
+            box-shadow: 2px 2px 0 #000;
+            padding: 10px 20px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.1s step-end;
+            margin-top: 20px;
+        }
+        
+        .clear-history-btn:hover {
+            background-color: #c0392b;
+            transform: translateY(-2px) translateX(-2px);
+            box-shadow: 4px 4px 0 #000;
+        }
+        
+        /* 错误提示 */
+        .error-message {
+            color: #e74c3c;
+            font-size: 14px;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+        
+        /* 成功提示 */
+        .success-message {
+            color: #27ae60;
+            font-size: 14px;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 992px) {
+            .converter-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .swap-btn {
+                transform: rotate(90deg);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            /* 导航栏响应式 */
+            .nav-links {
+                position: fixed;
+                top: 70px;
+                left: 0;
+                width: 100%;
+                background-color: #fff;
+                flex-direction: column;
+                align-items: center;
+                padding: 20px 0;
+                gap: 15px;
+                box-shadow: 0 10px 15px rgba(0,0,0,0.1);
+                transform: translateY(-150%);
+                transition: transform 0.3s ease;
+                z-index: 90;
+            }
+            
+            .nav-links.active {
+                transform: translateY(0);
+                animation: slideDown 0.3s ease-out;
+            }
+            
+            @keyframes slideDown {
+                from {
+                    opacity: 0;
+                    transform: translateY(-50px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+            
+            .mobile-menu-btn {
+                display: block;
+                z-index: 100;
+            }
+            
+            .header-right {
+                gap: 10px;
+            }
+            
+            .converter-container {
+                padding: 20px;
+            }
+            
+            .convert-section {
+                padding: 20px;
+            }
+            
+            .datetime-picker {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .logo {
+                font-size: 24px;
+            }
+            
+            .converter-title {
+                font-size: 24px;
+            }
+            
+            .datetime-picker {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        /* 滚动条样式 */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border: 1px solid #000;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: #888;
+            border: 1px solid #000;
+            box-shadow: 2px 2px 0 #000;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+    </style>
+</head>
+<body>
+    <header id="main-header">
+        <div class="container">
+            <div class="header-content">
+                <a href="index.html" class="logo">
+                    <span>RainyWindows</span>
+                </a>
+                
+                <!-- 移动端菜单按钮 -->
+                <button class="mobile-menu-btn" id="mobile-menu-btn">
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                </button>
+                
+                <!-- 桌面端导航 -->
+                <nav class="nav-links" id="nav-links">
+                    <a href="index.html">首页</a>
+                    <a href="library.html">收录</a>
+                    <a href="album.html">体验</a>
+                    <a href="studio.html">创造</a>
+                    <a href="encryptor.html">工具</a>
+                </nav>
+                
+                <div class="header-right">
+                    <div class="header-icon" title="移动版本">📱</div>
+                    <div class="header-icon" title="通知">🔔</div>
+                    <div class="header-icon" title="搜索">🔍</div>
+                </div>
+            </div>
+        </div>
+    </header>
+    
+    <main class="container main-content">
+        <div class="converter-container">
+            <h1 class="converter-title">时间戳转换器</h1>
+            
+            <div class="converter-grid">
+                <!-- 时间戳转日期时间 -->
+                <div class="convert-section">
+                    <h2 class="section-title">时间戳 → 日期时间</h2>
+                    <div class="input-group">
+                        <label class="input-label" for="timestamp-input">时间戳 (秒/毫秒)</label>
+                        <input type="text" id="timestamp-input" class="input-field" placeholder="请输入时间戳" oninput="convertTimestampToDatetime()">
+                    </div>
+                    <div class="result-section">
+                        <div class="result-title">转换结果</div>
+                        <div class="result-value" id="datetime-result"></div>
+                    </div>
+                    <div id="timestamp-error" class="error-message"></div>
+                </div>
+                
+                <!-- 交换按钮 -->
+                <button class="swap-btn" id="swap-btn" title="交换转换方向">⇄</button>
+                
+                <!-- 日期时间转时间戳 -->
+                <div class="convert-section">
+                    <h2 class="section-title">日期时间 → 时间戳</h2>
+                    <div class="datetime-picker">
+                        <select id="year" onchange="convertDatetimeToTimestamp()"></select>
+                        <select id="month" onchange="convertDatetimeToTimestamp()"></select>
+                        <select id="day" onchange="convertDatetimeToTimestamp()"></select>
+                        <select id="hour" onchange="convertDatetimeToTimestamp()"></select>
+                        <select id="minute" onchange="convertDatetimeToTimestamp()"></select>
+                        <select id="second" onchange="convertDatetimeToTimestamp()"></select>
+                    </div>
+                    <div class="result-section">
+                        <div class="result-title">转换结果</div>
+                        <div class="result-value" id="timestamp-result"></div>
+                    </div>
+                    <div id="datetime-error" class="error-message"></div>
+                </div>
+            </div>
+            
+            <!-- 历史记录 -->
+            <div class="history-container">
+                <h2 class="history-title">转换历史</h2>
+                <div class="history-list" id="history-list"></div>
+                <button class="clear-history-btn" id="clear-history-btn">清空历史记录</button>
+            </div>
+        </div>
+    </main>
+    
+    <script>
+        // 初始化日期时间选择器
+        function initDatetimePicker() {
+            const now = new Date();
+            
+            // 年份选择器 (最近100年)
+            const yearSelect = document.getElementById('year');
+            const currentYear = now.getFullYear();
+            for (let i = currentYear - 50; i <= currentYear + 50; i++) {
+                const option = document.createElement('option');
+                option.value = i;
+                option.textContent = i;
+                if (i === currentYear) option.selected = true;
+                yearSelect.appendChild(option);
+            }
+            
+            // 月份选择器
+            const monthSelect = document.getElementById('month');
+            for (let i = 1; i <= 12; i++) {
+                const option = document.createElement('option');
+                option.value = i;
+                option.textContent = i;
+                if (i === now.getMonth() + 1) option.selected = true;
+                monthSelect.appendChild(option);
+            }
+            
+            // 日期选择器
+            updateDayOptions();
+            
+            // 小时选择器
+            const hourSelect = document.getElementById('hour');
+            for (let i = 0; i < 24; i++) {
+                const option = document.createElement('option');
+                option.value = i;
+                option.textContent = i;
+                if (i === now.getHours()) option.selected = true;
+                hourSelect.appendChild(option);
+            }
+            
+            // 分钟选择器
+            const minuteSelect = document.getElementById('minute');
+            for (let i = 0; i < 60; i++) {
+                const option = document.createElement('option');
+                option.value = i;
+                option.textContent = i;
+                if (i === now.getMinutes()) option.selected = true;
+                minuteSelect.appendChild(option);
+            }
+            
+            // 秒选择器
+            const secondSelect = document.getElementById('second');
+            for (let i = 0; i < 60; i++) {
+                const option = document.createElement('option');
+                option.value = i;
+                option.textContent = i;
+                if (i === now.getSeconds()) option.selected = true;
+                secondSelect.appendChild(option);
+            }
+        }
+        
+        // 更新日期选项（根据月份和年份）
+        function updateDayOptions() {
+            const year = parseInt(document.getElementById('year').value);
+            const month = parseInt(document.getElementById('month').value);
+            const daySelect = document.getElementById('day');
+            
+            // 清空现有选项
+            daySelect.innerHTML = '';
+            
+            // 计算当月天数
+            const daysInMonth = new Date(year, month, 0).getDate();
+            
+            // 添加新选项
+            for (let i = 1; i <= daysInMonth; i++) {
+                const option = document.createElement('option');
+                option.value = i;
+                option.textContent = i;
+                daySelect.appendChild(option);
+            }
+            
+            // 保持当前日期（如果有效）
+            const now = new Date();
+            if (now.getDate() <= daysInMonth) {
+                daySelect.value = now.getDate();
+            } else {
+                daySelect.value = daysInMonth;
+            }
+        }
+        
+        // 监听月份和年份变化，更新日期选项
+        document.getElementById('month').addEventListener('change', updateDayOptions);
+        document.getElementById('year').addEventListener('change', updateDayOptions);
+        
+        // 时间戳转日期时间
+        function convertTimestampToDatetime() {
+            const timestampInput = document.getElementById('timestamp-input').value.trim();
+            const resultElement = document.getElementById('datetime-result');
+            const errorElement = document.getElementById('timestamp-error');
+            
+            // 清空错误信息
+            errorElement.textContent = '';
+            
+            if (!timestampInput) {
+                resultElement.textContent = '';
+                return;
+            }
+            
+            // 验证时间戳格式
+            const timestampRegex = /^\d+$/;
+            if (!timestampRegex.test(timestampInput)) {
+                errorElement.textContent = '请输入有效的数字时间戳';
+                resultElement.textContent = '';
+                return;
+            }
+            
+            let timestamp = parseInt(timestampInput);
+            
+            // 自动检测秒级或毫秒级时间戳
+            if (timestamp.toString().length === 10) {
+                // 秒级时间戳，转换为毫秒级
+                timestamp *= 1000;
+            } else if (timestamp.toString().length !== 13) {
+                errorElement.textContent = '时间戳格式不正确，请输入10位（秒）或13位（毫秒）数字';
+                resultElement.textContent = '';
+                return;
+            }
+            
+            try {
+                const date = new Date(timestamp);
+                
+                // 验证日期有效性
+                if (isNaN(date.getTime())) {
+                    errorElement.textContent = '无效的时间戳';
+                    resultElement.textContent = '';
+                    return;
+                }
+                
+                // 格式化日期时间
+                const formattedDate = date.toLocaleString('zh-CN', {
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit'
+                });
+                
+                resultElement.textContent = formattedDate;
+                
+                // 添加到历史记录
+                addToHistory(`${timestampInput} → ${formattedDate}`);
+            } catch (error) {
+                errorElement.textContent = '转换失败，请检查输入';
+                resultElement.textContent = '';
+            }
+        }
+        
+        // 日期时间转时间戳
+        function convertDatetimeToTimestamp() {
+            const year = parseInt(document.getElementById('year').value);
+            const month = parseInt(document.getElementById('month').value) - 1; // 月份从0开始
+            const day = parseInt(document.getElementById('day').value);
+            const hour = parseInt(document.getElementById('hour').value);
+            const minute = parseInt(document.getElementById('minute').value);
+            const second = parseInt(document.getElementById('second').value);
+            
+            const resultElement = document.getElementById('timestamp-result');
+            const errorElement = document.getElementById('datetime-error');
+            
+            // 清空错误信息
+            errorElement.textContent = '';
+            
+            try {
+                const date = new Date(year, month, day, hour, minute, second);
+                
+                // 验证日期有效性
+                if (isNaN(date.getTime())) {
+                    errorElement.textContent = '无效的日期时间';
+                    resultElement.textContent = '';
+                    return;
+                }
+                
+                // 转换为时间戳（毫秒级和秒级）
+                const timestampMs = date.getTime();
+                const timestampS = Math.floor(timestampMs / 1000);
+                
+                resultElement.textContent = `毫秒: ${timestampMs}\n秒: ${timestampS}`;
+                
+                // 添加到历史记录
+                const formattedDate = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')} ${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}:${String(second).padStart(2, '0')}`;
+                addToHistory(`${formattedDate} → 毫秒: ${timestampMs}, 秒: ${timestampS}`);
+            } catch (error) {
+                errorElement.textContent = '转换失败，请检查输入';
+                resultElement.textContent = '';
+            }
+        }
+        
+        // 添加到历史记录
+        function addToHistory(conversion) {
+            // 获取现有历史记录
+            let history = JSON.parse(localStorage.getItem('timestampHistory') || '[]');
+            
+            // 添加新记录
+            const newRecord = {
+                id: Date.now(),
+                time: new Date().toLocaleString('zh-CN'),
+                conversion: conversion
+            };
+            
+            // 限制历史记录数量（最多20条）
+            history.unshift(newRecord);
+            if (history.length > 20) {
+                history = history.slice(0, 20);
+            }
+            
+            // 保存到本地存储
+            localStorage.setItem('timestampHistory', JSON.stringify(history));
+            
+            // 更新历史记录显示
+            displayHistory();
+        }
+        
+        // 显示历史记录
+        function displayHistory() {
+            const historyList = document.getElementById('history-list');
+            const history = JSON.parse(localStorage.getItem('timestampHistory') || '[]');
+            
+            if (history.length === 0) {
+                historyList.innerHTML = '<div style="padding: 20px; text-align: center; color: #999;">暂无转换历史</div>';
+                return;
+            }
+            
+            historyList.innerHTML = history.map(record => `
+                <div class="history-item" onclick="loadFromHistory('${record.conversion}')">
+                    <div class="history-time">${record.time}</div>
+                    <div class="history-conversion">${record.conversion}</div>
+                </div>
+            `).join('');
+        }
+        
+        // 从历史记录加载
+        function loadFromHistory(conversion) {
+            // 解析转换记录
+            const parts = conversion.split(' → ');
+            if (parts.length !== 2) return;
+            
+            const [input, output] = parts;
+            
+            // 判断转换方向
+            if (/^\d+$/.test(input)) {
+                // 时间戳转日期时间
+                document.getElementById('timestamp-input').value = input;
+                convertTimestampToDatetime();
+            } else {
+                // 日期时间转时间戳
+                // 解析日期时间格式 (YYYY-MM-DD HH:mm:ss)
+                const dateTimeRegex = /^(\d{4})-(\d{2})-(\d{2})\s+(\d{2}):(\d{2}):(\d{2})$/;
+                const match = input.match(dateTimeRegex);
+                if (match) {
+                    const [, year, month, day, hour, minute, second] = match;
+                    document.getElementById('year').value = year;
+                    document.getElementById('month').value = month;
+                    document.getElementById('day').value = day;
+                    document.getElementById('hour').value = hour;
+                    document.getElementById('minute').value = minute;
+                    document.getElementById('second').value = second;
+                    convertDatetimeToTimestamp();
+                }
+            }
+        }
+        
+        // 清空历史记录
+        document.getElementById('clear-history-btn').addEventListener('click', function() {
+            if (confirm('确定要清空所有转换历史吗？')) {
+                localStorage.removeItem('timestampHistory');
+                displayHistory();
+            }
+        });
+        
+        // 交换转换方向
+        document.getElementById('swap-btn').addEventListener('click', function() {
+            const timestampInput = document.getElementById('timestamp-input');
+            const datetimeResult = document.getElementById('datetime-result');
+            const timestampResult = document.getElementById('timestamp-result');
+            
+            // 交换输入和输出
+            const temp = timestampInput.value;
+            timestampInput.value = timestampResult.textContent.split('\n')[0].replace('毫秒: ', '');
+            
+            // 重新转换
+            convertTimestampToDatetime();
+        });
+        
+        // 移动端菜单
+        document.getElementById('mobile-menu-btn').addEventListener('click', function() {
+            const navLinks = document.getElementById('nav-links');
+            const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+            
+            navLinks.classList.toggle('active');
+            mobileMenuBtn.classList.toggle('active');
+        });
+        
+        // 滚动时头部样式变化
+        window.addEventListener('scroll', function() {
+            const header = document.getElementById('main-header');
+            if (window.scrollY > 50) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+        });
+        
+        // 初始化
+        window.addEventListener('DOMContentLoaded', function() {
+            initDatetimePicker();
+            displayHistory();
+            
+            // 初始转换（当前时间）
+            convertDatetimeToTimestamp();
+        });
+    </script>
+</body>
+</html>

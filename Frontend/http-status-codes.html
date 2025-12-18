@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>100HTTP 代码提示 - 有趣的HTTP状态码大全</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            color: white;
+        }
+
+        h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            font-style: italic;
+        }
+
+        .search-box {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        #searchInput {
+            width: 100%;
+            max-width: 500px;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 25px;
+            font-size: 16px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        #searchInput:focus {
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .filters {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 8px 16px;
+            border: 2px solid white;
+            background: transparent;
+            color: white;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .filter-btn:hover,
+        .filter-btn.active {
+            background: white;
+            color: #667eea;
+        }
+
+        .status-codes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .status-card {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border-left: 4px solid #667eea;
+        }
+
+        .status-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        /* 状态码类型样式 */
+        .status-card.info {
+            border-left-color: #3498db;
+        }
+
+        .status-card.success {
+            border-left-color: #2ecc71;
+        }
+
+        .status-card.redirect {
+            border-left-color: #f39c12;
+        }
+
+        .status-card.client-error {
+            border-left-color: #e74c3c;
+        }
+
+        .status-card.server-error {
+            border-left-color: #9b59b6;
+        }
+
+        .status-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .status-code {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #667eea;
+        }
+
+        .status-card.info .status-code {
+            color: #3498db;
+        }
+
+        .status-card.success .status-code {
+            color: #2ecc71;
+        }
+
+        .status-card.redirect .status-code {
+            color: #f39c12;
+        }
+
+        .status-card.client-error .status-code {
+            color: #e74c3c;
+        }
+
+        .status-card.server-error .status-code {
+            color: #9b59b6;
+        }
+
+        .status-emoji {
+            font-size: 2.5rem;
+        }
+
+        .status-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #555;
+        }
+
+        .status-description {
+            color: #777;
+            margin-bottom: 15px;
+            font-size: 0.95rem;
+        }
+
+        .status-funny {
+            font-style: italic;
+            color: #999;
+            font-size: 0.9rem;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid #eee;
+        }
+
+        .status-details {
+            display: none;
+            margin-top: 15px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .status-details.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .show-details {
+            background: none;
+            border: none;
+            color: #667eea;
+            cursor: pointer;
+            font-size: 0.9rem;
+            padding: 5px 0;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.3s ease;
+        }
+
+        .show-details:hover {
+            color: #764ba2;
+        }
+
+        .show-details::after {
+            content: '▼';
+            font-size: 0.8rem;
+            transition: transform 0.3s ease;
+        }
+
+        .show-details.active::after {
+            transform: rotate(180deg);
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 50px;
+            color: white;
+            opacity: 0.8;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+
+            .status-codes-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .filters {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>100HTTP 代码提示</h1>
+            <p class="subtitle">有趣的HTTP状态码大全，让你轻松理解每个状态码的含义</p>
+        </header>
+
+        <div class="search-box">
+            <input type="text" id="searchInput" placeholder="搜索状态码或描述...">
+        </div>
+
+        <div class="filters">
+            <button class="filter-btn active" data-filter="all">全部</button>
+            <button class="filter-btn" data-filter="info">1xx 信息</button>
+            <button class="filter-btn" data-filter="success">2xx 成功</button>
+            <button class="filter-btn" data-filter="redirect">3xx 重定向</button>
+            <button class="filter-btn" data-filter="client-error">4xx 客户端错误</button>
+            <button class="filter-btn" data-filter="server-error">5xx 服务器错误</button>
+        </div>
+
+        <div class="status-codes-grid" id="statusCodesGrid">
+            <!-- 1xx 信息 -->
+            <div class="status-card info" data-type="info" data-code="100">
+                <div class="status-header">
+                    <div class="status-code">100</div>
+                    <div class="status-emoji">⏳</div>
+                </div>
+                <div class="status-title">继续 (Continue)</div>
+                <div class="status-description">请求已被服务器接受，客户端可以继续发送请求的剩余部分。</div>
+                <div class="status-funny">服务器："我准备好了，你继续说..."</div>
+                <button class="show-details">查看详情</button>
+                <div class="status-details">
+                    <p>这是一个临时响应，表示服务器已经收到了请求的初始部分，并且客户端可以继续发送剩余的请求。</p>
+                    <p>通常用于客户端发送的请求体较大时，服务器先确认可以处理请求，客户端再发送完整请求。</p>
+                </div>
+            </div>
+
+            <div class="status-card info" data-type="info" data-code="101">
+                <div class="status-header">
+                    <div class="status-code">101</div>
+                    <div class="status-emoji">🔄</div>
+                </div>
+                <div class="status-title">切换协议 (Switching Protocols)</div>
+                <div class="status-description">服务器同意客户端的切换请求，将切换到请求头中指定的协议。</div>
+                <div class="status-funny">服务器："好的，我们来换个频道聊聊..."</div>
+                <button class="show-details">查看详情</button>
+                <div class="status-details">
+                    <p>用于服务器和客户端之间的协议升级，比如从HTTP/1.1升级到WebSocket。</p>
+                    <p>客户端通过Upgrade头字段请求切换协议，服务器返回101状态码表示同意。</p>
+                </div>
+            </div>
+
+            <!-- 2xx 成功 -->
+            <div class="status-card success" data-type="success" data-code="200">
+                <div class="status-header">
+                    <div class="status-code">200</div>
+                    <div class="status-emoji">✅</div>
+                </div>
+                <div class="status-title">成功 (OK)</div>
+                <div class="status-description">请求已成功处理，服务器返回了请求的资源。</div>
+                <div class="status-funny">服务器："完美！这是你要的东西。"</div>
+                <button class="show-details">查看详情</button>
+                <div class="status-details">
+                    <p>最常见的成功状态码，表示请求已被成功处理，服务器返回了请求的资源。</p>
+                    <p>适用于GET、POST等多种请求方法，返回的响应体包含请求的资源内容。</p>
+                </div>
+            </div>
+
+            <div class="status-card success" data-type="success" data-code="201">
+                <div class="status-header">
+                    <div class="status-code">201</div>
+                    <div class="status-emoji">🎉</div>
+                </div>
+                <div class="status-title">已创建 (Created)</div>
+                <div class="status-description">请求已成功，服务器创建了新的资源。</div>
+                <div class="status-funny">服务器："恭喜！你的请求已经成功创建了新资源。"</div>
+                <button class="show-details">查看详情</button>
+                <div class="status-details">
+                    <p>通常在POST请求成功创建新资源后返回，响应头中应包含Location头字段，指向新创建资源的URL。</p>
+                    <p>适用于创建资源的操作，如注册用户、创建文章等。</p>
+                </div>
+            </div>
+
+            <div class="status-card success" data-type="success" data-code="204">
+                <div class="status-header">
+                    <div class="status-code">204</div>
+                    <div class="status-emoji">🤫</div>
+                </div>
+                <div class="status-title">无内容 (No Content)</div>
+                <div class="status-description">请求已成功处理，但服务器返回的响应体为空。</div>
+                <div class="status-funny">服务器："我明白了，但是没有什么可以告诉你的。"</div>
+                <button class="show-details">查看详情</button>
+                <div class="status-details">
+                    <p>表示请求已成功处理，但服务器不需要返回响应体。常用于DELETE请求或更新操作。</p>
+                    <p>客户端不应改变当前文档视图，因为没有新的内容返回。</p>
+                </div>
+            </div>
+
+            <!-- 3xx 重定向 -->
+            <div class="status-card redirect" data-type="redirect" data-code="301">
+                <div class="status-header">
+                    <div class="status-code">301</div>
+                    <div class="status-emoji">🚚</div>
+                </div>
+                <div class="status-title">永久移动 (Moved Permanently)</div>
+                <div class="status-description">请求的资源已被永久移动到新位置，后续请求应使用新URL。</div>
+                <div class="status-funny">服务器："抱歉，这个地址已经搬家了，以后请去新地址找它。"</div>
+                <button class="show-details">查看详情</button>
+                <div class="status-details">
+                    <p>表示请求的资源已被永久移动到新位置，服务器会在响应头中包含Location字段，指示新的URL。</p>
+                    <p>搜索引擎会更新索引，将旧URL指向新URL。</p>
+                </div>
+            </div>
+
+            <div class="status-card redirect" data-type="redirect" data-code="302">
+                <div class="status-header">
+                    <div class="status-code">302</div>
+                    <div class="status-emoji">👈</div>
+                </div>
+                <div class="status-title">临时移动 (Found)</div>
+                <div class="status-description">请求的资源临时被移动到新位置，后续请求仍应使用原URL。</div>
+                <div class="status-funny">服务器："资源暂时在这里，过段时间可能会回来。"</div>
+                <button class="show-details">查看详情</button>
+                <div class="status-details">
+                    <p>表示请求的资源临时被移动到新位置，服务器会在响应头中包含Location字段，指示临时的URL。</p>
+                    <p>搜索引擎不会更新索引，仍会保留原URL。</p>
+                </div>
+            </div>
+
+            <div class="status-card redirect" data-type="redirect" data-code="304">
+                <div class="status-header">
+                    <div class="status-code">304</div>
+                    <div class="status-emoji">🔄</div>
+                </div>
+                <div class="status-title">未修改 (Not Modified)</div>
+                <div class="status-description">资源未被修改，客户端可以使用本地缓存的版本。</div>
+                <div class="status-funny">服务器："资源没变，你用自己缓存的就行。"</div>
+                <button class="show-details">查看详情</button>
+                <div class="status-details">
+                    <p>用于条件GET请求，表示资源自上次请求以来没有被修改，客户端可以使用本地缓存的版本。</p>
+                    <p>服务器返回304状态码时，不应包含响应体，只包含必要的响应头。</p>
+                </div>
+            </div>
+
+            <!-- 4xx 客户端错误 -->
+            <div class="status-card client-error" data-type="client-error" data-code="400">
+                <div class="status-header">
+                    <div class="status-code">400</div>
+                    <div class="status-emoji">❌</div>
+                </div>
+                <div class="status-title">错误请求 (Bad Request)</div>
+                <div class="status-description">服务器无法理解请求，可能是请求语法错误或参数无效。</div>
+                <div class="status-funny">服务器："你在说什么？我听不懂！"</div>
+                <button class="show-details">查看详情</button>
+                <div class="status-details">
+                    <p>表示服务器无法理解请求，可能是请求语法错误、参数无效、JSON格式错误等。</p>
+                    <p>客户端应检查请求格式，确保符合服务器的要求。</p>
+                </div>
+            </div>
+
+            <div class="status-card client-error" data-type="client-error" data-code="401">
+                <div class="status-header">
+                    <div class="status-code">401</div>
+                    <div class="status-emoji">🔒</div>
+                </div>
+                <div class="status-title">未授权 (Unauthorized)</div>
+                <div class="status-description">请求需要用户身份验证，客户端未提供有效的身份凭证。</div>
+                <div class="status-funny">服务器："请先出示你的身份证。"</div>
+                <button class="show-details">查看详情</button>
+                <div class="status-details">
+                    <p>表示请求需要用户身份验证，服务器会在响应头中包含WWW-Authenticate字段，指示客户端如何进行身份验证。</p>
+                    <p>适用于需要登录的资源，如个人资料、管理页面等。</p>
+                </div>
+            </div>
+
+            <div class="status-card client-error" data-type="client-error" data-code="403">
+                <div class="status-header">
+                    <div class="status-code">403</div>
+                    <div class="status-emoji">🚫</div>
+                </div>
+                <div class="status-title">禁止访问 (Forbidden)</div>
+                <div class="status-description">服务器拒绝执行请求，客户端没有访问资源的权限。</div>
+                <div class="status-funny">服务器："你没有权限访问这个资源，走开！"</div>
+                <button class="show-details">查看详情</button>
+                <div class="status-details">
+                    <p>表示服务器拒绝执行请求，即使客户端提供了身份验证，也没有权限访问该资源。</p>
+                    <p>可能是因为IP地址被禁止、权限不足等原因。</p>
+                </div>
+            </div>
+
+            <div class="status-card client-error" data-type="client-error" data-code="404">
+                <div class="status-header">
+                    <div class="status-code">404</div>
+                    <div class="status-emoji">😵</div>
+                </div>
+                <div class="status-title">未找到 (Not Found)</div>
+                <div class="status-description">服务器无法找到请求的资源，可能是URL错误或资源已被删除。</div>
+                <div class="status-funny">服务器："哎呀，我找不到你要的东西！"</div>
+                <button class="show-details">查看详情</button>
+                <div class="status-details">
+                    <p>最常见的客户端错误，表示服务器无法找到请求的资源。</p>
+                    <p>可能是因为URL拼写错误、资源已被删除或移动到其他位置。</p>
+                </div>
+            </div>
+
+            <div class="status-card client-error" data-type="client-error" data-code="405">
+                <div class="status-header">
+                    <div class="status-code">405</div>
+                    <p>请求方法不允许 (Method Not Allowed)</p>
+                    <div class="status-emoji">🙅</div>
+                </div>
+                <div class="status-title">方法不允许 (Method Not Allowed)</div>
+                <div class="status-description">服务器不允许使用请求中指定的HTTP方法。</div>
+                <div class="status-funny">服务器："抱歉，这个方法我不接受！"</div>
+                <button class="show-details">查看详情</button>
+                <div class="status-details">
+                    <p>表示服务器不支持请求中使用的HTTP方法，响应头中应包含Allow字段，列出允许的方法。</p>
+                    <p>例如，GET请求的资源可能不支持POST方法。</p>
+                </div>
+            </div>
+
+            <div class="status-card client-error" data-type="client-error" data-code="408">
+                <div class="status-header">
+                    <div class="status-code">408</div>
+                    <div class="status-emoji">⏰</div>
+                </div>
+                <div class="status-title">请求超时 (Request Timeout)</div>
+                <div class="status-description">服务器等待请求时超时，客户端需要重新发送请求。</div>
+                <div class="status-funny">服务器："你太慢了，我等不及了！"</div>
+                <button class="show-details">查看详情</button>
+                <div class="status-details">
+                    <p>表示服务器等待客户端发送请求的时间超过了超时时间。</p>
+                    <p>客户端可以重新发送请求，但应考虑优化请求速度。</p>
+                </div>
+            </div>
+
+            <!-- 5xx 服务器错误 -->
+            <div class="status-card server-error" data-type="server-error" data-code="500">
+                <div class="status-header">
+                    <div class="status-code">500</div>
+                    <div class="status-emoji">💥</div>
+                </div>
+                <div class="status-title">内部服务器错误 (Internal Server Error)</div>
+                <div class="status-description">服务器遇到了意外情况，无法完成请求。</div>
+                <div class="status-funny">服务器："哎呀，我自己出错了，抱歉！"</div>
+                <button class="show-details">查看详情</button>
+                <div class="status-details">
+                    <p>最常见的服务器错误，表示服务器内部发生了错误，无法完成请求。</p>
+                    <p>可能是因为代码bug、数据库连接失败、内存不足等原因。</p>
+                </div>
+            </div>
+
+            <div class="status-card server-error" data-type="server-error" data-code="502">
+                <div class="status-header">
+                    <div class="status-code">502</div>
+                    <div class="status-emoji">⚡</div>
+                </div>
+                <div class="status-title">网关错误 (Bad Gateway)</div>
+                <div class="status-description">服务器作为网关或代理，从上游服务器收到无效响应。</div>
+                <div class="status-funny">服务器："我问了上游服务器，但它的回答没用！"</div>
+                <button class="show-details">查看详情</button>
+                <div class="status-details">
+                    <p>表示服务器作为网关或代理，从上游服务器收到了无效的响应。</p>
+                    <p>可能是因为上游服务器宕机、网络故障或配置错误。</p>
+                </div>
+            </div>
+
+            <div class="status-card server-error" data-type="server-error" data-code="503">
+                <div class="status-header">
+                    <div class="status-code">503</div>
+                    <div class="status-emoji">🔧</div>
+                </div>
+                <div class="status-title">服务不可用 (Service Unavailable)</div>
+                <div class="status-description">服务器暂时无法处理请求，可能是过载或维护中。</div>
+                <div class="status-funny">服务器："我现在很忙，稍后再来吧！"</div>
+                <button class="show-details">查看详情</button>
+                <div class="status-details">
+                    <p>表示服务器暂时无法处理请求，可能是因为服务器过载、维护中或其他临时原因。</p>
+                    <p>响应头中可以包含Retry-After字段，指示客户端何时可以重试。</p>
+                </div>
+            </div>
+
+            <div class="status-card server-error" data-type="server-error" data-code="504">
+                <div class="status-header">
+                    <div class="status-code">504</div>
+                    <div class="status-emoji">⏳</div>
+                </div>
+                <div class="status-title">网关超时 (Gateway Timeout)</div>
+                <div class="status-description">服务器作为网关或代理，未能及时从上游服务器获取响应。</div>
+                <div class="status-funny">服务器："我等了很久，但上游服务器没有回应！"</div>
+                <button class="show-details">查看详情</button>
+                <div class="status-details">
+                    <p>表示服务器作为网关或代理，等待上游服务器的响应超时。</p>
+                    <p>可能是因为上游服务器处理缓慢、网络延迟或上游服务器宕机。</p>
+                </div>
+            </div>
+
+            <div class="status-card server-error" data-type="server-error" data-code="505">
+                <div class="status-header">
+                    <div class="status-code">505</div>
+                    <div class="status-emoji">❌</div>
+                </div>
+                <div class="status-title">HTTP版本不支持 (HTTP Version Not Supported)</div>
+                <div class="status-description">服务器不支持请求中使用的HTTP版本。</div>
+                <div class="status-funny">服务器："抱歉，我不懂这个版本的HTTP！"</div>
+                <button class="show-details">查看详情</button>
+                <div class="status-details">
+                    <p>表示服务器不支持请求中使用的HTTP版本，例如客户端使用HTTP/2.0，但服务器只支持HTTP/1.1。</p>
+                    <p>服务器应返回支持的HTTP版本信息。</p>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p>&copy; 2025 100HTTP 代码提示 | 有趣的HTTP状态码大全</p>
+        </footer>
+    </div>
+
+    <script>
+        // 显示/隐藏详情
+        document.addEventListener('click', (e) => {
+            if (e.target.classList.contains('show-details')) {
+                e.target.classList.toggle('active');
+                const details = e.target.nextElementSibling;
+                details.classList.toggle('active');
+            }
+        });
+
+        // 搜索功能
+        const searchInput = document.getElementById('searchInput');
+        const statusCards = document.querySelectorAll('.status-card');
+        
+        searchInput.addEventListener('input', (e) => {
+            const searchTerm = e.target.value.toLowerCase();
+            
+            statusCards.forEach(card => {
+                const code = card.dataset.code;
+                const title = card.querySelector('.status-title').textContent.toLowerCase();
+                const description = card.querySelector('.status-description').textContent.toLowerCase();
+                
+                if (code.includes(searchTerm) || title.includes(searchTerm) || description.includes(searchTerm)) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        });
+
+        // 过滤功能
+        const filterBtns = document.querySelectorAll('.filter-btn');
+        
+        filterBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                // 移除所有active类
+                filterBtns.forEach(b => b.classList.remove('active'));
+                // 添加active类到当前按钮
+                btn.classList.add('active');
+                
+                const filter = btn.dataset.filter;
+                
+                statusCards.forEach(card => {
+                    if (filter === 'all' || card.dataset.type === filter) {
+                        card.style.display = 'block';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1025,53 +1025,6 @@ html {
     font-weight: 500;
 }
 
-/* 分页样式 */
-.pagination {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1.5rem 0;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.pagination-info {
-    color: rgba(255, 255, 255, 0.8);
-    font-size: 0.9rem;
-}
-
-.pagination-links {
-    display: flex;
-    gap: 1rem;
-}
-
-.pagination-prev,
-.pagination-next {
-    padding: 0.5rem 1rem;
-    border-radius: var(--border-radius);
-    text-decoration: none;
-    color: #a0c4ff;
-    border: 1px solid rgba(160, 196, 255, 0.5);
-    transition: all 0.3s ease;
-    background: rgba(255, 255, 255, 0.05);
-}
-
-.pagination-prev:hover,
-.pagination-next:hover {
-    background-color: rgba(160, 196, 255, 0.2);
-    color: #a0c4ff;
-    border-color: rgba(160, 196, 255, 0.7);
-}
-
-.pagination-prev.disabled {
-    color: rgba(255, 255, 255, 0.4);
-    border-color: rgba(255, 255, 255, 0.1);
-    cursor: not-allowed;
-}
-
-.pagination-prev.disabled:hover {
-    background-color: transparent;
-    color: rgba(255, 255, 255, 0.4);
-}
 
 /* 侧边栏 */
 .sidebar {

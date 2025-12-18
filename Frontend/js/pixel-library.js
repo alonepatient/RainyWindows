@@ -606,17 +606,32 @@ function renderCharacter() {
             characterCtx.fillStyle = '#2c3e50';
             characterCtx.fillRect(playerScreenX + 10, playerScreenY + 24, 14, 8);
             
-            // 左腿
-            characterCtx.fillStyle = '#2c3e50';
-            characterCtx.fillRect(playerScreenX + 10, playerScreenY + 28, 6, 4);
-            characterCtx.fillStyle = '#f5deb3';
-            characterCtx.fillRect(playerScreenX + 8, playerScreenY + 32, 10, 2);
-            
-            // 右腿
-            characterCtx.fillStyle = '#2c3e50';
-            characterCtx.fillRect(playerScreenX + 18, playerScreenY + 28, 6, 4);
-            characterCtx.fillStyle = '#f5deb3';
-            characterCtx.fillRect(playerScreenX + 16, playerScreenY + 32, 10, 2);
+            // 腿部动画 - 左右交替摆动，不上下移动
+            if (frame % 2 === 0) {
+                // 左腿在前（向左摆动）
+                characterCtx.fillStyle = '#2c3e50'; // 裤子颜色
+                characterCtx.fillRect(playerScreenX + 6, playerScreenY + 28, 8, 4);
+                characterCtx.fillStyle = '#f5deb3'; // 鞋子
+                characterCtx.fillRect(playerScreenX + 4, playerScreenY + 32, 12, 2);
+                
+                // 右腿在后（向右摆动）
+                characterCtx.fillStyle = '#2c3e50';
+                characterCtx.fillRect(playerScreenX + 18, playerScreenY + 28, 8, 4);
+                characterCtx.fillStyle = '#f5deb3';
+                characterCtx.fillRect(playerScreenX + 16, playerScreenY + 32, 12, 2);
+            } else {
+                // 右腿在前（向左摆动）
+                characterCtx.fillStyle = '#2c3e50';
+                characterCtx.fillRect(playerScreenX + 8, playerScreenY + 28, 8, 4);
+                characterCtx.fillStyle = '#f5deb3';
+                characterCtx.fillRect(playerScreenX + 6, playerScreenY + 32, 12, 2);
+                
+                // 左腿在后（向右摆动）
+                characterCtx.fillStyle = '#2c3e50';
+                characterCtx.fillRect(playerScreenX + 16, playerScreenY + 28, 8, 4);
+                characterCtx.fillStyle = '#f5deb3';
+                characterCtx.fillRect(playerScreenX + 14, playerScreenY + 32, 12, 2);
+            }
             
             // 手臂动画
             characterCtx.fillStyle = '#f5deb3'; // 肤色
@@ -656,17 +671,32 @@ function renderCharacter() {
             characterCtx.fillStyle = '#2c3e50';
             characterCtx.fillRect(playerScreenX + 8, playerScreenY + 24, 14, 8);
             
-            // 左腿
-            characterCtx.fillStyle = '#2c3e50';
-            characterCtx.fillRect(playerScreenX + 8, playerScreenY + 28, 6, 4);
-            characterCtx.fillStyle = '#f5deb3';
-            characterCtx.fillRect(playerScreenX + 6, playerScreenY + 32, 10, 2);
-            
-            // 右腿
-            characterCtx.fillStyle = '#2c3e50';
-            characterCtx.fillRect(playerScreenX + 16, playerScreenY + 28, 6, 4);
-            characterCtx.fillStyle = '#f5deb3';
-            characterCtx.fillRect(playerScreenX + 14, playerScreenY + 32, 10, 2);
+            // 腿部动画 - 左右交替摆动，不上下移动
+            if (frame % 2 === 0) {
+                // 右腿在前（向右摆动）
+                characterCtx.fillStyle = '#2c3e50'; // 裤子颜色
+                characterCtx.fillRect(playerScreenX + 18, playerScreenY + 28, 8, 4);
+                characterCtx.fillStyle = '#f5deb3'; // 鞋子
+                characterCtx.fillRect(playerScreenX + 16, playerScreenY + 32, 12, 2);
+                
+                // 左腿在后（向左摆动）
+                characterCtx.fillStyle = '#2c3e50';
+                characterCtx.fillRect(playerScreenX + 6, playerScreenY + 28, 8, 4);
+                characterCtx.fillStyle = '#f5deb3';
+                characterCtx.fillRect(playerScreenX + 4, playerScreenY + 32, 12, 2);
+            } else {
+                // 左腿在前（向右摆动）
+                characterCtx.fillStyle = '#2c3e50';
+                characterCtx.fillRect(playerScreenX + 16, playerScreenY + 28, 8, 4);
+                characterCtx.fillStyle = '#f5deb3';
+                characterCtx.fillRect(playerScreenX + 14, playerScreenY + 32, 12, 2);
+                
+                // 右腿在后（向左摆动）
+                characterCtx.fillStyle = '#2c3e50';
+                characterCtx.fillRect(playerScreenX + 8, playerScreenY + 28, 8, 4);
+                characterCtx.fillStyle = '#f5deb3';
+                characterCtx.fillRect(playerScreenX + 6, playerScreenY + 32, 12, 2);
+            }
             
             // 手臂动画
             characterCtx.fillStyle = '#f5deb3'; // 肤色

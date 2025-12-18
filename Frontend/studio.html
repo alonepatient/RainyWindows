@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>limina.top</title>
+    <title>studio</title>
     <style>
         /* 全局样式重置 */
         * {
@@ -502,14 +502,213 @@
         .main-container {
             width: 100vw;
             max-width: 1600px;
-            height: 85vh;
+            height: auto;
+            min-height: 85vh;
             display: grid;
-            grid-template-columns: 3fr 3fr;
-            grid-template-rows: 1fr 1fr;
-            gap: 60px;
-            padding: 120px;
+            grid-template-columns: 3fr 6fr;
+            gap: 30px;
+            padding: 100px 60px 60px;
             position: relative;
             z-index: 10;
+        }
+        
+        /* 设置按钮样式 */
+        .settings-btn {
+            position: absolute;
+            top: 20px;
+            right: 0px;
+            z-index: 100;
+            width: 45px;
+            height: 45px;
+            background: linear-gradient(135deg, rgba(65, 105, 225, 0.4), rgba(100, 149, 237, 0.3));
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+            font-size: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(15px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .settings-btn:hover {
+            background: linear-gradient(135deg, rgba(65, 105, 225, 0.6), rgba(100, 149, 237, 0.5));
+            transform: scale(1.15);
+            box-shadow: 0 6px 20px rgba(65, 105, 225, 0.4);
+        }
+        
+        /* 设置弹窗样式 */
+        .settings-modal {
+            position: fixed;
+            top: 75px;
+            right: 20px;
+            z-index: 1000;
+            width: 320px;
+            background-color: rgba(0, 0, 0, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            padding: 20px;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+        }
+        
+        .settings-modal.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+        
+        .settings-section {
+            margin-bottom: 25px;
+        }
+        
+        .settings-section:last-child {
+            margin-bottom: 0;
+        }
+        
+        .settings-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #ffffff;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        /* 背景设置样式 */
+        .background-options {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+        
+        .background-option {
+            width: 80px;
+            height: 60px;
+            border-radius: 8px;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .background-option:hover {
+            transform: scale(1.05);
+            border-color: rgba(65, 105, 225, 0.8);
+        }
+        
+        .background-option.active {
+            border-color: rgba(65, 105, 225, 1);
+            box-shadow: 0 0 15px rgba(65, 105, 225, 0.6);
+        }
+        
+        .bg-preview {
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            transition: transform 0.3s ease;
+        }
+        
+        .background-option:hover .bg-preview {
+            transform: scale(1.1);
+        }
+        
+        /* 音量设置样式 */
+        .volume-control {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .volume-icon {
+            font-size: 20px;
+            color: #ffffff;
+            min-width: 20px;
+        }
+        
+        .volume-slider {
+            flex: 1;
+            -webkit-appearance: none;
+            appearance: none;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 3px;
+            outline: none;
+        }
+        
+        .volume-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 16px;
+            height: 16px;
+            background: rgba(65, 105, 225, 0.8);
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .volume-slider::-webkit-slider-thumb:hover {
+            background: rgba(65, 105, 225, 1);
+            transform: scale(1.2);
+        }
+        
+        .volume-value {
+            font-size: 14px;
+            color: #ffffff;
+            min-width: 35px;
+            text-align: right;
+        }
+        
+        /* 关闭按钮 */
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            background: none;
+            border: none;
+            color: #ffffff;
+            font-size: 18px;
+            cursor: pointer;
+            opacity: 0.7;
+            transition: all 0.3s ease;
+        }
+        
+        .close-btn:hover {
+            opacity: 1;
+            transform: rotate(90deg);
+        }
+        
+        /* 左上角时间样式 */
+        .top-left-time {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            z-index: 100;
+            text-align: left;
+        }
+        
+        .top-left-time .time-display {
+            font-size: 36px;
+            font-weight: 700;
+            color: #ffffff;
+            font-family: 'Courier New', monospace;
+            margin-bottom: 5px;
+        }
+        
+        .top-left-time .date-weather {
+            font-size: 14px;
+            color: #cccccc;
+            line-height: 1.4;
         }
         
         /* 左侧区域 */
@@ -531,18 +730,14 @@
         .hexagon-logo {
             width: 80px;
             height: 80px;
-            background-color: rgba(65, 105, 225, 0.3);
-            border: 2px solid rgba(65, 105, 225, 0.5);
             display: flex;
             align-items: center;
             justify-content: center;
-            clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
-            backdrop-filter: blur(10px);
         }
         
         .dna-symbol {
-            width: 40px;
-            height: 40px;
+            width: 60px;
+            height: 60px;
             fill: #ffffff;
         }
         
@@ -651,12 +846,12 @@
         
         .top-right {
             display: flex;
-            gap: 15px;
+            gap: 25px;
             justify-content: space-between;
         }
         
-        .quote-box,
-        .time-box {
+        .todo-box,
+        .pomodoro-box {
             flex: 1;
             background-color: rgba(0, 0, 0, 0.3);
             padding: 20px;
@@ -664,19 +859,421 @@
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.1);
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            margin-bottom: 25px;
+            min-height: 200px;
+            max-height: 250px;
+            display: flex;
+            flex-direction: column;
         }
         
-        .quote-content {
+        /* 倒计时卡片样式 - 缩小版本 */
+        .countdown-box {
+            flex: 0 0 auto;
+            width: 400px;
+            background-color: rgba(0, 0, 0, 0.3);
+            padding: 15px;
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            margin-bottom: 25px;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .countdown-header {
+            margin-bottom: 15px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+        
+        .countdown-title {
             font-size: 16px;
-            line-height: 1.6;
-            margin-bottom: 10px;
+            font-weight: 600;
             color: #ffffff;
         }
         
-        .quote-source {
+        .countdown-display {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 15px;
+            flex-shrink: 0;
+        }
+        
+        .countdown-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 3px;
+        }
+        
+        .countdown-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #ffffff;
+            font-family: 'Courier New', monospace;
+            background-color: rgba(0, 0, 0, 0.4);
+            padding: 5px 10px;
+            border-radius: 6px;
+            min-width: 50px;
+            text-align: center;
+        }
+        
+        .countdown-label {
+            font-size: 12px;
+            color: #cccccc;
+            font-weight: 500;
+        }
+        
+        .countdown-separator {
+            font-size: 24px;
+            font-weight: 700;
+            color: #ffffff;
+        }
+        
+        .countdown-date-selector {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 10px;
+            flex-shrink: 0;
+        }
+        
+        .countdown-label-text {
+            font-size: 12px;
+            color: #cccccc;
+            margin-right: 8px;
+        }
+        
+        .countdown-date-input {
+            padding: 6px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 5px;
+            color: #ffffff;
+            font-size: 12px;
+            outline: none;
+            margin-right: 8px;
+            width: 140px;
+        }
+        
+        .countdown-date-input::-webkit-calendar-picker-indicator {
+            filter: invert(1);
+        }
+        
+        .countdown-save-btn {
+            padding: 6px 12px;
+            background-color: rgba(65, 105, 225, 0.7);
+            border: none;
+            border-radius: 5px;
+            color: #ffffff;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .countdown-save-btn:hover {
+            background-color: rgba(65, 105, 225, 0.9);
+            transform: translateY(-2px);
+        }
+        
+        .countdown-target {
+            text-align: center;
+            font-size: 12px;
+            color: #cccccc;
+            margin-top: auto;
+            padding-top: 10px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* 弹窗中的音乐播放器样式 */
+        .music-player-section .music-box {
+            background-color: rgba(0, 0, 0, 0.3);
+            padding: 15px;
+            border-radius: 8px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* 移除弹窗中音乐播放器的额外底部外边距 */
+        .settings-modal .music-box {
+            margin-bottom: 0;
+        }
+        
+        /* 番茄钟样式 */
+        .pomodoro-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #ffffff;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        
+        .pomodoro-timer {
+            font-size: 48px;
+            font-weight: 700;
+            color: #ffffff;
+            text-align: center;
+            margin-bottom: 20px;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .pomodoro-controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .pomodoro-btn {
+            padding: 10px 20px;
+            background-color: rgba(65, 105, 225, 0.7);
+            border: none;
+            border-radius: 5px;
+            color: #ffffff;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .pomodoro-btn:hover {
+            background-color: rgba(65, 105, 225, 0.9);
+            transform: translateY(-2px);
+        }
+        
+        .pomodoro-btn.active {
+            background-color: rgba(239, 68, 68, 0.7);
+        }
+        
+        .pomodoro-btn.active:hover {
+            background-color: rgba(239, 68, 68, 0.9);
+        }
+        
+        /* 音乐播放器样式 */
+        .music-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #ffffff;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        
+        .music-info {
+            text-align: center;
+            margin-bottom: 15px;
+        }
+        
+        .music-track {
+            font-size: 14px;
+            color: #ffffff;
+            margin-bottom: 5px;
+        }
+        
+        .music-artist {
+            font-size: 12px;
+            color: #cccccc;
+        }
+        
+        .music-controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .music-btn {
+            background: none;
+            border: none;
+            color: #ffffff;
+            font-size: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+        }
+        
+        .music-btn:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            transform: scale(1.1);
+        }
+        
+        .music-btn.play {
+            background-color: rgba(65, 105, 225, 0.7);
+            font-size: 24px;
+        }
+        
+        .music-btn.play:hover {
+            background-color: rgba(65, 105, 225, 0.9);
+        }
+        
+        .music-progress {
+            width: 100%;
+            height: 4px;
+            background-color: rgba(255, 255, 255, 0.2);
+            border-radius: 2px;
+            overflow: hidden;
+            cursor: pointer;
+        }
+        
+        .music-progress-bar {
+            height: 100%;
+            background-color: rgba(65, 105, 225, 0.8);
+            border-radius: 2px;
+            width: 0%;
+            transition: width 0.1s ease;
+        }
+        
+        /* 待办事清单样式 */
+        .todo-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .todo-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #ffffff;
+        }
+        
+        .todo-count {
             font-size: 14px;
             color: #cccccc;
-            text-align: right;
+        }
+        
+        .todo-input-container {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .todo-input {
+            flex: 1;
+            padding: 10px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 5px;
+            color: #ffffff;
+            font-size: 14px;
+            outline: none;
+        }
+        
+        .todo-input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+        
+        .add-todo-btn {
+            padding: 10px 15px;
+            background-color: rgba(65, 105, 225, 0.7);
+            border: none;
+            border-radius: 5px;
+            color: #ffffff;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .add-todo-btn:hover {
+            background-color: rgba(65, 105, 225, 0.9);
+            transform: translateY(-2px);
+        }
+        
+        .todo-list {
+            list-style: none;
+            height: 100%;
+            overflow-y: auto;
+            margin: 0;
+            padding: 0;
+        }
+
+        .todo-header {
+            margin-bottom: 15px;
+            flex-shrink: 0;
+        }
+
+        .todo-input-container {
+            margin-bottom: 15px;
+            flex-shrink: 0;
+            display: flex;
+            gap: 10px;
+        }
+        
+        .todo-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            margin-bottom: 8px;
+            background-color: rgba(255, 255, 255, 0.05);
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+        
+        .todo-item:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        .todo-item.completed {
+            opacity: 0.6;
+        }
+        
+        .todo-item.completed .todo-text {
+            text-decoration: line-through;
+            color: #888;
+        }
+        
+        .todo-checkbox {
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+        }
+        
+        .todo-text {
+            flex: 1;
+            font-size: 14px;
+            color: #ffffff;
+        }
+        
+        .delete-todo-btn {
+            background: none;
+            border: none;
+            color: #ff6b6b;
+            font-size: 16px;
+            cursor: pointer;
+            opacity: 0.7;
+            transition: all 0.3s ease;
+        }
+        
+        .delete-todo-btn:hover {
+            opacity: 1;
+            transform: scale(1.1);
+        }
+        
+        /* 滚动条样式 */
+        .todo-list::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .todo-list::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+        }
+        
+        .todo-list::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 3px;
+        }
+        
+        .todo-list::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.5);
         }
         
         .time-display {
@@ -723,7 +1320,7 @@
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             grid-template-rows: repeat(2, 1fr);
-            gap: 15px;
+            gap: 25px;
         }
         
         .function-card {
@@ -922,106 +1519,249 @@
     
     <!-- 主容器 -->
     <div class="main-container">
+        <!-- 左上角时间 -->
+        <div class="top-left-time">
+            <div class="time-display" id="current-time">10:35:06</div>
+            <div class="date-weather">2025年11月18日 星期二</div>
+        </div>
+        
+        <!-- 右上角设置按钮 -->
+        <button class="settings-btn" id="settings-btn" title="设置" onclick="document.getElementById('settings-modal').classList.toggle('active');">⚙️</button>
+        
+        <!-- 设置弹窗 -->
+        <div class="settings-modal" id="settings-modal">
+            <button class="close-btn" id="close-settings" onclick="document.getElementById('settings-modal').classList.remove('active');">✕</button>
+            
+            <!-- 背景设置 -->
+            <div class="settings-section">
+                <div class="settings-title">
+                    <span>🎨</span>
+                    <span>背景设置</span>
+                </div>
+                <div class="background-options" id="background-options">
+                    <div class="background-option" data-bg="0">
+                        <div class="bg-preview" style="background: linear-gradient(135deg, #1a0b1f 0%, #3a144a 20%, #6e1e4c 40%, #b33b44 60%, #ff7a5a 80%, #ffb74d 100%);"></div>
+                    </div>
+                    <div class="background-option" data-bg="1">
+                        <div class="bg-preview" style="background: linear-gradient(to bottom, #0a0a2a, #1a1a4a, #2a2a6a);"></div>
+                    </div>
+                    <div class="background-option" data-bg="2">
+                        <div class="bg-preview" style="background: linear-gradient(to bottom, #1a91da, #0066cc, #003366);"></div>
+                    </div>
+                    <div class="background-option" data-bg="3">
+                        <div class="bg-preview" style="background: linear-gradient(135deg, #006400, #228b22, #32cd32, #98fb98);"></div>
+                    </div>
+                    <div class="background-option" data-bg="4">
+                        <div class="bg-preview" style="background: linear-gradient(135deg, #000033, #330066, #660099, #9900cc, #cc00ff);"></div>
+                    </div>
+                    <div class="background-option" data-bg="5">
+                        <div class="bg-preview" style="background: linear-gradient(to bottom, #ffcc99, #ff9966, #ff6633, #cc3300);"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 音量设置 -->
+            <div class="settings-section">
+                <div class="settings-title">
+                    <span>🔊</span>
+                    <span>音量调节</span>
+                </div>
+                <div class="volume-control">
+                    <span class="volume-icon" id="volume-icon">🔊</span>
+                    <input type="range" class="volume-slider" id="volume-slider" min="0" max="100" value="50">
+                    <span class="volume-value" id="volume-value">50%</span>
+                </div>
+            </div>
+            
+            <!-- 音乐播放器 -->
+            <div class="settings-section music-player-section">
+                <div class="settings-title">
+                    <span>🎵</span>
+                    <span>音乐播放器</span>
+                </div>
+                <div class="music-box">
+                    <div class="music-info">
+                        <div class="music-track" id="music-track">未播放</div>
+                        <div class="music-artist" id="music-artist"></div>
+                    </div>
+                    <div class="music-controls">
+                        <button class="music-btn" id="music-prev">⏮️</button>
+                        <button class="music-btn play" id="music-play">▶️</button>
+                        <button class="music-btn" id="music-next">⏭️</button>
+                        <button class="music-btn" id="music-import" title="导入音乐">📁</button>
+                        <input type="file" id="music-file-input" multiple accept="audio/*" style="display: none;">
+                    </div>
+                    <div class="music-progress">
+                        <div class="music-progress-bar" id="music-progress-bar"></div>
+                    </div>
+                    <div class="music-list-container" style="margin-top: 15px;">
+                        <div class="music-list-title" style="font-size: 14px; color: #ffffff; margin-bottom: 8px;">音乐列表 (<span id="music-count">3</span>)</div>
+                        <div class="music-list" id="music-list-display" style="max-height: 120px; overflow-y: auto; font-size: 12px;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
         <!-- 左侧面板 -->
         <div class="left-panel">
             <!-- Logo区域 -->
             <div class="logo-section">
                 <div class="hexagon-logo">
                     <svg class="dna-symbol" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M30,10 Q50,0 70,10 Q80,15 90,25 Q85,45 90,65 Q80,75 70,80 Q50,90 30,80 Q20,75 10,65 Q15,45 10,25 Q20,15 30,10 Z M30,10 Q20,30 30,50 Q20,70 30,80 Q50,70 70,80 Q80,60 70,50 Q80,30 70,10 Q50,30 30,10 Z" />
-                        <path d="M30,10 L30,80 M70,10 L70,80" stroke="#ffffff" stroke-width="2" fill="none" />
+                        <!-- 工作台科技图标 -->
+                        <!-- 显示器主体 -->
+                        <rect x="20" y="20" width="60" height="45" rx="3" fill="#333" stroke="#fff" stroke-width="2"/>
+                        <!-- 显示器屏幕 -->
+                        <rect x="25" y="25" width="50" height="35" rx="2" fill="#1a1a2e"/>
+                        <!-- 显示器底座 -->
+                        <rect x="40" y="65" width="20" height="5" rx="2" fill="#333" stroke="#fff" stroke-width="1"/>
+                        <rect x="45" y="70" width="10" height="3" fill="#333" stroke="#fff" stroke-width="1"/>
+                        <!-- 键盘 -->
+                        <rect x="25" y="75" width="50" height="10" rx="2" fill="#333" stroke="#fff" stroke-width="1"/>
+                        <!-- 键盘按键 -->
+                        <rect x="28" y="78" width="4" height="2" fill="#666"/>
+                        <rect x="34" y="78" width="4" height="2" fill="#666"/>
+                        <rect x="40" y="78" width="4" height="2" fill="#666"/>
+                        <rect x="46" y="78" width="4" height="2" fill="#666"/>
+                        <rect x="52" y="78" width="4" height="2" fill="#666"/>
+                        <rect x="58" y="78" width="4" height="2" fill="#666"/>
+                        <rect x="64" y="78" width="4" height="2" fill="#666"/>
+                        <!-- 屏幕上的科技元素 - 代码或图形 -->
+                        <path d="M30,30 L40,35 L30,40 Z" fill="#4ade80" opacity="0.8"/>
+                        <path d="M45,32 L55,37 L45,42 Z" fill="#60a5fa" opacity="0.8"/>
+                        <path d="M60,30 L70,35 L60,40 Z" fill="#f472b6" opacity="0.8"/>
+                        <!-- 科技连接线 -->
+                        <path d="M35,45 L45,50 L35,55" stroke="#fff" stroke-width="1" fill="none"/>
+                        <path d="M50,45 L60,50 L50,55" stroke="#fff" stroke-width="1" fill="none"/>
                     </svg>
                 </div>
-                <div class="logo-text">limina.top</div>
+                <div class="logo-text">studio</div>
             </div>
             
-            <!-- 介绍区域 -->
-            <div class="intro-section">
-                <div class="intro-quote">" Hello World! "</div>
-                <div class="intro-description">一个喜欢折腾一些好玩东西的人的空间</div>
-                
-                <!-- 联系信息 -->
-                <div class="contact-section">
-                    <div class="contact-icon">
-                        <img src="https://cdn-icons-png.flaticon.com/512/1632/1632590.png" alt="GitHub" />
-                    </div>
-                    <div class="contact-icon">
-                        <img src="https://cdn-icons-png.flaticon.com/512/646/646095.png" alt="Twitter" />
-                    </div>
-                    <div class="contact-icon">
-                        <img src="https://cdn-icons-png.flaticon.com/512/5968/5968649.png" alt="Email" />
-                    </div>
-                </div>
-                <div class="contact-hint">通过这里联系我吧</div>
+            <!-- 语录集区域 -->
+            <div class="intro-section" id="quote-collection" style="cursor: pointer;">
+                <div class="intro-quote" id="current-quote">" 人生如逆旅，我亦是行人 "</div>
+                <div class="intro-description" id="quote-author">- 苏轼</div>
+                <div class="contact-hint" style="margin-top: 20px;">点击切换语录</div>
             </div>
         </div>
         
-        <!-- 右侧顶部 -->
-        <div class="top-right">
-            <!-- 语录盒子 -->
-            <div class="quote-box">
-                <div class="quote-content">回首某个瞬间，下个瞬间即告消逝。</div>
-                <div class="quote-source">- 「密教模拟器」</div>
+        <!-- 右侧面板 -->
+        <div class="right-panel">
+            <!-- 右侧顶部 -->
+            <div class="top-right">
+            <!-- 待办事清单 -->
+            <div class="todo-box">
+                <div class="todo-header">
+                    <span class="todo-title">📝 待办事清单</span>
+                    <span class="todo-count" id="todo-count">0 项任务</span>
+                </div>
+                <div class="todo-input-container">
+                    <input type="text" class="todo-input" id="todo-input" placeholder="添加新任务...">
+                    <button class="add-todo-btn" id="add-todo-btn">添加</button>
+                </div>
+                <ul class="todo-list" id="todo-list"></ul>
             </div>
             
-            <!-- 时间和天气 -->
-            <div class="time-box">
-                <div class="time-display" id="current-time">10:35:06</div>
-                <div class="date-weather">2025年11月18日 星期二<br>兰州市 -晴 -4℃ 东风 3级</div>
+            <!-- 目标日期倒计时卡片 -->
+            <div class="countdown-box">
+                <div class="countdown-header">
+                    <span class="countdown-title">⏰ 目标日期倒计时</span>
+                </div>
+                <div class="countdown-display">
+                    <div class="countdown-item">
+                        <div class="countdown-value" id="countdown-days">00</div>
+                        <div class="countdown-label">天</div>
+                    </div>
+                    <div class="countdown-separator">:</div>
+                    <div class="countdown-item">
+                        <div class="countdown-value" id="countdown-hours">00</div>
+                        <div class="countdown-label">时</div>
+                    </div>
+                    <div class="countdown-separator">:</div>
+                    <div class="countdown-item">
+                        <div class="countdown-value" id="countdown-minutes">00</div>
+                        <div class="countdown-label">分</div>
+                    </div>
+                    <div class="countdown-separator">:</div>
+                    <div class="countdown-item">
+                        <div class="countdown-value" id="countdown-seconds">00</div>
+                        <div class="countdown-label">秒</div>
+                    </div>
+                </div>
+                <div class="countdown-date-selector">
+                    <label for="target-date" class="countdown-label-text">目标日期:</label>
+                    <input type="date" id="target-date" class="countdown-date-input">
+                    <button class="countdown-save-btn" id="save-target-date">保存</button>
+                </div>
+                <div class="countdown-target" id="countdown-target">目标日期: 2025-12-31</div>
+            </div>
+        </div>
+        
+        <!-- 右侧中间区域 - 番茄钟 -->
+        <div class="top-right">
+            <!-- 番茄钟 -->
+            <div class="pomodoro-box">
+                <div class="pomodoro-title">🍅 番茄钟</div>
+                <div class="pomodoro-timer" id="pomodoro-timer">25:00</div>
+                <div class="pomodoro-controls">
+                    <button class="pomodoro-btn" id="pomodoro-start">开始</button>
+                    <button class="pomodoro-btn" id="pomodoro-pause">暂停</button>
+                    <button class="pomodoro-btn" id="pomodoro-reset">重置</button>
+                </div>
             </div>
         </div>
         
         <!-- 右侧底部 -->
         <div class="bottom-right">
-            <!-- 网站列表标题 -->
+            <!-- 工具箱标题 -->
             <div class="website-list">
-                <span class="website-list-icon">☁️</span>
-                <span class="website-list-title">网站列表</span>
+                <span class="website-list-icon">🧰</span>
+                <span class="website-list-title">工具箱</span>
             </div>
             
             <!-- 功能网格 -->
             <div class="function-grid">
-                <div class="function-card">
+                <a href="markdown-reader.html" class="function-card" target="_blank" style="text-decoration: none;">
                     <div class="function-header">
-                        <span class="function-icon">👤</span>
-                        <span class="function-title">简历</span>
+                        <span class="function-icon">📖</span>
+                        <span class="function-title">Markdown阅读器</span>
                     </div>
-                </div>
+                </a>
                 
-                <div class="function-card">
+                <a href="code-editor.html" class="function-card" target="_blank" style="text-decoration: none;">
                     <div class="function-header">
-                        <span class="function-icon">📝</span>
-                        <span class="function-title">博客</span>
+                        <span class="function-icon">🖥️</span>
+                        <span class="function-title">前端编辑预览</span>
                     </div>
-                </div>
+                </a>
                 
-                <div class="function-card">
+                <a href="encryptor.html" class="function-card" target="_blank" style="text-decoration: none;">
                     <div class="function-header">
-                        <span class="function-icon">🤖</span>
-                        <span class="function-title">GPT</span>
+                        <span class="function-icon">🔒</span>
+                        <span class="function-title">文本加解密</span>
                     </div>
-                </div>
+                </a>
                 
-                <div class="function-card">
+                <a href="timestamp-converter.html" class="function-card" target="_blank" style="text-decoration: none;">
                     <div class="function-header">
-                        <span class="function-icon">💾</span>
-                        <span class="function-title">网盘</span>
+                        <span class="function-icon">⏰</span>
+                        <span class="function-title">时间戳转换</span>
                     </div>
-                </div>
+                </a>
                 
-                <div class="function-card">
+                <a href="gradient-generator.html" class="function-card" target="_blank" style="text-decoration: none;">
                     <div class="function-header">
-                        <span class="function-icon">🎵</span>
-                        <span class="function-title">音乐</span>
+                        <span class="function-icon">🎨</span>
+                        <span class="function-title">CSS渐变色生成</span>
                     </div>
-                </div>
+                </a>
                 
-                <div class="function-card">
+                <a href="http-status-codes.html" class="function-card" target="_blank" style="text-decoration: none;">
                     <div class="function-header">
-                        <span class="function-icon">🧰</span>
-                        <span class="function-title">工具箱</span>
+                        <span class="function-icon">🔢</span>
+                        <span class="function-title">HTTP状态码</span>
                     </div>
-                </div>
+                </a>
             </div>
         </div>
     </div>
@@ -1389,6 +2129,20 @@
             }
         }
         
+        // 语录数组
+        const quotes = [
+            { text: "人生如逆旅，我亦是行人", author: "- 苏轼" },
+            { text: "天生我材必有用，千金散尽还复来", author: "- 李白" },
+            { text: "海内存知己，天涯若比邻", author: "- 王勃" },
+            { text: "山重水复疑无路，柳暗花明又一村", author: "- 陆游" },
+            { text: "会当凌绝顶，一览众山小", author: "- 杜甫" },
+            { text: "春风得意马蹄疾，一日看尽长安花", author: "- 孟郊" },
+            { text: "问君能有几多愁，恰似一江春水向东流", author: "- 李煜" },
+            { text: "但愿人长久，千里共婵娟", author: "- 苏轼" },
+            { text: "大漠孤烟直，长河落日圆", author: "- 王维" },
+            { text: "夕阳无限好，只是近黄昏", author: "- 李商隐" }
+        ];
+        
         // 初始化页面功能
         function initPageFunctions() {
             try {
@@ -1415,9 +2169,11 @@
                     }, 500);
                 }
                 
-                // 更新当前时间
+                // 更新当前时间和日期
                 function updateTime() {
                     const now = new Date();
+                    
+                    // 更新时间
                     let hours = now.getHours().toString().padStart(2, '0');
                     let minutes = now.getMinutes().toString().padStart(2, '0');
                     let seconds = now.getSeconds().toString().padStart(2, '0');
@@ -1425,9 +2181,23 @@
                     if (timeElement) {
                         timeElement.textContent = `${hours}:${minutes}:${seconds}`;
                     }
+                    
+                    // 更新日期
+                    const year = now.getFullYear();
+                    const month = (now.getMonth() + 1).toString().padStart(2, '0');
+                    const day = now.getDate().toString().padStart(2, '0');
+                    const weekdays = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
+                    const weekday = weekdays[now.getDay()];
+                    
+                    // 找到日期元素并更新
+                    const dateWeatherElement = document.querySelector('.top-left-time .date-weather');
+                    if (dateWeatherElement) {
+                        // 只更新日期部分
+                        dateWeatherElement.innerHTML = `${year}年${month}月${day}日 ${weekday}`;
+                    }
                 }
                 
-                // 初始化时间更新
+                // 初始化时间和日期更新
                 updateTime();
                 setInterval(updateTime, 1000);
                 
@@ -1443,14 +2213,626 @@
                     });
                 });
                 
-                // 联系图标点击效果
-                const contactIcons = document.querySelectorAll('.contact-icon');
-                contactIcons.forEach(icon => {
-                    icon.addEventListener('click', function() {
-                        // 这里可以添加联系图标的点击逻辑
-                        console.log('Contact icon clicked');
+                // 语录集点击切换功能
+                const quoteCollection = document.getElementById('quote-collection');
+                const currentQuote = document.getElementById('current-quote');
+                const quoteAuthor = document.getElementById('quote-author');
+                
+                if (quoteCollection && currentQuote && quoteAuthor) {
+                    quoteCollection.addEventListener('click', function() {
+                        // 随机选择一条语录
+                        const randomIndex = Math.floor(Math.random() * quotes.length);
+                        const randomQuote = quotes[randomIndex];
+                        
+                        // 更新显示的语录
+                        currentQuote.textContent = `" ${randomQuote.text} "`;
+                        quoteAuthor.textContent = randomQuote.author;
+                    });
+                }
+                
+                // 待办事清单功能
+                const todoInput = document.getElementById('todo-input');
+                const addTodoBtn = document.getElementById('add-todo-btn');
+                const todoList = document.getElementById('todo-list');
+                const todoCount = document.getElementById('todo-count');
+                
+                // 初始化待办事项数组
+                let todos = [];
+                
+                // 更新任务数量
+                function updateTodoCount() {
+                    todoCount.textContent = `${todos.length} 项任务`;
+                }
+                
+                // 渲染待办事项
+                function renderTodos() {
+                    todoList.innerHTML = '';
+                    
+                    todos.forEach((todo, index) => {
+                        const li = document.createElement('li');
+                        li.className = `todo-item ${todo.completed ? 'completed' : ''}`;
+                        li.innerHTML = `
+                            <input type="checkbox" class="todo-checkbox" ${todo.completed ? 'checked' : ''} data-index="${index}">
+                            <span class="todo-text">${todo.text}</span>
+                            <button class="delete-todo-btn" data-index="${index}">×</button>
+                        `;
+                        todoList.appendChild(li);
+                    });
+                    
+                    updateTodoCount();
+                }
+                
+                // 添加待办事项
+                function addTodo() {
+                    const text = todoInput.value.trim();
+                    if (text) {
+                        todos.push({ text, completed: false });
+                        todoInput.value = '';
+                        renderTodos();
+                    }
+                }
+                
+                // 切换待办事项完成状态
+                function toggleTodo(index) {
+                    todos[index].completed = !todos[index].completed;
+                    renderTodos();
+                }
+                
+                // 删除待办事项
+                function deleteTodo(index) {
+                    todos.splice(index, 1);
+                    renderTodos();
+                }
+                
+                // 事件监听器
+                if (addTodoBtn) {
+                    addTodoBtn.addEventListener('click', addTodo);
+                }
+                
+                if (todoInput) {
+                    todoInput.addEventListener('keypress', function(e) {
+                        if (e.key === 'Enter') {
+                            addTodo();
+                        }
+                    });
+                }
+                
+                if (todoList) {
+                    todoList.addEventListener('change', function(e) {
+                        if (e.target.classList.contains('todo-checkbox')) {
+                            const index = parseInt(e.target.dataset.index);
+                            toggleTodo(index);
+                        }
+                    });
+                    
+                    todoList.addEventListener('click', function(e) {
+                        if (e.target.classList.contains('delete-todo-btn')) {
+                            const index = parseInt(e.target.dataset.index);
+                            deleteTodo(index);
+                        }
+                    });
+                }
+                
+                // 初始化渲染
+                renderTodos();
+                
+                // 目标日期倒计时功能
+                const countdownDays = document.getElementById('countdown-days');
+                const countdownHours = document.getElementById('countdown-hours');
+                const countdownMinutes = document.getElementById('countdown-minutes');
+                const countdownSeconds = document.getElementById('countdown-seconds');
+                const targetDateInput = document.getElementById('target-date');
+                const saveTargetDateBtn = document.getElementById('save-target-date');
+                const countdownTarget = document.getElementById('countdown-target');
+                
+                // 从本地存储获取目标日期，默认为2025-12-31
+                let targetDate = localStorage.getItem('targetDate') || '2025-12-31';
+                
+                // 设置日期输入框的默认值和最小值
+                const today = new Date().toISOString().split('T')[0];
+                targetDateInput.value = targetDate;
+                targetDateInput.min = today;
+                
+                // 更新倒计时目标显示
+                countdownTarget.textContent = `目标日期: ${targetDate}`;
+                
+                // 计算并更新倒计时
+                function updateCountdown() {
+                    const now = new Date();
+                    const target = new Date(targetDate);
+                    const diff = target - now;
+                    
+                    // 如果目标日期已过，显示0
+                    if (diff <= 0) {
+                        countdownDays.textContent = '00';
+                        countdownHours.textContent = '00';
+                        countdownMinutes.textContent = '00';
+                        countdownSeconds.textContent = '00';
+                        return;
+                    }
+                    
+                    // 计算天、时、分、秒
+                    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+                    const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                    const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+                    
+                    // 更新显示，确保两位数
+                    countdownDays.textContent = days.toString().padStart(2, '0');
+                    countdownHours.textContent = hours.toString().padStart(2, '0');
+                    countdownMinutes.textContent = minutes.toString().padStart(2, '0');
+                    countdownSeconds.textContent = seconds.toString().padStart(2, '0');
+                }
+                
+                // 保存目标日期
+                function saveTargetDate() {
+                    const newTargetDate = targetDateInput.value;
+                    if (newTargetDate) {
+                        targetDate = newTargetDate;
+                        localStorage.setItem('targetDate', targetDate);
+                        countdownTarget.textContent = `目标日期: ${targetDate}`;
+                        updateCountdown();
+                    }
+                }
+                
+                // 初始化倒计时并设置每秒更新
+                updateCountdown();
+                const countdownInterval = setInterval(updateCountdown, 1000);
+                
+                // 绑定保存按钮事件
+                if (saveTargetDateBtn) {
+                    saveTargetDateBtn.addEventListener('click', saveTargetDate);
+                }
+                
+                // 按Enter键保存目标日期
+                if (targetDateInput) {
+                    targetDateInput.addEventListener('keypress', function(e) {
+                        if (e.key === 'Enter') {
+                            saveTargetDate();
+                        }
+                    });
+                }
+                
+                // 番茄钟功能
+                const pomodoroTimer = document.getElementById('pomodoro-timer');
+                const pomodoroStart = document.getElementById('pomodoro-start');
+                const pomodoroPause = document.getElementById('pomodoro-pause');
+                const pomodoroReset = document.getElementById('pomodoro-reset');
+                
+                let pomodoroTime = 25 * 60; // 25分钟
+                let pomodoroInterval = null;
+                let isPomodoroRunning = false;
+                
+                // 更新番茄钟显示
+                function updatePomodoroDisplay() {
+                    const minutes = Math.floor(pomodoroTime / 60);
+                    const seconds = pomodoroTime % 60;
+                    pomodoroTimer.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                }
+                
+                // 开始番茄钟
+                function startPomodoro() {
+                    if (!isPomodoroRunning) {
+                        isPomodoroRunning = true;
+                        pomodoroInterval = setInterval(() => {
+                            pomodoroTime--;
+                            updatePomodoroDisplay();
+                            
+                            if (pomodoroTime <= 0) {
+                                clearInterval(pomodoroInterval);
+                                isPomodoroRunning = false;
+                                // 可以添加提醒功能
+                                alert('番茄钟时间到！');
+                            }
+                        }, 1000);
+                        pomodoroStart.classList.add('active');
+                    }
+                }
+                
+                // 暂停番茄钟
+                function pausePomodoro() {
+                    if (isPomodoroRunning) {
+                        clearInterval(pomodoroInterval);
+                        isPomodoroRunning = false;
+                        pomodoroStart.classList.remove('active');
+                    }
+                }
+                
+                // 重置番茄钟
+                function resetPomodoro() {
+                    pausePomodoro();
+                    pomodoroTime = 25 * 60;
+                    updatePomodoroDisplay();
+                }
+                
+                // 番茄钟事件监听器
+                if (pomodoroStart) {
+                    pomodoroStart.addEventListener('click', startPomodoro);
+                }
+                
+                if (pomodoroPause) {
+                    pomodoroPause.addEventListener('click', pausePomodoro);
+                }
+                
+                if (pomodoroReset) {
+                    pomodoroReset.addEventListener('click', resetPomodoro);
+                }
+                
+                // 创建全局音频对象，用于音量控制
+                const audio = new Audio();
+                
+                // 音乐播放器功能
+                const musicTrack = document.getElementById('music-track');
+                const musicArtist = document.getElementById('music-artist');
+                const musicPlay = document.getElementById('music-play');
+                const musicPrev = document.getElementById('music-prev');
+                const musicNext = document.getElementById('music-next');
+                const musicProgressBar = document.getElementById('music-progress-bar');
+                const musicImportBtn = document.getElementById('music-import');
+                const musicFileInput = document.getElementById('music-file-input');
+                const musicListDisplay = document.getElementById('music-list-display');
+                const musicCount = document.getElementById('music-count');
+                
+                // 音乐列表 - 初始为空，只保留导入的音乐
+                let musicList = [];
+                let currentTrackIndex = 0;
+                let isMusicPlaying = false;
+                let musicProgress = 0;
+                let musicProgressInterval = null;
+                
+                // 播放状态标志
+                audio.addEventListener('ended', () => {
+                    nextTrack();
+                });
+                
+                // 实时更新进度条
+                audio.addEventListener('timeupdate', () => {
+                    if (audio.duration > 0) {
+                        musicProgress = (audio.currentTime / audio.duration) * 100;
+                        musicProgressBar.style.width = `${musicProgress}%`;
+                    }
+                });
+                
+                // 更新音乐信息
+                function updateMusicInfo() {
+                    if (musicList.length > 0) {
+                        musicTrack.textContent = musicList[currentTrackIndex].title;
+                        musicArtist.textContent = musicList[currentTrackIndex].artist;
+                    }
+                }
+                
+                // 播放/暂停音乐
+                function toggleMusic() {
+                    // 如果没有音乐，直接返回，不弹出提示
+                    if (musicList.length === 0) {
+                        return;
+                    }
+                    
+                    if (isMusicPlaying) {
+                        // 暂停播放
+                        audio.pause();
+                        isMusicPlaying = false;
+                        musicPlay.textContent = '▶️';
+                    } else {
+                        // 开始播放
+                        const currentTrack = musicList[currentTrackIndex];
+                        if (currentTrack.fileUrl) {
+                            audio.src = currentTrack.fileUrl;
+                            audio.play()
+                                .then(() => {
+                                    isMusicPlaying = true;
+                                    musicPlay.textContent = '⏸️';
+                                })
+                                .catch(error => {
+                                    console.error('播放失败:', error);
+                                    isMusicPlaying = false;
+                                    musicPlay.textContent = '▶️';
+                                });
+                        }
+                    }
+                }
+                
+                // 上一曲
+                function prevTrack() {
+                    if (musicList.length === 0) return;
+                    
+                    currentTrackIndex = (currentTrackIndex - 1 + musicList.length) % musicList.length;
+                    updateMusicInfo();
+                    displayMusicList();
+                    
+                    if (isMusicPlaying) {
+                        audio.src = musicList[currentTrackIndex].fileUrl || '';
+                        audio.play().catch(error => {
+                            console.error('播放失败:', error);
+                            isMusicPlaying = false;
+                            musicPlay.textContent = '▶️';
+                        });
+                    }
+                }
+                
+                // 下一曲
+                function nextTrack() {
+                    if (musicList.length === 0) return;
+                    
+                    currentTrackIndex = (currentTrackIndex + 1) % musicList.length;
+                    updateMusicInfo();
+                    displayMusicList();
+                    
+                    if (isMusicPlaying) {
+                        audio.src = musicList[currentTrackIndex].fileUrl || '';
+                        audio.play().catch(error => {
+                            console.error('播放失败:', error);
+                            isMusicPlaying = false;
+                            musicPlay.textContent = '▶️';
+                        });
+                    }
+                }
+                
+                // 显示音乐列表
+                function displayMusicList() {
+                    console.log('显示音乐列表，当前列表:', musicList);
+                    musicListDisplay.innerHTML = '';
+                    musicCount.textContent = musicList.length;
+                    
+                    // 如果列表为空，显示提示信息
+                    if (musicList.length === 0) {
+                        const emptyMsg = document.createElement('div');
+                        emptyMsg.textContent = '暂无音乐，请点击📁按钮导入';
+                        emptyMsg.style.cssText = 'text-align: center; opacity: 0.6; padding: 10px;';
+                        musicListDisplay.appendChild(emptyMsg);
+                        return;
+                    }
+                    
+                    musicList.forEach((track, index) => {
+                        const trackElement = document.createElement('div');
+                        trackElement.className = 'music-list-item';
+                        trackElement.style.cssText = `
+                            padding: 8px;
+                            margin: 4px 0;
+                            background-color: ${index === currentTrackIndex ? 'rgba(65, 105, 225, 0.3)' : 'rgba(255, 255, 255, 0.05)'};
+                            border-radius: 4px;
+                            cursor: pointer;
+                            transition: all 0.2s ease;
+                            font-size: 12px;
+                            display: flex;
+                            justify-content: space-between;
+                            align-items: center;
+                        `;
+                        
+                        trackElement.innerHTML = `
+                            <span>${index + 1}. ${track.title}</span>
+                            <span style="opacity: 0.7;">${track.artist}</span>
+                        `;
+                        
+                        trackElement.addEventListener('click', () => {
+                            console.log('点击播放:', track.title);
+                            currentTrackIndex = index;
+                            
+                            // 更新播放状态
+                            isMusicPlaying = true;
+                            musicPlay.textContent = '⏸️';
+                            
+                            // 设置音频源并播放
+                            audio.src = track.fileUrl;
+                            audio.play()
+                                .then(() => {
+                                    console.log('开始播放:', track.title);
+                                    updateMusicInfo();
+                                    displayMusicList();
+                                })
+                                .catch(error => {
+                                    console.error('播放失败:', error);
+                                    isMusicPlaying = false;
+                                    musicPlay.textContent = '▶️';
+                                });
+                        });
+                        
+                        musicListDisplay.appendChild(trackElement);
+                    });
+                }
+                
+                // 检查是否为重复文件（基于文件名和大小）
+                function isDuplicateFile(file) {
+                    return musicList.some(track => {
+                        return track.file && 
+                               track.file.name === file.name && 
+                               track.file.size === file.size;
+                    });
+                }
+                
+                // 导入音乐文件
+                function importMusicFiles(files) {
+                    // 确保files是数组
+                    const fileArray = Array.isArray(files) ? files : Array.from(files);
+                    let importedCount = 0;
+                    
+                    // 遍历所有选择的文件
+                    fileArray.forEach(file => {
+                        // 检查是否为音频文件且不是重复文件
+                        if (file.type && file.type.startsWith('audio/') && !isDuplicateFile(file)) {
+                            // 提取文件名作为歌曲标题，移除扩展名
+                            const title = file.name.replace(/\.[^/.]+$/, '');
+                            
+                            // 创建音乐对象
+                            const musicItem = {
+                                title: title,
+                                artist: '本地文件',
+                                file: file,
+                                fileUrl: URL.createObjectURL(file)
+                            };
+                            
+                            // 添加到音乐列表
+                            musicList.push(musicItem);
+                            importedCount++;
+                        }
+                    });
+                    
+                    // 导入完成后更新界面
+                    if (importedCount > 0) {
+                        console.log('成功导入', importedCount, '首音乐，当前列表:', musicList);
+                        
+                        // 更新音乐信息显示
+                        updateMusicInfo();
+                        
+                        // 显示音乐列表
+                        displayMusicList();
+                        
+                        // 如果是首次导入音乐，自动选择并播放第一首
+                        if (musicList.length === importedCount) {
+                            currentTrackIndex = 0;
+                            updateMusicInfo();
+                            
+                            // 自动播放第一首
+                            const firstTrack = musicList[0];
+                            if (firstTrack.fileUrl) {
+                                audio.src = firstTrack.fileUrl;
+                                audio.play().then(() => {
+                                    isMusicPlaying = true;
+                                    musicPlay.textContent = '⏸️';
+                                }).catch(error => {
+                                    console.error('自动播放失败:', error);
+                                });
+                            }
+                        }
+                    } else {
+                        console.log('没有导入新的音乐，可能都是重复文件');
+                    }
+                }
+                
+                // 音乐播放器事件监听器
+                if (musicPlay) {
+                    musicPlay.addEventListener('click', toggleMusic);
+                }
+                
+                if (musicPrev) {
+                    musicPrev.addEventListener('click', prevTrack);
+                }
+                
+                if (musicNext) {
+                    musicNext.addEventListener('click', nextTrack);
+                }
+                
+                // 初始化音乐列表显示
+                displayMusicList();
+                
+                // 初始化音乐信息
+                updateMusicInfo();
+                
+                // 导入音乐事件
+                if (musicImportBtn && musicFileInput) {
+                    // 点击导入按钮触发文件选择
+                    musicImportBtn.addEventListener('click', () => {
+                        musicFileInput.click();
+                    });
+                    
+                    // 文件选择变化事件
+                    musicFileInput.addEventListener('change', (e) => {
+                        const files = e.target.files;
+                        if (files.length > 0) {
+                            importMusicFiles(files);
+                            // 清空文件输入，允许再次选择相同文件
+                            e.target.value = '';
+                        }
+                    });
+                }
+                
+                // 初始调用显示列表
+                displayMusicList();
+                
+                // 设置弹窗功能
+                const settingsBtn = document.getElementById('settings-btn');
+                const settingsModal = document.getElementById('settings-modal');
+                const closeSettings = document.getElementById('close-settings');
+                const backgroundOptions = document.querySelectorAll('.background-option');
+                const volumeSlider = document.getElementById('volume-slider');
+                const volumeValue = document.getElementById('volume-value');
+                const volumeIcon = document.getElementById('volume-icon');
+                
+                // 显示/隐藏设置弹窗
+                function toggleSettings() {
+                    settingsModal.classList.toggle('active');
+                }
+                
+                // 关闭设置弹窗
+                function closeSettingsModal() {
+                    settingsModal.classList.remove('active');
+                }
+                
+                // 背景切换功能
+                function setBackground(index) {
+                    const backgrounds = document.querySelectorAll('.background');
+                    backgrounds.forEach((bg, i) => {
+                        if (i === index) {
+                            bg.classList.add('active');
+                            bg.classList.remove('hidden');
+                            bg.style.zIndex = -1;
+                        } else {
+                            bg.classList.remove('active');
+                            bg.classList.add('hidden');
+                            bg.style.zIndex = -2;
+                        }
+                    });
+                    
+                    // 更新选中状态
+                    backgroundOptions.forEach(option => {
+                        option.classList.remove('active');
+                    });
+                    backgroundOptions[index].classList.add('active');
+                }
+                
+                // 音量调节功能
+                function updateVolume() {
+                    const volume = volumeSlider.value;
+                    volumeValue.textContent = `${volume}%`;
+                    
+                    // 更新音量图标
+                    if (volume === '0') {
+                        volumeIcon.textContent = '🔇';
+                    } else if (volume < 50) {
+                        volumeIcon.textContent = '🔉';
+                    } else {
+                        volumeIcon.textContent = '🔊';
+                    }
+                    
+                    // 实际控制音乐播放器的音量
+                    // 将音量值从 0-100 转换为 0-1 范围
+                    const volumeLevel = volume / 100;
+                    // 设置音频对象的音量
+                    audio.volume = volumeLevel;
+                }
+                
+                // 事件监听器
+                if (settingsBtn) {
+                    settingsBtn.addEventListener('click', toggleSettings);
+                }
+                
+                if (closeSettings) {
+                    closeSettings.addEventListener('click', closeSettingsModal);
+                }
+                
+                // 点击外部关闭弹窗
+                document.addEventListener('click', function(e) {
+                    if (settingsModal.classList.contains('active') && 
+                        !settingsModal.contains(e.target) && 
+                        e.target !== settingsBtn) {
+                        closeSettingsModal();
+                    }
+                });
+                
+                // 背景选项点击事件
+                backgroundOptions.forEach(option => {
+                    option.addEventListener('click', function() {
+                        const bgIndex = parseInt(this.dataset.bg);
+                        setBackground(bgIndex);
                     });
                 });
+                
+                // 音量滑块事件
+                if (volumeSlider) {
+                    volumeSlider.addEventListener('input', updateVolume);
+                    // 初始化音量显示
+                    updateVolume();
+                }
                 
                 // 为了调试方便，可以添加一个快捷键切换背景
                 document.addEventListener('keydown', function(e) {
@@ -1466,11 +2848,7 @@
             }
         }
         
-        // 页面加载完成后执行初始化
-        document.addEventListener('DOMContentLoaded', function() {
-            // 延迟初始化，确保所有元素都已加载
-            setTimeout(initPageFunctions, 100);
-        });
+        // 页面加载完成后执行初始化 - 已在加载动画结束时调用，无需重复
     </script>
 </body>
 </html>

@@ -1,0 +1,1145 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Markdown 阅读器</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f5f5f5;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        /* 深色主题 */
+        body.dark-theme {
+            background-color: #1a1a1a;
+            color: #e0e0e0;
+        }
+
+        /* 布局容器 */
+        .app-container {
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* 左侧边栏 */
+        .sidebar {
+            width: 280px;
+            background-color: white;
+            border-right: 1px solid #e0e0e0;
+            display: flex;
+            flex-direction: column;
+            transition: background-color 0.3s, border-color 0.3s;
+        }
+
+        body.dark-theme .sidebar {
+            background-color: #2d2d2d;
+            border-right-color: #444;
+        }
+
+        /* 侧边栏头部 */
+        .sidebar-header {
+            padding: 20px;
+            border-bottom: 1px solid #e0e0e0;
+            background-color: #fafafa;
+            transition: background-color 0.3s, border-color 0.3s;
+        }
+
+        body.dark-theme .sidebar-header {
+            background-color: #333;
+            border-bottom-color: #444;
+        }
+
+        .sidebar-header h1 {
+            font-size: 1.5em;
+            color: #1a237e;
+            margin-bottom: 10px;
+            transition: color 0.3s;
+        }
+
+        body.dark-theme .sidebar-header h1 {
+            color: #90caf9;
+        }
+
+        /* 文件选择区 */
+        .file-selector {
+            padding: 15px;
+            border-bottom: 1px solid #e0e0e0;
+            transition: border-color 0.3s;
+        }
+
+        body.dark-theme .file-selector {
+            border-bottom-color: #444;
+        }
+
+        .file-input-wrapper {
+            position: relative;
+            margin-bottom: 10px;
+        }
+
+        #fileInput {
+            display: none;
+        }
+
+        .file-input-label {
+            display: block;
+            padding: 10px 15px;
+            background-color: #3498db;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+            text-align: center;
+            transition: background-color 0.3s;
+        }
+
+        .file-input-label:hover {
+            background-color: #2980b9;
+        }
+
+        /* 目录导航区 */
+        .toc-section {
+            flex: 1;
+            overflow-y: auto;
+            padding: 15px;
+        }
+
+        .toc-section h3 {
+            font-size: 1em;
+            margin-bottom: 10px;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: color 0.3s;
+        }
+
+        body.dark-theme .toc-section h3 {
+            color: #aaa;
+        }
+
+        .toc-list {
+            list-style: none;
+        }
+
+        .toc-item {
+            margin-bottom: 5px;
+        }
+
+        .toc-link {
+            display: block;
+            padding: 5px 10px;
+            border-radius: 3px;
+            color: #333;
+            text-decoration: none;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+        body.dark-theme .toc-link {
+            color: #e0e0e0;
+        }
+
+        .toc-link:hover {
+            background-color: #e8eaf6;
+        }
+
+        body.dark-theme .toc-link:hover {
+            background-color: #444;
+        }
+
+        /* 主内容区 */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* 工具栏 */
+        .toolbar {
+            padding: 15px 20px;
+            background-color: white;
+            border-bottom: 1px solid #e0e0e0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background-color 0.3s, border-color 0.3s;
+        }
+
+        body.dark-theme .toolbar {
+            background-color: #2d2d2d;
+            border-bottom-color: #444;
+        }
+
+        .toolbar-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .toolbar-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* 内容区域布局 */
+        .content-area {
+            flex: 1;
+            display: flex;
+            overflow: hidden;
+        }
+
+        /* 内容展示区 */
+        .content-display {
+            flex: 1;
+            overflow-y: auto;
+            padding: 30px;
+            background-color: white;
+            transition: background-color 0.3s;
+        }
+
+        body.dark-theme .content-display {
+            background-color: #1a1a1a;
+        }
+
+        /* 右侧目录 */
+        .right-sidebar {
+            width: 280px;
+            background-color: white;
+            border-left: 1px solid #e0e0e0;
+            display: flex;
+            flex-direction: column;
+            transition: all 0.3s ease;
+            overflow-y: auto;
+        }
+
+        body.dark-theme .right-sidebar {
+            background-color: #2d2d2d;
+            border-left-color: #444;
+        }
+
+        /* 右侧目录隐藏状态 */
+        .right-sidebar.hidden {
+            width: 0;
+            border-left: none;
+            overflow: hidden;
+        }
+
+        /* 目录头部 */
+        .toc-header {
+            padding: 15px;
+            border-bottom: 1px solid #e0e0e0;
+            background-color: #fafafa;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background-color 0.3s, border-color 0.3s;
+        }
+
+        body.dark-theme .toc-header {
+            background-color: #333;
+            border-bottom-color: #444;
+        }
+
+        .toc-header h3 {
+            font-size: 1em;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin: 0;
+            transition: color 0.3s;
+        }
+
+        body.dark-theme .toc-header h3 {
+            color: #aaa;
+        }
+
+        /* 收回按钮 */
+        .toggle-toc-btn {
+            background: none;
+            border: none;
+            font-size: 18px;
+            cursor: pointer;
+            color: #666;
+            padding: 5px;
+            border-radius: 3px;
+            transition: all 0.3s;
+        }
+
+        body.dark-theme .toggle-toc-btn {
+            color: #aaa;
+        }
+
+        .toggle-toc-btn:hover {
+            background-color: #e0e0e0;
+        }
+
+        body.dark-theme .toggle-toc-btn:hover {
+            background-color: #444;
+        }
+
+        /* 目录内容区 */
+        .toc-content {
+            padding: 15px;
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        /* 搜索框 */
+        .search-box {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        #searchInput {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.3s, background-color 0.3s, color 0.3s;
+        }
+
+        body.dark-theme #searchInput {
+            background-color: #444;
+            border-color: #555;
+            color: #e0e0e0;
+        }
+
+        #searchInput:focus {
+            border-color: #3498db;
+        }
+
+        /* 按钮样式 */
+        .btn {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background-color: #3498db;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #2980b9;
+        }
+
+        .btn-secondary {
+            background-color: #95a5a6;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background-color: #7f8c8d;
+        }
+
+        /* 下拉菜单 */
+        .dropdown {
+            position: relative;
+        }
+
+        .dropdown select {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: white;
+            cursor: pointer;
+            transition: border-color 0.3s, background-color 0.3s, color 0.3s;
+        }
+
+        body.dark-theme .dropdown select {
+            background-color: #444;
+            border-color: #555;
+            color: #e0e0e0;
+        }
+
+        /* 内容展示区 */
+        .content-display {
+            flex: 1;
+            overflow-y: auto;
+            padding: 30px;
+            background-color: white;
+            transition: background-color 0.3s;
+        }
+
+        body.dark-theme .content-display {
+            background-color: #1a1a1a;
+        }
+
+        /* Markdown 样式 */
+        .markdown-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .markdown-content h1 {
+            font-size: 2em;
+            margin-bottom: 20px;
+            color: #1a237e;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e8eaf6;
+            transition: color 0.3s, border-color 0.3s;
+        }
+
+        body.dark-theme .markdown-content h1 {
+            color: #90caf9;
+            border-bottom-color: #333;
+        }
+
+        .markdown-content h2 {
+            font-size: 1.8em;
+            margin: 20px 0 15px;
+            color: #3949ab;
+            transition: color 0.3s;
+        }
+
+        body.dark-theme .markdown-content h2 {
+            color: #64b5f6;
+        }
+
+        .markdown-content h3 {
+            font-size: 1.5em;
+            margin: 18px 0 12px;
+            color: #5c6bc0;
+            transition: color 0.3s;
+        }
+
+        body.dark-theme .markdown-content h3 {
+            color: #42a5f5;
+        }
+
+        .markdown-content p {
+            margin-bottom: 15px;
+            line-height: 1.8;
+        }
+
+        .markdown-content ul, .markdown-content ol {
+            margin-bottom: 15px;
+            padding-left: 30px;
+        }
+
+        .markdown-content li {
+            margin-bottom: 5px;
+        }
+
+        .markdown-content code {
+            background-color: #f5f5f5;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 0.9em;
+            transition: background-color 0.3s;
+        }
+
+        body.dark-theme .markdown-content code {
+            background-color: #333;
+        }
+
+        .markdown-content pre {
+            background-color: #f5f5f5;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            margin-bottom: 15px;
+            transition: background-color 0.3s;
+        }
+
+        body.dark-theme .markdown-content pre {
+            background-color: #2d2d2d;
+        }
+
+        .markdown-content pre code {
+            background-color: transparent;
+            padding: 0;
+        }
+
+        .markdown-content blockquote {
+            border-left: 4px solid #3498db;
+            padding-left: 15px;
+            margin-bottom: 15px;
+            color: #666;
+            font-style: italic;
+            transition: color 0.3s;
+        }
+
+        body.dark-theme .markdown-content blockquote {
+            color: #aaa;
+        }
+
+        .markdown-content a {
+            color: #3498db;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        body.dark-theme .markdown-content a {
+            color: #64b5f6;
+        }
+
+        .markdown-content a:hover {
+            text-decoration: underline;
+        }
+
+        .markdown-content img {
+            max-width: 100%;
+            height: auto;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+
+        /* 高亮样式 */
+        .highlight {
+            background-color: #ffff00;
+            transition: background-color 0.3s;
+        }
+
+        body.dark-theme .highlight {
+            background-color: #444400;
+        }
+
+        /* 最近文件和收藏 */
+        .recent-files, .favorites {
+            margin-bottom: 20px;
+        }
+
+        .file-list {
+            list-style: none;
+        }
+
+        .file-item {
+            padding: 8px 10px;
+            border-radius: 3px;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-bottom: 5px;
+            font-size: 0.9em;
+        }
+
+        .file-item:hover {
+            background-color: #e8eaf6;
+        }
+
+        body.dark-theme .file-item:hover {
+            background-color: #444;
+        }
+
+        /* 空状态 */
+        .empty-state {
+            text-align: center;
+            color: #999;
+            padding: 50px 0;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .app-container {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                height: auto;
+                max-height: 300px;
+            }
+
+            .content-display {
+                padding: 15px;
+            }
+
+            .toolbar {
+                flex-direction: column;
+                gap: 10px;
+                align-items: stretch;
+            }
+
+            .toolbar-left, .toolbar-right {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- 左侧边栏 -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h1>📚 Markdown 阅读器</h1>
+            </div>
+            
+            <!-- 文件选择区 -->
+            <div class="file-selector">
+                <div class="file-input-wrapper">
+                    <input type="file" id="fileInput" accept=".md,.markdown">
+                    <label for="fileInput" class="file-input-label">📁 选择 Markdown 文件</label>
+                </div>
+                <div id="dropZone" style="margin-top: 10px; padding: 20px; border: 2px dashed #ccc; text-align: center; border-radius: 5px; cursor: pointer;">
+                    📋 或拖放 Markdown 文件到此处
+                </div>
+            </div>
+            
+            <!-- 对照编辑按钮 -->
+            <div class="toc-section">
+                <button id="togglePreviewBtn" class="btn btn-primary" style="width: 100%; display: flex; align-items: center; justify-content: flex-start; gap: 8px; padding: 10px 15px; margin: 0;">
+                    <span>📝</span>
+                    <span>对照编辑</span>
+                </button>
+            </div>
+        </aside>
+        
+        <!-- 主内容区 -->
+        <main class="main-content">
+            <!-- 工具栏 -->
+            <div class="toolbar">
+                <div class="toolbar-left">
+                    <!-- 搜索功能 -->
+                    <div class="search-box">
+                        <input type="text" id="searchInput" placeholder="搜索内容...">
+                        <button class="btn btn-primary" id="searchBtn">🔍</button>
+                        <button class="btn btn-secondary" id="clearSearchBtn">清除</button>
+                    </div>
+                </div>
+                
+                <div class="toolbar-right">
+                    <!-- 字体大小调整 -->
+                    <div class="dropdown">
+                        <select id="fontSizeSelect">
+                            <option value="14">字体大小: 14px</option>
+                            <option value="16" selected>字体大小: 16px</option>
+                            <option value="18">字体大小: 18px</option>
+                            <option value="20">字体大小: 20px</option>
+                            <option value="22">字体大小: 22px</option>
+                        </select>
+                    </div>
+                    
+                    <!-- 主题切换 -->
+                    <div class="dropdown">
+                        <select id="themeSelect">
+                            <option value="light" selected>浅色主题</option>
+                            <option value="dark">深色主题</option>
+                        </select>
+                    </div>
+                    
+                    <!-- 目录弹出和收回按钮 -->
+                    <button class="btn btn-secondary" id="showTocBtn">📑 显示目录</button>
+                    <button class="btn btn-secondary" id="hideTocBtn" style="display: none;">📑 隐藏目录</button>
+                    
+
+                </div>
+            </div>
+            
+            <!-- 内容区域布局 -->
+            <div class="content-area">
+                <!-- 内容展示区 -->
+                <div class="content-display">
+                    <!-- 编辑区域 -->
+                    <div id="editArea" style="display: none; width: 50%; height: 100%; float: left; padding-right: 15px;">
+                        <textarea id="markdownEditor" style="width: 100%; height: 100%; padding: 15px; border: 1px solid #ddd; border-radius: 5px; font-family: 'Consolas', 'Monaco', monospace; font-size: 14px; resize: none; outline: none;"></textarea>
+                    </div>
+                    <!-- 预览区域 -->
+                    <div id="previewArea" class="markdown-content" style="width: 100%; height: 100%; float: left;">
+                        <div class="empty-state">
+                            <h2>欢迎使用 Markdown 阅读器</h2>
+                            <p>请点击左侧的 "选择 Markdown 文件" 按钮来打开您的 Markdown 文件</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 右侧目录 -->
+                <aside class="right-sidebar" id="rightSidebar">
+                    <!-- 目录头部 -->
+                    <div class="toc-header">
+                        <h3>文档目录</h3>
+                        <button class="toggle-toc-btn" id="closeTocBtn">×</button>
+                    </div>
+                    
+                    <!-- 目录内容区 -->
+                    <div class="toc-content">
+                        <ul class="toc-list" id="tocList">
+                            <li class="toc-item empty-state">暂无目录</li>
+                        </ul>
+                    </div>
+                </aside>
+            </div>
+        </main>
+    </div>
+
+    <!-- KaTeX支持 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/contrib/auto-render.min.js"></script>
+    
+    <script src="js/marked.min.js"></script>
+    <script>
+        // 全局变量
+        let currentFile = null;
+        let currentContent = '';
+        let isTocVisible = JSON.parse(localStorage.getItem('isTocVisible')) || true;
+        let isPreviewMode = false;
+        
+        // 初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            // 绑定事件
+            bindEvents();
+            
+            // 应用保存的设置
+            applySavedSettings();
+        });
+        
+        // 绑定事件
+        function bindEvents() {
+            // 文件选择
+            document.getElementById('fileInput').addEventListener('change', handleFileSelect);
+            
+            // 搜索功能
+            document.getElementById('searchBtn').addEventListener('click', performSearch);
+            document.getElementById('clearSearchBtn').addEventListener('click', clearSearch);
+            document.getElementById('searchInput').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    performSearch();
+                }
+            });
+            
+            // 字体大小调整
+            document.getElementById('fontSizeSelect').addEventListener('change', adjustFontSize);
+            
+            // 主题切换
+            document.getElementById('themeSelect').addEventListener('change', switchTheme);
+            
+            // 目录显示/隐藏按钮
+            document.getElementById('showTocBtn').addEventListener('click', showTOC);
+            document.getElementById('hideTocBtn').addEventListener('click', hideTOC);
+            document.getElementById('closeTocBtn').addEventListener('click', hideTOC);
+            
+            // 拖放功能
+            const dropZone = document.getElementById('dropZone');
+            dropZone.addEventListener('dragover', handleDragOver);
+            dropZone.addEventListener('drop', handleDrop);
+            
+            // 对照编辑按钮
+            document.getElementById('togglePreviewBtn').addEventListener('click', togglePreview);
+            
+            // 编辑器缩进功能
+            const editor = document.getElementById('markdownEditor');
+            editor.addEventListener('keydown', handleEditorKeyDown);
+        }
+        
+        // 处理编辑器按键事件，实现缩进功能
+        function handleEditorKeyDown(e) {
+            const editor = e.target;
+            
+            // Tab键处理：插入缩进
+            if (e.key === 'Tab') {
+                e.preventDefault();
+                
+                const start = editor.selectionStart;
+                const end = editor.selectionEnd;
+                const value = editor.value;
+                
+                // 多行选择
+                if (start !== end) {
+                    const lines = value.substring(start, end).split('\n');
+                    const indentedLines = lines.map(line => '    ' + line);
+                    const newText = indentedLines.join('\n');
+                    
+                    // 替换选中内容
+                    editor.value = value.substring(0, start) + newText + value.substring(end);
+                    
+                    // 更新光标位置
+                    editor.selectionStart = start;
+                    editor.selectionEnd = start + newText.length;
+                } else {
+                    // 单行插入缩进
+                    editor.value = value.substring(0, start) + '    ' + value.substring(end);
+                    editor.selectionStart = editor.selectionEnd = start + 4;
+                }
+                
+                // 触发input事件，更新预览
+                editor.dispatchEvent(new Event('input'));
+            }
+            
+            // Shift+Tab键处理：减少缩进
+            else if (e.key === 'Tab' && e.shiftKey) {
+                e.preventDefault();
+                
+                const start = editor.selectionStart;
+                const end = editor.selectionEnd;
+                const value = editor.value;
+                
+                // 多行选择
+                if (start !== end) {
+                    const lines = value.substring(start, end).split('\n');
+                    const unindentedLines = lines.map(line => {
+                        // 移除最多4个前导空格
+                        if (line.startsWith('    ')) {
+                            return line.substring(4);
+                        } else if (line.startsWith('   ')) {
+                            return line.substring(3);
+                        } else if (line.startsWith('  ')) {
+                            return line.substring(2);
+                        } else if (line.startsWith(' ')) {
+                            return line.substring(1);
+                        }
+                        return line;
+                    });
+                    const newText = unindentedLines.join('\n');
+                    
+                    // 替换选中内容
+                    editor.value = value.substring(0, start) + newText + value.substring(end);
+                    
+                    // 更新光标位置
+                    editor.selectionStart = start;
+                    editor.selectionEnd = start + newText.length;
+                } else {
+                    // 单行减少缩进
+                    const lineStart = value.lastIndexOf('\n', start - 1) + 1;
+                    const line = value.substring(lineStart, start);
+                    
+                    if (line.startsWith('    ')) {
+                        // 移除4个空格
+                        editor.value = value.substring(0, lineStart) + line.substring(4) + value.substring(start);
+                        editor.selectionStart = editor.selectionEnd = start - 4;
+                    } else if (line.startsWith('   ')) {
+                        // 移除3个空格
+                        editor.value = value.substring(0, lineStart) + line.substring(3) + value.substring(start);
+                        editor.selectionStart = editor.selectionEnd = start - 3;
+                    } else if (line.startsWith('  ')) {
+                        // 移除2个空格
+                        editor.value = value.substring(0, lineStart) + line.substring(2) + value.substring(start);
+                        editor.selectionStart = editor.selectionEnd = start - 2;
+                    } else if (line.startsWith(' ')) {
+                        // 移除1个空格
+                        editor.value = value.substring(0, lineStart) + line.substring(1) + value.substring(start);
+                        editor.selectionStart = editor.selectionEnd = start - 1;
+                    }
+                }
+                
+                // 触发input事件，更新预览
+                editor.dispatchEvent(new Event('input'));
+            }
+        }
+        
+        // 处理拖放事件
+        function handleDragOver(e) {
+            e.preventDefault();
+            const dropZone = document.getElementById('dropZone');
+            dropZone.style.borderColor = '#3498db';
+            dropZone.style.backgroundColor = '#e8f4f8';
+        }
+        
+        // 处理拖放事件
+        function handleDrop(e) {
+            e.preventDefault();
+            const dropZone = document.getElementById('dropZone');
+            dropZone.style.borderColor = '#ccc';
+            dropZone.style.backgroundColor = 'transparent';
+            
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                const file = files[0];
+                if (file.type === 'text/markdown' || file.name.endsWith('.md') || file.name.endsWith('.markdown')) {
+                    currentFile = file;
+                    readFile(file);
+                } else {
+                    alert('请选择 Markdown 文件 (.md 或 .markdown)');
+                }
+            }
+        }
+        
+        // 显示目录
+        function showTOC() {
+            const rightSidebar = document.getElementById('rightSidebar');
+            rightSidebar.classList.remove('hidden');
+            
+            // 切换按钮显示状态
+            document.getElementById('showTocBtn').style.display = 'none';
+            document.getElementById('hideTocBtn').style.display = 'inline-block';
+            
+            // 更新状态并保存到本地存储
+            isTocVisible = true;
+            localStorage.setItem('isTocVisible', JSON.stringify(isTocVisible));
+        }
+        
+        // 隐藏目录
+        function hideTOC() {
+            const rightSidebar = document.getElementById('rightSidebar');
+            rightSidebar.classList.add('hidden');
+            
+            // 切换按钮显示状态
+            document.getElementById('showTocBtn').style.display = 'inline-block';
+            document.getElementById('hideTocBtn').style.display = 'none';
+            
+            // 更新状态并保存到本地存储
+            isTocVisible = false;
+            localStorage.setItem('isTocVisible', JSON.stringify(isTocVisible));
+        }
+        
+        // 处理文件选择
+        function handleFileSelect(e) {
+            const file = e.target.files[0];
+            if (file) {
+                currentFile = file;
+                // 读取文件内容
+                readFile(file);
+            }
+        }
+        
+        // 读取文件内容
+        function readFile(file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                currentContent = e.target.result;
+                renderMarkdown(currentContent);
+                generateTOC(currentContent);
+            };
+            reader.readAsText(file);
+        }
+        
+        // 渲染 Markdown
+        function renderMarkdown(content) {
+            // 配置marked.js，禁用默认的数学公式处理，避免与KaTeX冲突
+            marked.use({
+                gfm: true,
+                breaks: true,
+                pedantic: false,
+                sanitize: false,
+                smartLists: true,
+                smartypants: true,
+                // 自定义渲染器，确保缩进正确显示
+                renderer: {
+                    paragraph(text) {
+                        // 检查段落是否包含缩进
+                        if (text.startsWith('    ')) {
+                            // 对于缩进的段落，使用pre标签或添加CSS样式保留缩进
+                            return `<p style="white-space: pre-wrap;">${text}</p>`;
+                        }
+                        return `<p>${text}</p>`;
+                    }
+                }
+            });
+            
+            // 预处理内容，确保缩进在Markdown解析中得到保留
+            let processedContent = content;
+            
+            // 直接解析Markdown为HTML，保留原始数学公式语法
+            const html = marked.parse(processedContent);
+            
+            // 添加CSS样式，确保所有元素都能正确显示缩进
+            const styledHtml = `
+                <style>
+                    /* 确保所有元素都能正确显示缩进 */
+                    .markdown-content p,
+                    .markdown-content ul,
+                    .markdown-content ol,
+                    .markdown-content blockquote,
+                    .markdown-content table,
+                    .markdown-content pre {
+                        white-space: pre-wrap;
+                    }
+                    
+                    /* 确保代码块内的缩进正常显示 */
+                    .markdown-content pre code {
+                        white-space: pre;
+                    }
+                </style>
+                ${html}
+            `;
+            
+            document.getElementById('previewArea').innerHTML = styledHtml;
+            
+            // 使用KaTeX渲染数学公式，支持所有标准LaTeX语法
+            renderMathInElement(document.getElementById('previewArea'), {
+                delimiters: [
+                    {left: '$', right: '$', display: false},       // $...$ 行内公式
+                    {left: '\\(', right: '\\)', display: false}, // \(...\) 行内公式
+                    {left: '$$', right: '$$', display: true},       // $$...$$ 块级公式
+                    {left: '\\[', right: '\\]', display: true}  // \[...\] 块级公式
+                ],
+                throwOnError: false, // 忽略渲染错误，继续渲染其他内容
+                trust: true,         // 信任输入，允许渲染所有KaTeX功能
+                // 配置KaTeX渲染选项
+                output: 'html',
+                leqno: false,
+                fleqn: false
+            });
+        }
+        
+        // 切换对照编辑模式
+        function togglePreview() {
+            isPreviewMode = !isPreviewMode;
+            const editArea = document.getElementById('editArea');
+            const previewArea = document.getElementById('previewArea');
+            const toggleBtn = document.getElementById('togglePreviewBtn');
+            
+            if (isPreviewMode) {
+                // 进入对照编辑模式
+                editArea.style.display = 'block';
+                previewArea.style.width = '50%';
+                previewArea.style.paddingLeft = '15px';
+                previewArea.style.borderLeft = '1px solid #ddd';
+                
+                // 更新按钮状态
+                toggleBtn.classList.remove('btn-primary');
+                toggleBtn.classList.add('btn-secondary');
+                toggleBtn.innerHTML = '<span>👁️</span><span>退出对照</span>';
+                
+                // 将当前内容加载到编辑器
+                document.getElementById('markdownEditor').value = currentContent;
+                
+                // 添加实时编辑事件
+                document.getElementById('markdownEditor').addEventListener('input', handleEditorInput);
+            } else {
+                // 退出对照编辑模式
+                editArea.style.display = 'none';
+                previewArea.style.width = '100%';
+                previewArea.style.paddingLeft = '0';
+                previewArea.style.borderLeft = 'none';
+                
+                // 更新按钮状态
+                toggleBtn.classList.remove('btn-secondary');
+                toggleBtn.classList.add('btn-primary');
+                toggleBtn.innerHTML = '<span>📝</span><span>对照编辑</span>';
+                
+                // 移除实时编辑事件
+                document.getElementById('markdownEditor').removeEventListener('input', handleEditorInput);
+            }
+        }
+        
+        // 处理编辑器输入
+        function handleEditorInput() {
+            currentContent = document.getElementById('markdownEditor').value;
+            renderMarkdown(currentContent);
+            generateTOC(currentContent);
+        }
+        
+        // 生成目录
+        function generateTOC(content) {
+            const tocList = document.getElementById('tocList');
+            const headings = content.match(/^(#{1,6})\s+(.+)$/gm);
+            
+            if (headings) {
+                tocList.innerHTML = '';
+                headings.forEach(heading => {
+                    const level = heading.match(/^#{1,6}/)[0].length;
+                    const text = heading.replace(/^#{1,6}\s+/, '');
+                    const id = text.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+                    
+                    const li = document.createElement('li');
+                    li.className = 'toc-item';
+                    li.style.paddingLeft = `${(level - 1) * 15}px`;
+                    
+                    const link = document.createElement('a');
+                    link.className = 'toc-link';
+                    link.textContent = text;
+                    link.href = `#${id}`;
+                    link.onclick = function(e) {
+                        e.preventDefault();
+                        scrollToHeading(id);
+                    };
+                    
+                    li.appendChild(link);
+                    tocList.appendChild(li);
+                });
+            } else {
+                tocList.innerHTML = '<li class="toc-item empty-state">暂无目录</li>';
+            }
+        }
+        
+        // 滚动到指定标题
+        function scrollToHeading(id) {
+            const element = document.getElementById(id);
+            if (element) {
+                element.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+        
+        // 执行搜索
+        function performSearch() {
+            const searchTerm = document.getElementById('searchInput').value.trim();
+            if (!searchTerm) return;
+            
+            const contentElement = document.getElementById('markdownContent');
+            const content = contentElement.innerHTML;
+            
+            // 清除之前的高亮
+            contentElement.innerHTML = content.replace(/<span class="highlight">(.*?)<\/span>/g, '$1');
+            
+            // 高亮搜索结果
+            const regex = new RegExp(`(${searchTerm})`, 'gi');
+            const highlightedContent = content.replace(regex, '<span class="highlight">$1</span>');
+            contentElement.innerHTML = highlightedContent;
+        }
+        
+        // 清除搜索
+        function clearSearch() {
+            document.getElementById('searchInput').value = '';
+            const contentElement = document.getElementById('markdownContent');
+            const content = contentElement.innerHTML;
+            contentElement.innerHTML = content.replace(/<span class="highlight">(.*?)<\/span>/g, '$1');
+        }
+        
+        // 调整字体大小
+        function adjustFontSize() {
+            const fontSize = document.getElementById('fontSizeSelect').value;
+            document.querySelector('.content-display').style.fontSize = `${fontSize}px`;
+            localStorage.setItem('fontSize', fontSize);
+        }
+        
+        // 切换主题
+        function switchTheme() {
+            const theme = document.getElementById('themeSelect').value;
+            document.body.className = theme === 'dark' ? 'dark-theme' : '';
+            localStorage.setItem('theme', theme);
+        }
+        
+
+        
+        // 应用保存的设置
+        function applySavedSettings() {
+            // 字体大小
+            const savedFontSize = localStorage.getItem('fontSize') || '16';
+            document.getElementById('fontSizeSelect').value = savedFontSize;
+            document.querySelector('.content-display').style.fontSize = `${savedFontSize}px`;
+            
+            // 主题
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            document.getElementById('themeSelect').value = savedTheme;
+            document.body.className = savedTheme === 'dark' ? 'dark-theme' : '';
+            
+            // 目录状态
+            const savedTocState = JSON.parse(localStorage.getItem('isTocVisible')) || true;
+            isTocVisible = savedTocState;
+            
+            const rightSidebar = document.getElementById('rightSidebar');
+            const showTocBtn = document.getElementById('showTocBtn');
+            const hideTocBtn = document.getElementById('hideTocBtn');
+            
+            if (isTocVisible) {
+                rightSidebar.classList.remove('hidden');
+                showTocBtn.style.display = 'none';
+                hideTocBtn.style.display = 'inline-block';
+            } else {
+                rightSidebar.classList.add('hidden');
+                showTocBtn.style.display = 'inline-block';
+                hideTocBtn.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>
